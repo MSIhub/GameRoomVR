@@ -1,0 +1,77 @@
+# 0.7.0
+
+## Build 17 (Oct 12, 2021)
+
+- Updated fusion to version 0.7.0#296
+
+## Build 14 (Sep 08, 2021)
+
+- Updated to fusion version 0.7.0#286  
+feat: added starting scene to make standalone vr setup easier ( eg quest )
+
+## Build 12 (Sep 02, 2021)
+
+- Updated fusion to version 0.7.0#283
+- Updated to fusion version 0.6.0#273
+
+**What's New**
+
+- Added observer camera
+
+**Changes**
+
+- Adjusted rig spawning GUI to match Fusion GUI
+
+# 0.5.0
+
+## Build 11 (Jun 22, 2021)
+
+**Changes**
+
+- Updated to fusion version 0.5.0#218
+
+**Bug Fixes**
+
+- Fixed: Overriding local Hand Position in Render() instead of AfterUpdate() so it is done after NRB interpolation
+
+## Build 10 (Jun 09, 2021)
+
+**Changes**
+
+- Upgraded to Fusion SDK 0.5.0
+
+# 0.2.0
+
+## Build 8 (Jun 04, 2021)
+
+**What's New**
+
+- Added area of interest calls to hands and head
+- Added dependency package importer script for openxr and inputsystem
+- Added warning when no xr loader is selected
+- Added head and hand meshes
+- Different material for local hands
+
+**Changes**
+
+- Updated fusion to version 0.4.0#198
+- Added setup instructions to readme regarding unsafe code and AppIds
+- Updated fusion to 0.3.0#160
+- Updated fusion to 0.2.0#152
+- PlayerSpawner now using rpcs instead of join callbacks
+- Updated fusion to 0.2.0#142
+- Removed nested NetworkObjects from hands. These were necessary due to a bug. Removed all workarounds associated with this
+- Changed IsPreprocessed flag in input to use NetworkBool type
+- Updated fusion to 0.2.0#134
+- Removed automatic dependency loading. Added further instructions to readme instead
+- Added setup instructions to readme
+- Updated fusion  to 0.2.0#133
+- Updated fusion to 0.2.0#131
+
+**Bug Fixes**
+
+- Fixed: Previous input actions need to be [Networked] for resim and prediction to work. Moved Preprocess to Hand.cs
+- Fixed: Removed whitespace from prefab and material names
+- Fixed: Fixed teleport actions for index controller
+- Fixed: Fixed prefab spawning
+

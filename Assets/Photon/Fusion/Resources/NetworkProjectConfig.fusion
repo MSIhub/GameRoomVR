@@ -1,0 +1,318 @@
+{
+    "Version": 1,
+    "TypeId": "NetworkProjectConfig",
+    "PeerMode": 0,
+    "Scenes": [
+        "Assets/Scenes/VR_Start.unity",
+        "Assets/Scenes/Game.unity"
+    ],
+    "PhysicsEngine": 0,
+    "ServerPhysicsMode": 1,
+    "UseLagCompensation": true,
+    "LagCompensation": {
+        "HitboxBufferSize": 60,
+        "ExpansionFactor": 0.20000000298023225,
+        "Optimize": false,
+        "DebugBroadphase": false,
+        "DebugHistory": false,
+        "DebugColor": {
+            "r": 0.0,
+            "g": 1.0,
+            "b": 0.0,
+            "a": 0.5
+        },
+        "ClientDebugColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 1.0,
+            "a": 0.5
+        },
+        "HistoryDebugColor": {
+            "r": 0.0,
+            "g": 0.0,
+            "b": 1.0,
+            "a": 0.5
+        }
+    },
+    "SceneLoadSpawnMode": 2,
+    "DeltaCompressor": 0,
+    "InvokeRenderInBatchMode": true,
+    "MaxNetworkedObjectCount": 8192,
+    "NetworkIdIsObjectName": false,
+    "PrefabTable": {},
+    "PrefabSources": [
+        {
+            "id": 0
+        }
+    ],
+    "Simulation": {
+        "InputDataWordCount": 0,
+        "TickRate": 60,
+        "DefaultPlayers": 10,
+        "ReplicationMode": 0,
+        "InterestManagement": false,
+        "SimulationCulling": false,
+        "ServerPacketInterval": 1,
+        "ClientPacketInterval": 1
+    },
+    "Interpolation": {
+        "DeltaAdjustment": 1,
+        "AllowedJitter": 25,
+        "SnapLimit": 200,
+        "MultiplierMin": 1.25,
+        "MultiplierMax": 3.0
+    },
+    "Network": {
+        "SocketSendBufferSize": 256,
+        "SocketRecvBufferSize": 256,
+        "ConnectAttempts": 10,
+        "ConnectInterval": 0.5,
+        "ConnectionDefaultRtt": 0.1,
+        "ConnectionTimeout": 10.0,
+        "ConnectionPingInterval": 1.0,
+        "ConnectionShutdownTime": 1.0,
+        "MtuDefault": 1232
+    },
+    "NetworkConditions": {
+        "Enabled": false,
+        "DelayShape": 1,
+        "DelayMin": 0.01,
+        "DelayMax": 0.1,
+        "DelayPeriod": 3.0,
+        "DelayThreshold": 0.5,
+        "AdditionalJitter": 0.01,
+        "LossChanceShape": 1,
+        "LossChanceMin": 0.0,
+        "LossChanceMax": 0.02,
+        "LossChanceThreshold": 0.9,
+        "LossChancePeriod": 3.0,
+        "AdditionalLoss": 0.005
+    },
+    "Heap": {
+        "PageShift": 14,
+        "PageCount": 128,
+        "GlobalsSize": 0
+    },
+    "AccuracyDefaults": {
+        "coreKeys": [
+            "Uncompressed",
+            "Default",
+            "Position",
+            "Rotation",
+            "NormalizedTime"
+        ],
+        "coreDefs": [
+            {
+                "_value": 0.0,
+                "_inverse": Infinity,
+                "_hash": -1382104104
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -814817977
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -194233199
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -258202764
+            },
+            {
+                "_value": 0.00009999999747378752,
+                "_inverse": 10000.0,
+                "_hash": 1061325578
+            }
+        ],
+        "coreVals": [
+            {
+                "_value": 0.0,
+                "_inverse": Infinity,
+                "_hash": -1382104104
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -814817977
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -194233199
+            },
+            {
+                "_value": 0.0010000000474974514,
+                "_inverse": 999.9999389648438,
+                "_hash": -258202764
+            },
+            {
+                "_value": 0.00009999999747378752,
+                "_inverse": 10000.0,
+                "_hash": 1061325578
+            }
+        ],
+        "tags": [],
+        "values": []
+    },
+    "AssembliesToWeave": [
+        "Assembly-CSharp",
+        "Assembly-CSharp-firstpass"
+    ],
+    "references": {
+        "version": 1,
+        "00000000": {
+            "type": {
+                "class": "NetworkPrefabSourceStatic",
+                "ns": "Fusion",
+                "asm": "Fusion.Runtime"
+            },
+            "data": {
+                "Id": "Static",
+                "_entries": [
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                -803624255602313631,
+                                -4623347896058082999
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 815038363609415717,
+                            "guid": "61b6ef4ffff3d8f4498968869591d6bf",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                7271735624910555758,
+                                264505440977255033
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 5091169073196929411,
+                            "guid": "6eca58070665ea64797a9b124cb6ab03",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                8384034271346155492,
+                                8247648301496937482
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 8815895893571785555,
+                            "guid": "e4df49d0bf125a740a2c14ab6e887572",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                -8881257196450100773,
+                                -7212462539117638472
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 7408881512176793842,
+                            "guid": "dbc9b57ea26fbf84b8cc14b0882fe89b",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                7234622325507379506,
+                                -2695065435728382421
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 8815895893571785555,
+                            "guid": "3251faa3ac8a66642bf6f9e8433499da",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                7265012665050642715,
+                                -8352571041202683976
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 907719831059966849,
+                            "guid": "1bb90ef58682d264b83fe64fe4b4158c",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                -6571105823471740020,
+                                1566542048605868489
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 9153086257183699605,
+                            "guid": "8c5b779a11becea4c991dd7cb179bd15",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                315291947536223630,
+                                2885843380772572200
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 4945582564059790120,
+                            "guid": "8e0d70155b246004288c5cd443930c28",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                7269438038894608803,
+                                8872390605155311545
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 2285810983895460555,
+                            "guid": "a3810699613be264b99fcb583f10217b",
+                            "type": 3
+                        }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                -6567574427340799576,
+                                -8891163262581288022
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 9119106504919259541,
+                            "guid": "a88169d6da49dba4aad3d6bd1e3e9c84",
+                            "type": 3
+                        }
+                    }
+                ]
+            }
+        },
+        "00000001": {
+            "type": {
+                "class": "Terminus",
+                "ns": "UnityEngine.DMAT",
+                "asm": "FAKE_ASM"
+            },
+            "data": {}
+        }
+    }
+}
