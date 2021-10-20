@@ -2,6 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Fusion;
+using UnityEngine.InputSystem;
 
 [RequireComponent( typeof( HighlightCollector ) )]
 [RequireComponent( typeof( VelocityBuffer ) )]
@@ -10,7 +11,11 @@ public class Hand : NetworkBehaviour
     HighlightCollector m_HighlightCollector;
     Highlightable m_ActiveHighlight;
     bool m_Grabbing;
-
+    
+    [SerializeField] private Animator _handAnimator;
+    [SerializeField] private InputActionReference _gripInputAction;
+    [SerializeField] private InputActionReference _triggerInputAction;
+    
     public Transform Visuals;
     public VelocityBuffer VelocityBuffer { get; private set; }
 
@@ -24,13 +29,25 @@ public class Hand : NetworkBehaviour
         VelocityBuffer = GetComponent<VelocityBuffer>();
         m_HighlightCollector = GetComponent<HighlightCollector>();
         m_TeleportHandler = GetComponentInChildren<TeleportHandler>();
+        _gripInputAction.action.performed += GripPressed;
+        _triggerInputAction.action.performed += TriggerPressed;
+    }
+
+    private void TriggerPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
+    }
+
+    private void GripPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _handAnimator.SetFloat("Grip", obj.ReadValue<float>());
     }
 
     public void UpdateInput( InputDataController input )
     {
         PreviousInputAction = input.PreprocessActions( PreviousInputAction );
         UpdatePose( input.LocalPosition, input.LocalRotation );
-
+        
         if( input.GetAction( InputAction.GRAB ) )
         {
             Grab();
@@ -39,10 +56,12 @@ public class Hand : NetworkBehaviour
         {
             Drop();
         }
+        
+        
 
         m_TeleportHandler?.UpdateInput( input );
 
-        Visuals.localScale = m_Grabbing ? Vector3.one * 0.8f : Vector3.one;
+        //Visuals.localScale = m_Grabbing ? Vector3.one * 0.8f : Vector3.one;
     }
 
     void UpdatePose( Vector3 localPosition, Quaternion localRotation )
@@ -62,7 +81,7 @@ public class Hand : NetworkBehaviour
     void Grab()
     {
         Drop();
-
+        
         if( m_HighlightCollector.CurrentHighlight != null )
         {
             m_ActiveHighlight = m_HighlightCollector.CurrentHighlight;
@@ -72,18 +91,19 @@ public class Hand : NetworkBehaviour
         {
             m_ActiveHighlight = null;
         }
-
+        
         m_Grabbing = true;
     }
 
     public void Drop()
     {
+        
         if( m_ActiveHighlight != null )
         {
             m_ActiveHighlight.Drop();
             m_ActiveHighlight = null;
         }
-
+        
         m_Grabbing = false;
     }
 

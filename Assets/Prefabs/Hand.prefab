@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 2724140444146552588}
   - component: {fileID: 1734002802235295814}
   - component: {fileID: 6020735634292735883}
+  - component: {fileID: 2315296731350025804}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -126,6 +127,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _handAnimator: {fileID: 0}
+  _gripInputAction: {fileID: 0}
+  _triggerInputAction: {fileID: 0}
   Visuals: {fileID: 3912068373609533206}
   _PreviousInputAction: 0
 --- !u!54 &8775139017112649252
@@ -184,6 +188,25 @@ MonoBehaviour:
   _interpolationTarget: {fileID: 3912068373609533206}
   _space: 0
   _syncDragAndMass: 0
+--- !u!95 &2315296731350025804
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218209131754416409}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: e1e4d19745953a04389ae805c9f465d2, type: 3}
+  m_Controller: {fileID: 9100000, guid: 37c7411290b4c934c948b844f0d5439f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &6173206405240616856
 GameObject:
   m_ObjectHideFlags: 0
