@@ -15,6 +15,7 @@ public class Player : NetworkBehaviour
     public PlayerInputHandler LocalInput;
     public Renderer[] Renderers;
     public Material LocalHandMaterial;
+    public string UserName = "Default";
 
     public override void Spawned()
     {
