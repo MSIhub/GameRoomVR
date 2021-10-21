@@ -12,7 +12,7 @@ public class Hand : NetworkBehaviour
     Highlightable m_ActiveHighlight;
     bool m_Grabbing;
     
-    [SerializeField] private Animator _handAnimator;
+    
     [SerializeField] private InputActionReference _gripInputAction;
     [SerializeField] private InputActionReference _triggerInputAction;
     [SerializeField] private InputActionReference _thumbInputAction;
@@ -21,12 +21,13 @@ public class Hand : NetworkBehaviour
     public VelocityBuffer VelocityBuffer { get; private set; }
 
     TeleportHandler m_TeleportHandler;
-
+    private Animator _handAnimator;
     [Networked]
     private InputAction PreviousInputAction { get; set; }
 
     private void Awake()
     {
+        _handAnimator = GetComponent<Animator>();
         VelocityBuffer = GetComponent<VelocityBuffer>();
         m_HighlightCollector = GetComponent<HighlightCollector>();
         m_TeleportHandler = GetComponentInChildren<TeleportHandler>();
