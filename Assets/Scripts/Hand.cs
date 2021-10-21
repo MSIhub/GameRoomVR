@@ -39,37 +39,32 @@ public class Hand : NetworkBehaviour
 
     private void ThumbUp(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (_handAnimator != null)
-        {
+        
             _handAnimator.SetBool("ThumbDown", false);
-        }
+       
         
     }
 
     private void ThumbDown(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (_handAnimator != null)
-        {
+        
             _handAnimator.SetBool("ThumbDown", true);
-        }
+       
         
     }
 
     private void TriggerPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (_handAnimator != null)
-        {
-            _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
-        }
         
-    }
+            _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
+        
+}
 
     private void GripPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        if (_handAnimator != null)
-        {
+        
             _handAnimator.SetFloat("Grip", obj.ReadValue<float>());
-        }
+        
        
     }
 
@@ -135,6 +130,13 @@ public class Hand : NetworkBehaviour
         }
         
         m_Grabbing = false;
+    }
+    private void OnDisable()
+    {
+        _gripInputAction.action.performed -= GripPressed;
+        _triggerInputAction.action.performed -= TriggerPressed;
+        _thumbInputAction.action.started -= ThumbDown;
+        _thumbInputAction.action.canceled -= ThumbUp;
     }
 
 
