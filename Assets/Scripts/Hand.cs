@@ -21,10 +21,10 @@ public class Hand : NetworkBehaviour
     public VelocityBuffer VelocityBuffer { get; private set; }
 
     TeleportHandler m_TeleportHandler;
-    private Animator _handAnimator;
+    
     [Networked]
     private InputAction PreviousInputAction { get; set; }
-
+    private Animator _handAnimator;
     private void Awake()
     {
         _handAnimator = GetComponent<Animator>();
@@ -39,22 +39,38 @@ public class Hand : NetworkBehaviour
 
     private void ThumbUp(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _handAnimator.SetBool("ThumbDown", false);
+        if (_handAnimator != null)
+        {
+            _handAnimator.SetBool("ThumbDown", false);
+        }
+        
     }
 
     private void ThumbDown(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _handAnimator.SetBool("ThumbDown", true);
+        if (_handAnimator != null)
+        {
+            _handAnimator.SetBool("ThumbDown", true);
+        }
+        
     }
 
     private void TriggerPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
+        if (_handAnimator != null)
+        {
+            _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
+        }
+        
     }
 
     private void GripPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        _handAnimator.SetFloat("Grip", obj.ReadValue<float>());
+        if (_handAnimator != null)
+        {
+            _handAnimator.SetFloat("Grip", obj.ReadValue<float>());
+        }
+       
     }
 
     public void UpdateInput( InputDataController input )
