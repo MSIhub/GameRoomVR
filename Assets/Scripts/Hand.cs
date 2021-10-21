@@ -15,6 +15,7 @@ public class Hand : NetworkBehaviour
     [SerializeField] private Animator _handAnimator;
     [SerializeField] private InputActionReference _gripInputAction;
     [SerializeField] private InputActionReference _triggerInputAction;
+    [SerializeField] private InputActionReference _thumbInputAction;
     
     public Transform Visuals;
     public VelocityBuffer VelocityBuffer { get; private set; }
@@ -31,6 +32,18 @@ public class Hand : NetworkBehaviour
         m_TeleportHandler = GetComponentInChildren<TeleportHandler>();
         _gripInputAction.action.performed += GripPressed;
         _triggerInputAction.action.performed += TriggerPressed;
+        _thumbInputAction.action.started += ThumbDown;
+        _thumbInputAction.action.canceled += ThumbUp;
+    }
+
+    private void ThumbUp(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _handAnimator.SetBool("ThumbDown", false);
+    }
+
+    private void ThumbDown(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _handAnimator.SetBool("ThumbDown", true);
     }
 
     private void TriggerPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
