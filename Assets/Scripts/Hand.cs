@@ -8,26 +8,31 @@ using UnityEngine.InputSystem;
 [RequireComponent( typeof( VelocityBuffer ) )]
 public class Hand : NetworkBehaviour
 {
+    enum HandSide{left, right}
+    
     HighlightCollector m_HighlightCollector;
     Highlightable m_ActiveHighlight;
     bool m_Grabbing;
     
     
+    
     [SerializeField] private InputActionReference _gripInputAction;
     [SerializeField] private InputActionReference _triggerInputAction;
     [SerializeField] private InputActionReference _thumbInputAction;
-    
+    [SerializeField] private HandSide _handSide = HandSide.left;
+    [SerializeField] private Animator _handAnimator;
     public Transform Visuals;
+    public Transform AttachPoint;
     public VelocityBuffer VelocityBuffer { get; private set; }
 
     TeleportHandler m_TeleportHandler;
     
     [Networked]
     private InputAction PreviousInputAction { get; set; }
-    private Animator _handAnimator;
     private void Awake()
     {
-        _handAnimator = GetComponent<Animator>();
+        
+        
         VelocityBuffer = GetComponent<VelocityBuffer>();
         m_HighlightCollector = GetComponent<HighlightCollector>();
         m_TeleportHandler = GetComponentInChildren<TeleportHandler>();

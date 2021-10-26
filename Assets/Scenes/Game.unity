@@ -9935,21 +9935,41 @@ PrefabInstance:
       propertyPath: m_Name
       value: Club_K_Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 1157962623337459237, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: _m_PositionOffset.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: _m_PositionOffset.y
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: KeepPositionOffsetOnGrab
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: KeepRotationOffsetOnGrab
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_RootOrder
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.7478
+      value: 0.9588
       objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.002
+      value: -0.007
       objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.0699
       objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_LocalRotation.w
@@ -9995,6 +10015,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Club_K_Net
       objectReference: {fileID: 0}
+    - target: {fileID: 9119106504919259543, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9119106504969391533, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -10002,6 +10026,30 @@ PrefabInstance:
     - target: {fileID: 9119106504969391534, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_Name
       value: Club_K_Highlight
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106504969391534, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106505698272324, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Size.y
+      value: 0.0056046844
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106505698272324, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Size.z
+      value: 0.087230854
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106505698272324, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Center.y
+      value: 0.00013353431
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106505698272324, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Center.z
+      value: -0.0003320016
+      objectReference: {fileID: 0}
+    - target: {fileID: 9119106505698272326, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}

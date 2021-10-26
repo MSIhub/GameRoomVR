@@ -171,8 +171,8 @@ MonoBehaviour:
   _interpolationDataSource: 0
   ThrowForce: 2
   KeepRotationOffsetOnGrab: 1
-  KeepPositionOffsetOnGrab: 1
-  _m_PositionOffset: {x: 0, y: 0, z: 0}
+  KeepPositionOffsetOnGrab: 0
+  _m_PositionOffset: {x: -0.18, y: 0, z: -0.32}
   _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!54 &9119106504919259528
 Rigidbody:

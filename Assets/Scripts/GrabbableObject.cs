@@ -17,6 +17,10 @@ public class GrabbableObject : NetworkBehaviour
     public bool KeepRotationOffsetOnGrab = true;
     public bool KeepPositionOffsetOnGrab = true;
 
+    private bool parentToHand = false;
+    private bool unparentFromHand = false;
+    
+    private Transform originalParent;
 
     private void Awake()
     {
@@ -27,25 +31,31 @@ public class GrabbableObject : NetworkBehaviour
         Highlight.GrabCallback += OnGrab;
         Highlight.DropCallback += OnDrop;
     }
-
-    private void OnDestroy()
-    {
-        if( Highlight != null )
-        {
-            Highlight.GrabCallback -= OnGrab;
-            Highlight.DropCallback -= OnDrop;
-        }
-    }
-
+    
     public override void FixedUpdateNetwork()
     {
+        if (parentToHand)
+        {
+            parentToHand = false;
+            //reparent the object to the hand
+            originalParent = transform.parent;
+            transform.SetParent(m_HoldingHand.AttachPoint);
+        }
+        
+        if (unparentFromHand)
+        {
+            unparentFromHand = false;
+            //reparent the object to the hand
+             transform.SetParent(originalParent);
+        }
+        
         if( m_HoldingHand != null )
         {
-            Vector3 targetPosition = m_HoldingHand.transform.position + m_HoldingHand.transform.TransformDirection( m_PositionOffset );
+            Vector3 targetPosition = m_HoldingHand.AttachPoint.position;
             m_Body.velocity = ( targetPosition - transform.position ) / Runner.DeltaTime;
 
 
-            Quaternion targetRotation = m_HoldingHand.transform.rotation * m_RotationOffset;
+            Quaternion targetRotation = m_HoldingHand.AttachPoint.transform.rotation;
             Quaternion rotationDelta = targetRotation * Quaternion.Inverse( m_Body.rotation );
             rotationDelta.ToAngleAxis( out var angleInDegrees, out var rotationAxis );
             if( angleInDegrees > 180f )
@@ -61,35 +71,45 @@ public class GrabbableObject : NetworkBehaviour
 
     }
 
+    private void OnDestroy()
+    {
+        if( Highlight != null )
+        {
+            Highlight.GrabCallback -= OnGrab;
+            Highlight.DropCallback -= OnDrop;
+        }
+    }
+
+
     void OnGrab( Hand other )
     {
+        Debug.Log("grabba " + transform.name);
+        SetLayerMaskIncludingChildren("grabbed");
+        parentToHand = true;    
         if( m_HoldingHand != null )
         {
             m_HoldingHand.Drop();
         }
         m_HoldingHand = other;
+        
+        
 
-        if( KeepRotationOffsetOnGrab )
-        {
-            m_RotationOffset = Quaternion.Inverse( m_HoldingHand.transform.rotation ) * transform.rotation;
-        }
-        else
-        {
-            m_RotationOffset = Quaternion.identity;
-        }
+    }
 
-        if( KeepPositionOffsetOnGrab )
+    private void SetLayerMaskIncludingChildren(string MaskName)
+    {
+        foreach (var tf in gameObject.GetComponentsInChildren<Transform>())
         {
-            m_PositionOffset = m_HoldingHand.transform.InverseTransformDirection( transform.position - m_HoldingHand.transform.position );
-        }
-        else
-        {
-            m_PositionOffset = Vector3.zero;
+            tf.gameObject.layer = LayerMask.NameToLayer(MaskName);
         }
     }
 
     void OnDrop()
     {
+        Debug.Log("droppa " + transform.name);
+        //reparent the object to the original parent
+        unparentFromHand = true;
+        SetLayerMaskIncludingChildren("Default");
         if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
         {
             m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
@@ -98,7 +118,8 @@ public class GrabbableObject : NetworkBehaviour
         {
             m_Body.velocity = m_Body.velocity * ThrowForce;
         }
-
+        
+        
         m_HoldingHand = null;
     }
 
