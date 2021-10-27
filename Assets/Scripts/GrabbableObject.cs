@@ -27,7 +27,7 @@ public class GrabbableObject : NetworkBehaviour
     private Vector3 _originalAttachPointPosition;
     private Quaternion _originalAttachPointRotation;
     
-    private Transform originalParent;
+    private Transform _originalParent;
     private bool _grabPointExist = false;
 
     private void Awake()
@@ -52,17 +52,15 @@ public class GrabbableObject : NetworkBehaviour
         {
             parentToHand = false;
             //reparent the object to the hand
-            originalParent = transform.parent;
-            if (_grabPointExist)
-            {
-                transform.SetParent(_grabAttachPoint);
-                Debug.Log("GrabPoint attached");
-            }
-            else
-            {
-                
-            }
+            _originalParent = transform.parent;
             transform.SetParent(m_HoldingHand.AttachPoint);
+            
+            //transform.Rotate(new Vector3(90,0,0));
+            
+            transform.Translate(new Vector3(0.1f,0,0));
+            //transform.Rotate(_grabAttachPoint.rotation.eulerAngles);
+            //transform.SetParent(m_HoldingHand.AttachPoint);
+            //transform.SetParent(_grabAttachPoint);
             
         }
         
@@ -70,7 +68,7 @@ public class GrabbableObject : NetworkBehaviour
         {
             unparentFromHand = false;
             //reparent the object to the hand
-             transform.SetParent(originalParent);
+             transform.SetParent(_originalParent);
         }
         
         if( m_HoldingHand != null )
