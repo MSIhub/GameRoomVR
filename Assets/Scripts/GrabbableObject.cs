@@ -12,7 +12,6 @@ public class GrabbableObject : NetworkBehaviour
     [Networked] Vector3 m_PositionOffset_right { get; set; }
     [Networked] Quaternion m_RotationOffset_right { get; set; }
 
-    [SerializeField] private Transform _grabAttachPoint;
     Rigidbody m_Body;
     public float ThrowForce = 2f;
 
@@ -39,11 +38,7 @@ public class GrabbableObject : NetworkBehaviour
         Highlight.GrabCallback += OnGrab;
         Highlight.DropCallback += OnDrop;
         
-        if (_grabAttachPoint == null)
-        {
-            _grabPointExist = true;
-            Debug.Log("Grab attach point missing, default center will be used");
-        }
+
     }
     
     public override void FixedUpdateNetwork()
@@ -73,6 +68,7 @@ public class GrabbableObject : NetworkBehaviour
         
         if( m_HoldingHand != null )
         {
+            
             Vector3 targetPosition = m_HoldingHand.AttachPoint.position;
             m_Body.velocity = ( targetPosition - transform.position ) / Runner.DeltaTime;
 
