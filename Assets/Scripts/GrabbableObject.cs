@@ -12,6 +12,7 @@ public class GrabbableObject : NetworkBehaviour
     [Networked] Vector3 m_PositionOffset_right { get; set; }
     [Networked] Quaternion m_RotationOffset_right { get; set; }
 
+    [SerializeField] private Transform _grabAttachPoint;
     Rigidbody m_Body;
     public float ThrowForce = 2f;
 
@@ -27,6 +28,7 @@ public class GrabbableObject : NetworkBehaviour
     private Quaternion _originalAttachPointRotation;
     
     private Transform originalParent;
+    private bool _grabPointExist = false;
 
     private void Awake()
     {
@@ -36,6 +38,12 @@ public class GrabbableObject : NetworkBehaviour
         Highlight = GetComponent<Highlightable>();
         Highlight.GrabCallback += OnGrab;
         Highlight.DropCallback += OnDrop;
+        
+        if (_grabAttachPoint == null)
+        {
+            _grabPointExist = true;
+            Debug.Log("Grab attach point missing, default center will be used");
+        }
     }
     
     public override void FixedUpdateNetwork()
@@ -45,7 +53,17 @@ public class GrabbableObject : NetworkBehaviour
             parentToHand = false;
             //reparent the object to the hand
             originalParent = transform.parent;
+            if (_grabPointExist)
+            {
+                transform.SetParent(_grabAttachPoint);
+                Debug.Log("GrabPoint attached");
+            }
+            else
+            {
+                
+            }
             transform.SetParent(m_HoldingHand.AttachPoint);
+            
         }
         
         if (unparentFromHand)
@@ -91,7 +109,7 @@ public class GrabbableObject : NetworkBehaviour
 
     void OnGrab( Hand other )
     {
-        Debug.Log("grabba " + transform.name);
+       // Debug.Log("grabba " + transform.name);
         SetLayerMaskIncludingChildren("grabbed");
         
         parentToHand = true;    
@@ -133,7 +151,7 @@ public class GrabbableObject : NetworkBehaviour
 
     void OnDrop()
     {
-        Debug.Log("droppa " + transform.name);
+      //  Debug.Log("droppa " + transform.name);
         //reparent the object to the original parent
         unparentFromHand = true;
         //remove object specific object

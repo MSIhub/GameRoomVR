@@ -169,6 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _grabAttachPoint: {fileID: 0}
   ThrowForce: 2
   KeepRotationOffsetOnGrab: 0
   KeepPositionOffsetOnGrab: 0
