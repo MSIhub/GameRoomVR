@@ -302,6 +302,19 @@
                             "guid": "a88169d6da49dba4aad3d6bd1e3e9c84",
                             "type": 3
                         }
+                    },
+                    {
+                        "PrefabGuid": {
+                            "RawGuidValue": [
+                                -7746524000404193179,
+                                -983644280846098679
+                            ]
+                        },
+                        "Prefab": {
+                            "fileID": 7110731110708266107,
+                            "guid": "65c0dee776d17e9409dfd2f6bc6459f2",
+                            "type": 3
+                        }
                     }
                 ]
             }
