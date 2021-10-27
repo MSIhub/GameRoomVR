@@ -9939,22 +9939,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
-      propertyPath: _m_PositionOffset.x
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
-      propertyPath: _m_PositionOffset.y
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
-      propertyPath: KeepPositionOffsetOnGrab
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9119106504919259530, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
-      propertyPath: KeepRotationOffsetOnGrab
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9119106504919259540, guid: a88169d6da49dba4aad3d6bd1e3e9c84, type: 3}
       propertyPath: m_RootOrder
       value: 11

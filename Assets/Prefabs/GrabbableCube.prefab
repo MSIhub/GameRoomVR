@@ -180,6 +180,8 @@ MonoBehaviour:
   KeepPositionOffsetOnGrab: 1
   _m_PositionOffset: {x: 0, y: 0, z: 0}
   _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
+  _m_PositionOffset_right: {x: 0, y: 0, z: 0}
+  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &8126498522339525895
 MonoBehaviour:
   m_ObjectHideFlags: 0

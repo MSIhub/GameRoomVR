@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2472530279463492938}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.019, y: 0.0153, z: 0.0526}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7879261017083131820}
@@ -287,8 +287,8 @@ MonoBehaviour:
   _gripInputAction: {fileID: -8617510936344231808, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
   _triggerInputAction: {fileID: 3691931547078147985, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
   _thumbInputAction: {fileID: -8252466274117533347, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
-  _handSide: 1
-  _handAnimator: {fileID: 589643488417694566}
+  handSide: 1
+  handAnimator: {fileID: 589643488417694566}
   Visuals: {fileID: 5856064176601056178}
   AttachPoint: {fileID: 4511396141157170729}
   _PreviousInputAction: 0
@@ -638,8 +638,8 @@ MonoBehaviour:
   _gripInputAction: {fileID: 617285111052756451, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
   _triggerInputAction: {fileID: 6802593353903890727, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
   _thumbInputAction: {fileID: -2761514079763790136, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
-  _handSide: 0
-  _handAnimator: {fileID: 2430640248263322764}
+  handSide: 0
+  handAnimator: {fileID: 2430640248263322764}
   Visuals: {fileID: 5162854729359673277}
   AttachPoint: {fileID: 6582132242066190966}
   _PreviousInputAction: 0
@@ -1536,7 +1536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8380290317003051601}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0212, y: 0.0583, z: 0.0539}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7928395492919831601}

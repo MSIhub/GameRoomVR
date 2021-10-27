@@ -8,6 +8,9 @@ public class GrabbableObject : NetworkBehaviour
     [Networked] Hand m_HoldingHand { get; set; }
     [Networked] Vector3 m_PositionOffset { get; set; }
     [Networked] Quaternion m_RotationOffset { get; set; }
+    
+    [Networked] Vector3 m_PositionOffset_right { get; set; }
+    [Networked] Quaternion m_RotationOffset_right { get; set; }
 
     Rigidbody m_Body;
     public float ThrowForce = 2f;
@@ -19,6 +22,9 @@ public class GrabbableObject : NetworkBehaviour
 
     private bool parentToHand = false;
     private bool unparentFromHand = false;
+
+    private Vector3 _originalAttachPointPosition;
+    private Quaternion _originalAttachPointRotation;
     
     private Transform originalParent;
 
@@ -67,6 +73,8 @@ public class GrabbableObject : NetworkBehaviour
                 m_Body.angularVelocity = angularVelocity;
             }
 
+           
+            
         }
 
     }
@@ -85,13 +93,32 @@ public class GrabbableObject : NetworkBehaviour
     {
         Debug.Log("grabba " + transform.name);
         SetLayerMaskIncludingChildren("grabbed");
+        
         parentToHand = true;    
         if( m_HoldingHand != null )
         {
             m_HoldingHand.Drop();
         }
         m_HoldingHand = other;
+        if (gameObject.CompareTag("card"))
+        {
+            m_HoldingHand.handAnimator.SetBool("cardInHand", true);
+        }
+        //save attachpoint
+        _originalAttachPointPosition = m_HoldingHand.AttachPoint.localPosition;
+        _originalAttachPointRotation = m_HoldingHand.AttachPoint.localRotation;
         
+        //add offset from object
+        if (m_HoldingHand.handSide == Hand.HandSide.left)
+        {
+            m_HoldingHand.AttachPoint.localPosition = m_PositionOffset;
+            m_HoldingHand.AttachPoint.localRotation = m_RotationOffset;
+        }
+        else
+        {
+            m_HoldingHand.AttachPoint.localPosition = m_PositionOffset_right;
+            m_HoldingHand.AttachPoint.localRotation = m_RotationOffset_right;
+        }
         
 
     }
@@ -109,6 +136,15 @@ public class GrabbableObject : NetworkBehaviour
         Debug.Log("droppa " + transform.name);
         //reparent the object to the original parent
         unparentFromHand = true;
+        //remove object specific object
+        //add offset from object
+        m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
+        m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
+        
+        if (gameObject.CompareTag("card"))
+        {
+            m_HoldingHand.handAnimator.SetBool("cardInHand", false);
+        }
         SetLayerMaskIncludingChildren("Default");
         if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
         {

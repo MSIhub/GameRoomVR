@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 [RequireComponent( typeof( VelocityBuffer ) )]
 public class Hand : NetworkBehaviour
 {
-    enum HandSide{left, right}
+    public enum HandSide{left, right}
     
     HighlightCollector m_HighlightCollector;
     Highlightable m_ActiveHighlight;
@@ -19,8 +19,8 @@ public class Hand : NetworkBehaviour
     [SerializeField] private InputActionReference _gripInputAction;
     [SerializeField] private InputActionReference _triggerInputAction;
     [SerializeField] private InputActionReference _thumbInputAction;
-    [SerializeField] private HandSide _handSide = HandSide.left;
-    [SerializeField] private Animator _handAnimator;
+    public HandSide handSide = HandSide.left;
+    public Animator handAnimator;
     public Transform Visuals;
     public Transform AttachPoint;
     public VelocityBuffer VelocityBuffer { get; private set; }
@@ -45,7 +45,7 @@ public class Hand : NetworkBehaviour
     private void ThumbUp(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         
-            _handAnimator.SetBool("ThumbDown", false);
+            handAnimator.SetBool("ThumbDown", false);
        
         
     }
@@ -53,7 +53,7 @@ public class Hand : NetworkBehaviour
     private void ThumbDown(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         
-            _handAnimator.SetBool("ThumbDown", true);
+            handAnimator.SetBool("ThumbDown", true);
        
         
     }
@@ -61,14 +61,14 @@ public class Hand : NetworkBehaviour
     private void TriggerPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         
-            _handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
+            handAnimator.SetFloat("Trigger", obj.ReadValue<float>());
         
 }
 
     private void GripPressed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
         
-            _handAnimator.SetFloat("Grip", obj.ReadValue<float>());
+            handAnimator.SetFloat("Grip", obj.ReadValue<float>());
         
        
     }
