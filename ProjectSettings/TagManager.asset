@@ -6,6 +6,7 @@ TagManager:
   tags:
   - card
   - Striker
+  - Puck
   layers:
   - Default
   - TransparentFX
