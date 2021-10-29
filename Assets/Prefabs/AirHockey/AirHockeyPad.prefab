@@ -141,7 +141,6 @@ GameObject:
   - component: {fileID: 7110731110708266107}
   - component: {fileID: 7110731110708266104}
   - component: {fileID: 7110731110708266105}
-  - component: {fileID: 7110731110708266106}
   m_Layer: 0
   m_Name: AirHockeyPad
   m_TagString: Striker
@@ -254,18 +253,6 @@ MonoBehaviour:
   _m_RotationOffset: {x: 0.0616284, y: -0.70441604, z: 0.0616284, w: 0.70441604}
   _m_PositionOffset_right: {x: -0.0474, y: 0.0024, z: 0.008}
   _m_RotationOffset_right: {x: 0.061628412, y: 0.70441604, z: -0.061628412, w: 0.70441604}
---- !u!114 &7110731110708266106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110731110708266111}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57c87bbbe974fbd458c095ec31c456ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7110731111036271265
 GameObject:
   m_ObjectHideFlags: 0

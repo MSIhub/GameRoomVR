@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace AirHockey
 {
-    public class AirHockeyPuckMotionModifier : NetworkBehaviour
+    public class AirHockeyPuckModifier : NetworkBehaviour
     {
         [SerializeField] private float _impactIntensity = 1.5f;
+        [SerializeField] private AudioSource _audioSource;
         private Rigidbody _rb;
         public void Start()
         {
@@ -14,8 +15,10 @@ namespace AirHockey
         }
         private void OnCollisionEnter(Collision other)
         {
-            Debug.Log(other.gameObject.name);
             _rb.velocity = _rb.velocity.normalized * _impactIntensity;
+            if (!other.gameObject.CompareTag("SideWalls")) return;
+            Debug.Log(other.gameObject.name);
+            _audioSource.Play();
         }
     }
 }
