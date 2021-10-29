@@ -14,7 +14,7 @@ namespace AirHockey
         private Transform _baseNode;
         private Vector3 _puckSpawnPosition;
         private Quaternion _puckSpawnRotation = Quaternion.Euler(new Vector3(-90f, 0f,0f));
-        private GameObject _puckSpawned;
+        //private GameObject _puckSpawned;
         private void Awake()
         {
             isScoreTrigger1 = gameObject.name.Contains("1");
@@ -46,12 +46,13 @@ namespace AirHockey
             }
             
             //Using dotween instead of invoke
-            DOVirtual.DelayedCall(0.5f, () =>
+            DOVirtual.DelayedCall(1f, () =>
             {
                 Destroy(other.transform.parent.gameObject);
             }).OnComplete(() =>
             {
-                DOVirtual.DelayedCall(1f, ()=> _puckSpawned = Instantiate(_airHockeyPuckPrefab, _puckSpawnPosition,_puckSpawnRotation, _baseNode));
+                Instantiate(_airHockeyPuckPrefab, _puckSpawnPosition, _puckSpawnRotation, _baseNode);
+                //DOVirtual.DelayedCall(3f, ()=> Instantiate(_airHockeyPuckPrefab, _puckSpawnPosition,_puckSpawnRotation, _baseNode));
             });
 
         }
