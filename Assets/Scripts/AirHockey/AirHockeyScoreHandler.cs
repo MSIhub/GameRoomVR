@@ -49,25 +49,28 @@ namespace AirHockey
             {
                 _puckSpawnPosition = _baseNode.position + new Vector3(0.7f, 0.7f, 0f); // Value based on measurement
             }
-            
+            Destroy(other.transform.parent.gameObject);
             //Using dotween instead of invoke
-            DOVirtual.DelayedCall(1f, () =>
+            /*DOVirtual.DelayedCall(1f, () =>
             {
-                Destroy(other.transform.parent.gameObject);
-            });
+               // Destroy(other.transform.parent.gameObject);
+            });*/
             DOVirtual.DelayedCall(3f, () =>
             {
                 Instantiate(_airHockeyPuckPrefab, _puckSpawnPosition, _puckSpawnRotation, _baseNode);
                 _audioSource.clip = _audioClipInstantiate;
                 _audioSource.Play();
+            }).OnComplete(() =>
+            {
+                _isPuckDetected = false;
             });
             
         }
 
-        private void OnTriggerExit(Collider other)
+        /*private void OnTriggerExit(Collider other)
         {
             _isPuckDetected = false;
-        }
+        }*/
     }
 }
 

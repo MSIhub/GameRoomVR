@@ -17,7 +17,6 @@ namespace AirHockey
         {
             _rb.velocity = _rb.velocity.normalized * _impactIntensity;
             if (!other.gameObject.CompareTag("SideWalls")) return;
-            Debug.Log(other.gameObject.name);
             _audioSource.Play();
         }
     }
