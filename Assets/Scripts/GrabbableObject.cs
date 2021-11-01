@@ -46,17 +46,9 @@ public class GrabbableObject : NetworkBehaviour
         if (parentToHand)
         {
             parentToHand = false;
-            //reparent the object to the hand
             _originalParent = transform.parent;
             transform.SetParent(m_HoldingHand.AttachPoint);
-            
-            //transform.Rotate(new Vector3(90,0,0));
-            
-            //transform.Translate(new Vector3(0.1f,0,0));
-            //transform.Rotate(_grabAttachPoint.rotation.eulerAngles);
-            //transform.SetParent(m_HoldingHand.AttachPoint);
-            //transform.SetParent(_grabAttachPoint);
-            
+
         }
         
         if (unparentFromHand)
