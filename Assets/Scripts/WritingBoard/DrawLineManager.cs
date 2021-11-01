@@ -9,17 +9,26 @@ namespace WritingBoard
         [SerializeField] private Transform _tipTransform;
         private LineRenderer _currLine;
         private int _numTouch = 0;
-
-  //      private Vector3 _writingPoint;
-        // Start is called before the first frame update
-        void Start()
-        {
-//            _writingPoint = transform.position;
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
+            InitiateLineDrawObject(other);
+        }
+        
+        private void OnTriggerStay(Collider other)
+        {
+            if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
+            DrawLine();
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
+            _numTouch = 0;
+        }
+
+        private void InitiateLineDrawObject(Collider other)
+        {
             var go = new GameObject
             {
                 transform =
@@ -33,22 +42,13 @@ namespace WritingBoard
             _currLine.material = _chalkTipMaterial;
             _currLine.useWorldSpace = false;
             _numTouch = 0;
-            
         }
 
-        private void OnTriggerStay(Collider other)
+        private void DrawLine()
         {
-            if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
             _currLine.positionCount = _numTouch + 1;
-            _currLine.SetPosition(_numTouch,  _tipTransform.position);
+            _currLine.SetPosition(_numTouch, _tipTransform.position);
             _numTouch++;
-
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
-            _numTouch = 0;
         }
     }
 }
