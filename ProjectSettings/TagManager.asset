@@ -8,6 +8,7 @@ TagManager:
   - Striker
   - Puck
   - SideWalls
+  - Chalk
   layers:
   - Default
   - TransparentFX

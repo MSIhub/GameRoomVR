@@ -1,18 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BoardManager : MonoBehaviour
+namespace WritingBoard
 {
-    // Start is called before the first frame update
-    void Start()
+    public class BoardManager : MonoBehaviour
     {
-        
-    }
+        [SerializeField] private AudioClip _audioClip;
+        private AudioSource _audioSource;
+        private bool _audioExist;
+    
+        private void Start()
+        {
+            _audioExist =  gameObject.TryGetComponent<AudioSource>(out _audioSource);
+            if (!_audioExist) return;
+            _audioSource.clip = _audioClip;
+        }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private void OnCollisionEnter(Collision other)
+        {
+            if (!other.gameObject.CompareTag("Chalk")) return;
+            if (!_audioExist) return;
+            _audioSource.Play();
+        }
+
+        private void OnCollisionExit(Collision other)
+        {
+            if (!other.gameObject.CompareTag("Chalk")) return;
+            if (!_audioExist) return;
+            _audioSource.Stop();
+        }
     }
 }
