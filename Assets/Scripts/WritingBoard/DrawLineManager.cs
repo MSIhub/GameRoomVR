@@ -6,6 +6,7 @@ namespace WritingBoard
     public class DrawLineManager : MonoBehaviour
     {
         [SerializeField] private Material _chalkTipMaterial;
+        [SerializeField] private Transform _tipTransform;
         private LineRenderer _currLine;
         private int _numTouch = 0;
 
@@ -27,8 +28,8 @@ namespace WritingBoard
                 }
             };
             _currLine = go.AddComponent<LineRenderer>();
-            _currLine.startWidth = 0.01f;
-            _currLine.endWidth = 0.01f;
+            _currLine.startWidth = 0.005f;
+            _currLine.endWidth = 0.005f;
             _currLine.material = _chalkTipMaterial;
             _currLine.useWorldSpace = false;
             _numTouch = 0;
@@ -39,7 +40,7 @@ namespace WritingBoard
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
             _currLine.positionCount = _numTouch + 1;
-            _currLine.SetPosition(_numTouch, transform.position);
+            _currLine.SetPosition(_numTouch,  _tipTransform.position);
             _numTouch++;
 
         }
