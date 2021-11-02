@@ -1,4 +1,5 @@
 using System;
+using Fusion;
 using UnityEngine;
 
 namespace WritingBoard
@@ -36,6 +37,10 @@ namespace WritingBoard
                     parent = other.transform.parent
                 }
             };
+            
+            var networkTransform = go.AddComponent<NetworkTransform>();
+            networkTransform.InterpolationDataSource = NetworkBehaviour.InterpolationDataSources.Snapshots;
+            
             _currLine = go.AddComponent<LineRenderer>();
             _currLine.startWidth = 0.005f;
             _currLine.endWidth = 0.005f;
