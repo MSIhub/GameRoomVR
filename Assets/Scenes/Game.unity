@@ -1602,7 +1602,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh64078
+  m_Name: pb_Mesh26458
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2602,7 +2602,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh64352
+  m_Name: pb_Mesh26730
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6937,7 +6937,7 @@ MonoBehaviour:
   m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 1
+  _interpolationDataSource: 0
   _interpolationTarget: {fileID: 1007302329}
   _space: 0
   _syncDragAndMass: 1
@@ -10989,6 +10989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _chalkTipMaterial: {fileID: 2100000, guid: e3e797dc48016814ebf1dd40db79b603, type: 2}
   _tipTransform: {fileID: 73516349}
+  _visualBoard: {fileID: 1007302329}
 --- !u!1001 &1176135423
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ namespace WritingBoard
     {
         [SerializeField] private Material _chalkTipMaterial;
         [SerializeField] private Transform _tipTransform;
+        [SerializeField] private Transform _visualBoard;
         private LineRenderer _currLine;
         private int _numTouch = 0;
         private void OnTriggerEnter(Collider other)
@@ -34,13 +35,10 @@ namespace WritingBoard
             {
                 transform =
                 {
-                    parent = other.transform.parent
+                    parent = _visualBoard
                 }
             };
-            
-            var networkTransform = go.AddComponent<NetworkTransform>();
-            networkTransform.InterpolationDataSource = NetworkBehaviour.InterpolationDataSources.Snapshots;
-            
+
             _currLine = go.AddComponent<LineRenderer>();
             _currLine.startWidth = 0.005f;
             _currLine.endWidth = 0.005f;
