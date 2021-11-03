@@ -28,6 +28,11 @@ public class GrabbableObject : NetworkBehaviour
     
     private Transform _originalParent;
     private bool _grabPointExist = false;
+    
+    //TODO: card variables. These should reside in a specific card grab class which inherits from this class
+    
+    private bool objectIsCard = false;
+    [SerializeField] private GameObject stackPrefab;
 
     private void Awake()
     {
@@ -47,7 +52,15 @@ public class GrabbableObject : NetworkBehaviour
         {
             parentToHand = false;
             _originalParent = transform.parent;
-            transform.SetParent(m_HoldingHand.AttachPoint);
+            if (!objectIsCard)
+            {
+                transform.SetParent(m_HoldingHand.AttachPoint);
+            }
+            else
+            {
+                handleCardGrab();
+            }
+            
 
         }
         
@@ -83,6 +96,12 @@ public class GrabbableObject : NetworkBehaviour
 
     }
 
+    private void handleCardGrab()
+    {
+        GameObject stack = Instantiate(stackPrefab,m_HoldingHand.AttachPoint);
+        transform.SetParent(stack.transform);
+    }
+
     private void OnDestroy()
     {
         if( Highlight != null )
@@ -107,6 +126,8 @@ public class GrabbableObject : NetworkBehaviour
         if (gameObject.CompareTag("card"))
         {
             m_HoldingHand.handAnimator.SetBool("cardInHand", true);
+            objectIsCard = true;
+            
         }
         if (gameObject.CompareTag("Striker"))
         {
@@ -156,6 +177,7 @@ public class GrabbableObject : NetworkBehaviour
         if (gameObject.CompareTag("card"))
         {
             m_HoldingHand.handAnimator.SetBool("cardInHand", false);
+            objectIsCard = false;
         }
         if (gameObject.CompareTag("Striker"))
         {

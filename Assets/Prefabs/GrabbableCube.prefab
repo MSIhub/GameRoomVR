@@ -178,6 +178,7 @@ MonoBehaviour:
   ThrowForce: 2
   KeepRotationOffsetOnGrab: 1
   KeepPositionOffsetOnGrab: 1
+  stackPrefab: {fileID: 0}
   _m_PositionOffset: {x: 0, y: 0, z: 0}
   _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
   _m_PositionOffset_right: {x: 0, y: 0, z: 0}
