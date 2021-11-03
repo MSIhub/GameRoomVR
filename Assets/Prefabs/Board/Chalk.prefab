@@ -4967,7 +4967,7 @@ MonoBehaviour:
   ThrowForce: 2
   KeepRotationOffsetOnGrab: 0
   KeepPositionOffsetOnGrab: 0
-  _m_PositionOffset: {x: 0, y: -0.1, z: 0}
-  _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  _m_PositionOffset_right: {x: 0, y: -0.1, z: 0}
-  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
+  _m_PositionOffset: {x: -0.013, y: 0.0211, z: 0.015}
+  _m_RotationOffset: {x: 0.5015429, y: -0.45893267, z: -0.3452872, w: -0.6470026}
+  _m_PositionOffset_right: {x: -0.008, y: 0.04, z: 0.015}
+  _m_RotationOffset_right: {x: -0.43301275, y: -0.25000006, z: -0.43301275, w: 0.75}
