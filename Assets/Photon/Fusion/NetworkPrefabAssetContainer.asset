@@ -168,6 +168,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 86a57551904392140ac3eced8aab7ac5
+--- !u!114 &-4791021009986252734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: Chalk
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: 1f9384047c8bfb54fb24daf9f0aff5d6
 --- !u!114 &-2846135090756357703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,6 +292,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 15e42bb3b0e6cbe41a4bd2e953671d87
+--- !u!114 &2133543461424415028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: Board
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: 9093b4c5352787b4aa02c37ad9bc60f2
 --- !u!114 &2183573832511422491
 MonoBehaviour:
   m_ObjectHideFlags: 0
