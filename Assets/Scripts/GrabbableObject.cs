@@ -70,6 +70,8 @@ public class GrabbableObject : NetworkBehaviour
             else
             {
                 transform.SetParent(m_HoldingHand.AttachPoint);
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.identity;
             }
             
 
@@ -81,6 +83,11 @@ public class GrabbableObject : NetworkBehaviour
             //reparent the object to the hand
             if (objectIsCard)
             {
+                if (!lastCardInStack && !toBeStacked)
+                {
+                    transform.SetParent(originalParent);
+                    SetLayerMaskIncludingChildren("Default");
+                }
                 if (lastCardInStack)
                 {
                     //this is the last card, so we need to destroy the stack
@@ -92,33 +99,38 @@ public class GrabbableObject : NetworkBehaviour
                     {
                         currentCollider.gameObject.tag = "card";
                     }
+                    SetLayerMaskIncludingChildren("Default");
                 }
                 
                 //if the current card drop is a drop in the stack
                 if (toBeStacked)
                 {
+                    Debug.Log("card to be added to stack > " + name);
                     //add card to stack at ghost position
                     foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
                     {
-                        currentCollider.gameObject.tag = "Untagged";
+                        currentCollider.gameObject.tag = "stackedCard";
                     }
-                    gameObject.GetComponent<Rigidbody>().isKinematic = true;
-                    gameObject.GetComponent<Rigidbody>().useGravity = false;
+                    
                     transform.SetParent(localGameManager.Stack.transform);
                     transform.localPosition = localGameManager.Stack.GetComponent<CardStack>().ghostPosition;
+                    transform.localRotation = localGameManager.Stack.GetComponent<CardStack>().ghostRotation;
                     localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
                     toBeStacked = false;
                 }
+
+                
                 
             } else
             {
                 transform.SetParent(originalParent);
+                SetLayerMaskIncludingChildren("Default");
             }
 
             
         }
         
-        
+        /*
         if( m_HoldingHand != null )
         {
             
@@ -142,6 +154,8 @@ public class GrabbableObject : NetworkBehaviour
             
         }
 
+        */
+
     }
 
     private void handleCardGrab()
@@ -149,17 +163,21 @@ public class GrabbableObject : NetworkBehaviour
         if (localGameManager.stackSpawned)
         {
             transform.SetParent(m_HoldingHand.AttachPoint);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
         }
         else
         {
             lastCardInStack = true;
             foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
             {
-                currentCollider.gameObject.tag = "Untagged";
+                currentCollider.gameObject.tag = "stackedCard";
             }
             localGameManager.Stack = Instantiate(stackPrefab,m_HoldingHand.AttachPoint);
             localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
             transform.SetParent(localGameManager.Stack.transform);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
             localGameManager.stackSpawned = true;
         }
         
@@ -179,6 +197,8 @@ public class GrabbableObject : NetworkBehaviour
     {
        // Debug.Log("grabba " + transform.name);
         SetLayerMaskIncludingChildren("grabbed");
+        gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        gameObject.GetComponent<Rigidbody>().useGravity = false;
         
         parentToHand = true;    
         if( m_HoldingHand != null )
@@ -232,6 +252,8 @@ public class GrabbableObject : NetworkBehaviour
       //  Debug.Log("droppa " + transform.name);
         //reparent the object to the original parent
         unparentFromHand = true;
+        
+
         //remove object specific object
         //add offset from object
         m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
@@ -249,15 +271,22 @@ public class GrabbableObject : NetworkBehaviour
         {
             m_HoldingHand.handAnimator.SetBool("penInHand", false);
         }
-        SetLayerMaskIncludingChildren("Default");
-        if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
+
+        if (!toBeStacked)
         {
-            m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
+            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
+
+            if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
+            {
+                m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
+            }
+            else
+            {
+                m_Body.velocity = m_Body.velocity * ThrowForce;
+            }
         }
-        else
-        {
-            m_Body.velocity = m_Body.velocity * ThrowForce;
-        }
+        
         
         
         m_HoldingHand = null;

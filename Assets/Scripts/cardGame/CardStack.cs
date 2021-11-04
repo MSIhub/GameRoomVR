@@ -13,6 +13,7 @@ namespace cardGame
 
         public List<GameObject> cardsInStack;
         public Vector3 ghostPosition;
+        public Quaternion ghostRotation;
         
         private Player PlayerRef;
 
@@ -47,10 +48,13 @@ namespace cardGame
                     currentCollider.gameObject.tag = "Untagged";
                 }
                 ghostShow = true;
-                ghost.transform.Translate((new Vector3(0.01f,0.005f,-0.005f)+cardsInStack[cardsInStack.Count-1].transform.localPosition));
+                ghost.transform.localPosition = cardsInStack[cardsInStack.Count - 1].transform.localPosition;
+                ghost.transform.Translate(new Vector3(0.01f,0.005f,-0.005f));
+                ghost.transform.localRotation = cardsInStack[cardsInStack.Count - 1].transform.localRotation;
                 ghost.transform.Rotate(new Vector3(0,7.5f,0));
                 other.transform.parent.GetComponent<GrabbableObject>().toBeStacked = true;
                 ghostPosition = ghost.transform.localPosition;
+                ghostRotation = ghost.transform.localRotation;
             }
         }
 
@@ -83,6 +87,11 @@ namespace cardGame
         public void addCardToStack(GameObject card)
         {
             cardsInStack.Add(card);
+            if (ghostShow)
+            {
+                ghostShow = false;
+                Destroy(ghost);
+            }
         }
     }
 }
