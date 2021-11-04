@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using cardGame;
 using UnityEngine;
 using Fusion;
 
@@ -26,13 +28,17 @@ public class GrabbableObject : NetworkBehaviour
     private Vector3 _originalAttachPointPosition;
     private Quaternion _originalAttachPointRotation;
     
-    private Transform _originalParent;
+    public Transform originalParent;
     private bool _grabPointExist = false;
+
+    private gameManagerLocal localGameManager;
     
     //TODO: card variables. These should reside in a specific card grab class which inherits from this class
     
     private bool objectIsCard = false;
     [SerializeField] private GameObject stackPrefab;
+    public bool toBeStacked = false;
+    public bool lastCardInStack;
 
     private void Awake()
     {
@@ -42,23 +48,28 @@ public class GrabbableObject : NetworkBehaviour
         Highlight = GetComponent<Highlightable>();
         Highlight.GrabCallback += OnGrab;
         Highlight.DropCallback += OnDrop;
-        
 
+        localGameManager = FindObjectOfType<gameManagerLocal>();
     }
-    
+
+    private void Start()
+    {
+        
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (parentToHand)
         {
             parentToHand = false;
-            _originalParent = transform.parent;
-            if (!objectIsCard)
+            originalParent = transform.parent;
+            if (objectIsCard)
             {
-                transform.SetParent(m_HoldingHand.AttachPoint);
+                handleCardGrab();
             }
             else
             {
-                handleCardGrab();
+                transform.SetParent(m_HoldingHand.AttachPoint);
             }
             
 
@@ -68,8 +79,45 @@ public class GrabbableObject : NetworkBehaviour
         {
             unparentFromHand = false;
             //reparent the object to the hand
-             transform.SetParent(_originalParent);
+            if (objectIsCard)
+            {
+                if (lastCardInStack)
+                {
+                    //this is the last card, so we need to destroy the stack
+                    localGameManager.Stack.GetComponent<CardStack>().destroyStack();
+                    lastCardInStack = false;
+                    localGameManager.stackSpawned = false;
+                    transform.SetParent(originalParent);
+                    foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
+                    {
+                        currentCollider.gameObject.tag = "card";
+                    }
+                }
+                
+                //if the current card drop is a drop in the stack
+                if (toBeStacked)
+                {
+                    //add card to stack at ghost position
+                    foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
+                    {
+                        currentCollider.gameObject.tag = "Untagged";
+                    }
+                    gameObject.GetComponent<Rigidbody>().isKinematic = true;
+                    gameObject.GetComponent<Rigidbody>().useGravity = false;
+                    transform.SetParent(localGameManager.Stack.transform);
+                    transform.localPosition = localGameManager.Stack.GetComponent<CardStack>().ghostPosition;
+                    localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
+                    toBeStacked = false;
+                }
+                
+            } else
+            {
+                transform.SetParent(originalParent);
+            }
+
+            
         }
+        
         
         if( m_HoldingHand != null )
         {
@@ -98,8 +146,23 @@ public class GrabbableObject : NetworkBehaviour
 
     private void handleCardGrab()
     {
-        GameObject stack = Instantiate(stackPrefab,m_HoldingHand.AttachPoint);
-        transform.SetParent(stack.transform);
+        if (localGameManager.stackSpawned)
+        {
+            transform.SetParent(m_HoldingHand.AttachPoint);
+        }
+        else
+        {
+            lastCardInStack = true;
+            foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
+            {
+                currentCollider.gameObject.tag = "Untagged";
+            }
+            localGameManager.Stack = Instantiate(stackPrefab,m_HoldingHand.AttachPoint);
+            localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
+            transform.SetParent(localGameManager.Stack.transform);
+            localGameManager.stackSpawned = true;
+        }
+        
     }
 
     private void OnDestroy()
@@ -164,7 +227,7 @@ public class GrabbableObject : NetworkBehaviour
         }
     }
 
-    void OnDrop()
+    public void OnDrop()
     {
       //  Debug.Log("droppa " + transform.name);
         //reparent the object to the original parent
@@ -177,7 +240,6 @@ public class GrabbableObject : NetworkBehaviour
         if (gameObject.CompareTag("card"))
         {
             m_HoldingHand.handAnimator.SetBool("cardInHand", false);
-            objectIsCard = false;
         }
         if (gameObject.CompareTag("Striker"))
         {
