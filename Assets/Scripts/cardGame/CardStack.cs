@@ -25,6 +25,7 @@ namespace cardGame
 
         private int previousCardHighlightNumber = 99;
         private Material initialCardMaterial;
+        private Hand.HandSide selectorHandSide = Hand.HandSide.right;
         
         [SerializeField] private InputActionReference _selectCardInputActionRightHand;
         [SerializeField] private InputActionReference _selectCardInputActionLeftHand;
@@ -37,8 +38,36 @@ namespace cardGame
 
         private void getCardFromStack(UnityEngine.InputSystem.InputAction.CallbackContext obj)
         {
-            if(highlightCard){
+            if(highlightCard)
+            {
+                
                 Debug.Log("grab card card number = " + previousCardHighlightNumber);
+                GameObject card = cardsInStack[previousCardHighlightNumber];
+                GrabbableObject cardGrabba = card.GetComponent<GrabbableObject>();
+                //reset material
+                card.GetComponentInChildren<Renderer>().material = initialCardMaterial;
+                //unparent card from stack
+                card.transform.parent = cardGrabba.originalParent;
+                //remove card from stack
+                cardsInStack.RemoveAt(previousCardHighlightNumber);
+                //reset layer mask
+                cardGrabba.SetLayerMaskIncludingChildren("Default");
+                //remove Holding Hand
+                cardGrabba.m_HoldingHand = null;
+                //remove highlight logic
+                highlightCard = false;
+                previousCardHighlightNumber = 99;
+                cardGrabba.toBeStacked = false;
+                //initiate grab with other hand
+                if (selectorHandSide == Hand.HandSide.left)
+                {
+                    GetComponentInParent<Player>().LeftHand.GrabCardFromStack(card);
+                }
+                else
+                {
+                    GetComponentInParent<Player>().RightHand.GrabCardFromStack(card);
+                }
+                
             }
         }
 
@@ -100,17 +129,27 @@ namespace cardGame
 
             if (other.CompareTag("cardSelector"))
             {
-                Debug.Log("cardSelector entered stack - hand = " + other.GetComponent<stackedCardSelector>().selectorHandSide);
+
                 if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
                 {
-                    
-                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
+
+                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing && cardsInStack != null &&
+                        cardsInStack.Count > 0)
+                    {
+                        highlightCard = true;
+                        selectorHandSide = Hand.HandSide.left;
+                    }
                     
                 }
                 else
                 {
-                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
-                    Debug.Log("highlight card = true (right hand)");
+                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing && cardsInStack != null &&
+                        cardsInStack.Count > 0)
+                    {
+                        highlightCard = true;
+                        selectorHandSide = Hand.HandSide.right;
+                    }
+
                 }
                 cardSelectorTransform = other.transform;
             }
@@ -128,14 +167,7 @@ namespace cardGame
             
             if (other.gameObject.layer == LayerMask.NameToLayer("cardSelector"))
             {
-                if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
-                {
-                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing) highlightCard = false;
-                }
-                else
-                {
-                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing) highlightCard = false;
-                }
+                highlightCard = false;
                 cardsInStack[previousCardHighlightNumber].GetComponentInChildren<Renderer>().material =
                     initialCardMaterial;
                 previousCardHighlightNumber = 99;

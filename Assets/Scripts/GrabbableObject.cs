@@ -7,7 +7,7 @@ using Fusion;
 [RequireComponent( typeof( Highlightable ) )]
 public class GrabbableObject : NetworkBehaviour
 {
-    [Networked] Hand m_HoldingHand { get; set; }
+    [Networked] public Hand m_HoldingHand { get; set; }
     [Networked] Vector3 m_PositionOffset { get; set; }
     [Networked] Quaternion m_RotationOffset { get; set; }
     
@@ -247,7 +247,7 @@ public class GrabbableObject : NetworkBehaviour
 
     }
 
-    private void SetLayerMaskIncludingChildren(string MaskName)
+    public void SetLayerMaskIncludingChildren(string MaskName)
     {
         foreach (var tf in gameObject.GetComponentsInChildren<Transform>())
         {

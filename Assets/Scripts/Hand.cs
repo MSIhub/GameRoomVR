@@ -125,6 +125,14 @@ public class Hand : NetworkBehaviour
         m_Grabbing = true;
     }
 
+    public void GrabCardFromStack(GameObject card)
+    {
+        Debug.Log("GrabCardFromStack called");
+        m_ActiveHighlight = card.GetComponent<Highlightable>();
+        m_ActiveHighlight.Grab(this);
+        m_Grabbing = true;
+    }
+
     public void Drop()
     {
         
