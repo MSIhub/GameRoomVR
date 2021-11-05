@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9209445967950855568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: CardDispenserWithButton
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: 834d39630cd6fa6408f16d41b8f18d3c
 --- !u!114 &-9195716880432092230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +140,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 6980e8769eec8a344a328f4943a8a3db
+--- !u!114 &-6688382152690002436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: CardDispenserWithButtonV2
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: b74ac583b372c24469a26d70d9b048c1
 --- !u!114 &-6495308519424523344
 MonoBehaviour:
   m_ObjectHideFlags: 0
