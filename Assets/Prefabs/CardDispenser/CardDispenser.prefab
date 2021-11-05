@@ -200,6 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnPoint: {fileID: 6606826686898135870}
   _distMovedForNextSpawn: 0.1
+  _buttonThrowForce: 0.1
 --- !u!1 &6606826686898135869
 GameObject:
   m_ObjectHideFlags: 0

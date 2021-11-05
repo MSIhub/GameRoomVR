@@ -536,7 +536,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh151776
+  m_Name: pb_Mesh196146
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -912,7 +912,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh151344
+  m_Name: pb_Mesh195716
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5580,7 +5580,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh151646
+  m_Name: pb_Mesh196014
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -8158,7 +8158,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh150950
+  m_Name: pb_Mesh195320
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -11847,7 +11847,6 @@ GameObject:
   - component: {fileID: 1856952949}
   - component: {fileID: 1856952948}
   - component: {fileID: 1856952947}
-  - component: {fileID: 1856952950}
   m_Layer: 0
   m_Name: ButtonPress
   m_TagString: Untagged
@@ -13762,20 +13761,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!114 &1856952950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1856952944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e97224b37fca4dd49b0a2e2097b41adf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _buttonBase: {fileID: 0}
-  _buttonPress: {fileID: 0}
 --- !u!1001 &1880384596
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21067,6 +21052,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnPoint: {fileID: 6606826688605048883}
   _distMovedForNextSpawn: 0.1
+  _buttonThrowForce: 0.5
 --- !u!114 &6606826688650025776
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,9 +10,11 @@ namespace CardDispenser
     {
         [SerializeField] private Transform _spawnPoint;
         [SerializeField] private float _distMovedForNextSpawn = 0.1f;
+        [SerializeField] private float _buttonThrowForce = 1f;
         private List<GameObject> _cardsList;
         private bool _isCardSlotFree;
         private GameObject _currentCardSpawned;
+        private ButtonController _button;
         
         public void Spawned()
         {
@@ -25,6 +27,9 @@ namespace CardDispenser
                 rb.gameObject.SetActive(false);
             }
             _isCardSlotFree = true;
+
+            _button = GetComponentInChildren<ButtonController>();
+            Debug.Log(_button.gameObject.name);
         }
 
         public override void FixedUpdateNetwork()
@@ -34,7 +39,22 @@ namespace CardDispenser
             {
                 _currentCardSpawned = SpawnRandomCard();
             }
+            CheckSlotAvailability();
+            PushCardOnButtonPress();
+            Debug.Log(_button.IsButtonPressed);
+        }
 
+        private void PushCardOnButtonPress()
+        {
+            //Add force if button pressed
+            if (_button.IsButtonPressed)
+            {
+                _currentCardSpawned.GetComponentInChildren<Rigidbody>().AddForce(Vector3.right * _buttonThrowForce, ForceMode.Impulse);
+            }
+        }
+
+        private void CheckSlotAvailability()
+        {
             var dist = Vector3.Distance(_currentCardSpawned.transform.position, _spawnPoint.position);
             _isCardSlotFree = Math.Round(dist, 2) > _distMovedForNextSpawn;
         }

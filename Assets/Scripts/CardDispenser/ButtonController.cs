@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace CardDispenser
@@ -8,20 +7,24 @@ namespace CardDispenser
         [SerializeField] private Transform _buttonBase;
         [SerializeField] private Transform _buttonPress;
 
-        private bool _isButtonPressed = false;
+        public bool IsButtonPressed { get; set; }
 
+        public void Spawned()
+        {
+            IsButtonPressed = false;
+        }
         private void OnTriggerEnter(Collider other)
         {
-            if (_isButtonPressed) return;
+            if (IsButtonPressed) return;
             _buttonPress.Translate(new Vector3(0,-0.01f,0), _buttonBase);
-            _isButtonPressed = true;
+            IsButtonPressed = true;
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (!_isButtonPressed) return;
+            if (!IsButtonPressed) return;
             _buttonPress.Translate(new Vector3(0,0.01f,0), _buttonBase);
-            _isButtonPressed = false;
+            IsButtonPressed = false;
 
         }
     }
