@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3320340235840363683}
   - component: {fileID: 3320340235840363686}
-  - component: {fileID: 3320340235840363684}
+  - component: {fileID: 3320340234845107114}
   m_Layer: 0
   m_Name: Tip
   m_TagString: Chalk
@@ -45,9 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _chalkLineRendererPrefab: {fileID: 2889083643958454976, guid: 773fc291c7c90384c855797658256b11, type: 3}
-  _visualBoard: {fileID: 0}
---- !u!136 &3320340235840363684
-CapsuleCollider:
+--- !u!135 &3320340234845107114
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -56,10 +55,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.01
-  m_Height: 0.05
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0.025}
+  serializedVersion: 2
+  m_Radius: 0.02
+  m_Center: {x: 0, y: 0, z: 0.01}
 --- !u!1 &3320340235888625083
 GameObject:
   m_ObjectHideFlags: 0
@@ -2423,7 +2421,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3320340236048974438}
-  - component: {fileID: 3320340236048974439}
+  - component: {fileID: 6149060794898546714}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Chalk
@@ -2445,8 +2443,8 @@ Transform:
   m_Father: {fileID: 3320340236657047608}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &3320340236048974439
-MeshCollider:
+--- !u!136 &6149060794898546714
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2455,10 +2453,10 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Radius: 0.01000001
+  m_Height: 0.15000002
+  m_Direction: 1
+  m_Center: {x: -0.000000010244548, y: -0.025000012, z: 0}
 --- !u!1 &3320340236248369317
 GameObject:
   m_ObjectHideFlags: 0
@@ -4841,7 +4839,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3320340236657047591}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.462, y: 0.71900004, z: 0.037999995}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3320340235888625084}

@@ -8,7 +8,8 @@ namespace WritingBoard
     public class DrawLineManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chalkLineRendererPrefab;
-        [SerializeField] private Transform _visualBoard;
+        
+        private BoardVisualComponent _boardVisualComponent;
         private LineRenderer _currLine;
         private int _numTouch = 0;
 
@@ -16,6 +17,8 @@ namespace WritingBoard
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
+            var boardParent = board.GetComponentInParent<Rigidbody>();
+            _boardVisualComponent = boardParent.gameObject.GetComponentInChildren<BoardVisualComponent>();
             InitiateLineDrawObject(other);
         }
         
@@ -34,7 +37,7 @@ namespace WritingBoard
         private void InitiateLineDrawObject(Collider other)
         {
             
-            var go = Instantiate(_chalkLineRendererPrefab,_visualBoard);
+            var go = Instantiate(_chalkLineRendererPrefab,_boardVisualComponent.transform);
             go.transform.position = transform.position;
             go.transform.localRotation = Quaternion.identity;
             _currLine = go.GetComponent<LineRenderer>();
