@@ -4906,6 +4906,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buttonBase: {fileID: 6093112918246400775}
   _buttonPress: {fileID: 6093112919502893048}
+  _zOffset: 0.01
 --- !u!1 &6093112919502893049
 GameObject:
   m_ObjectHideFlags: 0

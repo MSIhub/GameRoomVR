@@ -6,6 +6,7 @@ namespace CardDispenser
     {
         [SerializeField] private Transform _buttonBase;
         [SerializeField] private Transform _buttonPress;
+        [SerializeField] private float _zOffset = 0.01f;
 
         public bool IsButtonPressed { get; set; }
 
@@ -16,14 +17,14 @@ namespace CardDispenser
         private void OnTriggerEnter(Collider other)
         {
             if (IsButtonPressed) return;
-            _buttonPress.Translate(new Vector3(0,-0.01f,0), _buttonBase);
+            _buttonPress.Translate(new Vector3(0,-_zOffset,0), _buttonBase);
             IsButtonPressed = true;
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (!IsButtonPressed) return;
-            _buttonPress.Translate(new Vector3(0,0.01f,0), _buttonBase);
+            _buttonPress.Translate(new Vector3(0,_zOffset,0), _buttonBase);
             IsButtonPressed = false;
 
         }
