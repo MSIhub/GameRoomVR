@@ -915,6 +915,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2600494954004754016}
   - component: {fileID: 2348934066407136314}
+  - component: {fileID: 9020172552753373631}
   m_Layer: 9
   m_Name: cardSelector
   m_TagString: Untagged
@@ -944,12 +945,25 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4630462445966594526}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.00015418728
   m_Height: 0.0004239415
   m_Direction: 1
   m_Center: {x: -0.000017946266, y: 0.00014862191, z: 0.000011455759}
+--- !u!114 &9020172552753373631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4630462445966594526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dacbda567342644a82a7b28b6594ca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectorHandSide: 1
 --- !u!1 &4994771972493670025
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,6 +974,7 @@ GameObject:
   m_Component:
   - component: {fileID: 687413573912525803}
   - component: {fileID: 2031426083814344179}
+  - component: {fileID: 7007784558823174737}
   m_Layer: 9
   m_Name: cardSelector
   m_TagString: Untagged
@@ -989,12 +1004,25 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4994771972493670025}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.00015418728
   m_Height: 0.0004239415
   m_Direction: 1
   m_Center: {x: -0.000017946266, y: 0.00014862191, z: 0.000011455759}
+--- !u!114 &7007784558823174737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4994771972493670025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dacbda567342644a82a7b28b6594ca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectorHandSide: 0
 --- !u!1 &5059897165516085376
 GameObject:
   m_ObjectHideFlags: 0
@@ -2024,14 +2052,14 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 5475053094516560173, guid: fc105e48b59f63749bb472e94cbc772f, type: 3}
   m_PrefabInstance: {fileID: 4887987143958483531}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &7033098078398343441 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2472206920828074842, guid: fc105e48b59f63749bb472e94cbc772f, type: 3}
-  m_PrefabInstance: {fileID: 4887987143958483531}
-  m_PrefabAsset: {fileID: 0}
 --- !u!137 &6945476482647759721 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2573477776310847778, guid: fc105e48b59f63749bb472e94cbc772f, type: 3}
+  m_PrefabInstance: {fileID: 4887987143958483531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7033098078398343441 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2472206920828074842, guid: fc105e48b59f63749bb472e94cbc772f, type: 3}
   m_PrefabInstance: {fileID: 4887987143958483531}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7697403320991397033

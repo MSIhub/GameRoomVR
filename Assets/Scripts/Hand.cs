@@ -12,7 +12,7 @@ public class Hand : NetworkBehaviour
     
     HighlightCollector m_HighlightCollector;
     Highlightable m_ActiveHighlight;
-    bool m_Grabbing;
+    public bool m_Grabbing;
     
     
     

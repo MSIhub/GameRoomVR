@@ -10,6 +10,7 @@ TagManager:
   - SideWalls
   - Chalk
   - stack
+  - stackedCard
   layers:
   - Default
   - TransparentFX

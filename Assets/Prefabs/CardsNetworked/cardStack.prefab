@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6675010230456141603}
   - component: {fileID: 2811180692736187952}
   - component: {fileID: 1661979748926844199}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: cardStack
   m_TagString: stack
   m_Icon: {fileID: 0}
@@ -58,3 +58,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostMaterial: {fileID: 2100000, guid: 6e38683053278b34d93ad14735b3d4be, type: 2}
+  cardsInStack: []
+  ghostPosition: {x: 0, y: 0, z: 0}
+  ghostRotation: {x: 0, y: 0, z: 0, w: 0}

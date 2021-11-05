@@ -100,6 +100,7 @@ public class GrabbableObject : NetworkBehaviour
                         currentCollider.gameObject.tag = "card";
                     }
                     SetLayerMaskIncludingChildren("Default");
+                    
                 }
                 
                 //if the current card drop is a drop in the stack
@@ -179,6 +180,8 @@ public class GrabbableObject : NetworkBehaviour
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
             localGameManager.stackSpawned = true;
+            //deactivate fingertip cardSelector
+            m_HoldingHand.transform.parent.GetComponentInChildren<stackedCardSelector>().gameObject.SetActive(false);
         }
         
     }
@@ -258,7 +261,7 @@ public class GrabbableObject : NetworkBehaviour
         //add offset from object
         m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
         m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
-        
+        //reactivate finger tip selector
         if (gameObject.CompareTag("card"))
         {
             m_HoldingHand.handAnimator.SetBool("cardInHand", false);

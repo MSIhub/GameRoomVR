@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 
 namespace cardGame
@@ -16,7 +17,15 @@ namespace cardGame
         public Quaternion ghostRotation;
         
         private Player PlayerRef;
+        
+        private bool highlightCard = false;
+        private Transform cardSelectorTransform;
+        private float colliderXoffset = 0.125f;
 
+        private int previousCardHighlightNumber = 99;
+        private Material initialCardMaterial;
+        
+        
         private void Awake()
         {
             PlayerRef = FindObjectOfType<Player>();
@@ -24,13 +33,32 @@ namespace cardGame
         // Start is called before the first frame update
         void Start()
         {
-        
+            colliderXoffset = GetComponent<Collider>().bounds.extents.x;
         }
 
         // Update is called once per frame
         void Update()
         {
-        
+            if (highlightCard)
+            {
+                //calculate x position of cardSelector
+                float distanceToStackOrigin = Vector3.Distance(new Vector3(cardSelectorTransform.position.x, 0, 0),
+                    new Vector3(transform.position.x - colliderXoffset, 0, 0))/(colliderXoffset*2);
+                int cardNumberToHighlight = Mathf.FloorToInt(distanceToStackOrigin * cardsInStack.Count);
+                if (cardNumberToHighlight != previousCardHighlightNumber)
+                {
+                    //check if this is the first card to be highlighted or not, if it is not the first card, then reset the previous cards material
+                    if (previousCardHighlightNumber < cardsInStack.Count)
+                    {
+                        cardsInStack[previousCardHighlightNumber].GetComponentInChildren<Renderer>().material =
+                            initialCardMaterial;
+                    }
+                    previousCardHighlightNumber = cardNumberToHighlight;
+                    initialCardMaterial = cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material;
+                    cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material = ghostMaterial;
+
+                }
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -43,6 +71,7 @@ namespace cardGame
                 ghost.GetComponent<Rigidbody>().isKinematic = true;
                 ghost.GetComponent<Rigidbody>().useGravity = false;
                 ghost.GetComponentInChildren<Renderer>().material = ghostMaterial;
+                
                 foreach (var currentCollider in ghost.GetComponentsInChildren<Collider>(true))
                 {
                     currentCollider.gameObject.tag = "Untagged";
@@ -56,6 +85,19 @@ namespace cardGame
                 ghostPosition = ghost.transform.localPosition;
                 ghostRotation = ghost.transform.localRotation;
             }
+
+            if (other.gameObject.layer == LayerMask.NameToLayer("cardSelector"))
+            {
+                if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
+                {
+                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
+                }
+                else
+                {
+                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
+                }
+                cardSelectorTransform = other.transform;
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -66,6 +108,21 @@ namespace cardGame
                 Destroy(ghost);
                 ghostShow = false;
                 other.transform.parent.GetComponent<GrabbableObject>().toBeStacked = false;
+            }
+            
+            if (other.gameObject.layer == LayerMask.NameToLayer("cardSelector"))
+            {
+                if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
+                {
+                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing) highlightCard = false;
+                }
+                else
+                {
+                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing) highlightCard = false;
+                }
+                cardsInStack[previousCardHighlightNumber].GetComponentInChildren<Renderer>().material =
+                    initialCardMaterial;
+                previousCardHighlightNumber = 99;
             }
             
         }
