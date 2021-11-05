@@ -1,62 +1,52 @@
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder;
+using Math = System.Math;
 
 namespace WritingBoard
 {
     public class EraseLineManager : MonoBehaviour
     {
         private LineRenderer[] _lineRenderers;
-        private Vector3[] _positions;
-        private Vector3[] _modifiedPositions;
+        private float _radiusDuster;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-            
+            var trig = GetComponentsInChildren<SphereCollider>();
+            foreach (var col in trig)
+            {
+                if (!col.isTrigger) return;
+                _radiusDuster = col.radius;
+            }
+
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
-        
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
             var parent =  other.gameObject.transform.parent;
-            Debug.Log(parent.name);
             _lineRenderers = parent.gameObject.GetComponentsInChildren<LineRenderer>();
-            if (_lineRenderers.Length < 1) return;
-            foreach (var lineRenderer in _lineRenderers)
-            {
-                lineRenderer.GetPositions(_positions);
-                lineRenderer.GetPositions(_modifiedPositions);
-            }
-
         }
         
         private void OnTriggerStay(Collider other)
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
-            if (_positions.Length < 1) return;
-            foreach (var position in _positions)
+            if (_lineRenderers.Length < 1) return;
+            foreach (var lineRenderer in _lineRenderers)
             {
-                    var dist = Vector3.Distance(transform.position, position);
-                    Debug.Log(dist);
-
+                if (lineRenderer==null) return;
+                var pos = new Vector3[lineRenderer.positionCount];
+                lineRenderer.GetPositions(pos);
+                if (pos.Length <1) return;
+                foreach (var position in pos)
+                {
+                    var dist = Vector3.Distance(transform.position, lineRenderer.transform.TransformPoint(position));
+                    if (Math.Round(dist,2) <= _radiusDuster*1.2f)
+                    {
+                        Destroy(lineRenderer.gameObject);
+                    }
+                }
+                
             }
-
         }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;
-            
-        }
-
-        
-        
     }
 }

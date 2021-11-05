@@ -1,35 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3320340234771691156
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3320340234771691157}
-  m_Layer: 0
-  m_Name: WritingPoint
-  m_TagString: Chalk
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3320340234771691157
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3320340234771691156}
-  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.09500004, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3320340236657047608}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3320340235840363682
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3320340235840363683}
   - component: {fileID: 3320340235840363686}
-  - component: {fileID: 3320340235840363684}
+  - component: {fileID: 3320340234845107114}
   m_Layer: 0
   m_Name: Tip
   m_TagString: Chalk
@@ -55,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3320340235840363682}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 0.01, y: -0.050000012, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: -0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3320340236657047608}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!114 &3320340235840363686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,11 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18d68137ff89ce2429ffd585d628dc08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _chalkTipMaterial: {fileID: 2100000, guid: e3e797dc48016814ebf1dd40db79b603, type: 2}
-  _tipTransform: {fileID: 3320340234771691157}
-  _visualBoard: {fileID: 0}
---- !u!136 &3320340235840363684
-CapsuleCollider:
+  _chalkLineRendererPrefab: {fileID: 2889083643958454976, guid: 773fc291c7c90384c855797658256b11, type: 3}
+--- !u!135 &3320340234845107114
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -87,10 +55,9 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.01
-  m_Height: 0.05
-  m_Direction: 1
-  m_Center: {x: -0.01, y: 0.026, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.02
+  m_Center: {x: 0, y: 0, z: 0.01}
 --- !u!1 &3320340235888625083
 GameObject:
   m_ObjectHideFlags: 0
@@ -2454,7 +2421,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3320340236048974438}
-  - component: {fileID: 3320340236048974439}
+  - component: {fileID: 6149060794898546714}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Chalk
@@ -2476,8 +2443,8 @@ Transform:
   m_Father: {fileID: 3320340236657047608}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &3320340236048974439
-MeshCollider:
+--- !u!136 &6149060794898546714
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2486,10 +2453,10 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Radius: 0.01000001
+  m_Height: 0.15000002
+  m_Direction: 1
+  m_Center: {x: -0.000000010244548, y: -0.025000012, z: 0}
 --- !u!1 &3320340236248369317
 GameObject:
   m_ObjectHideFlags: 0
@@ -4872,12 +4839,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3320340236657047591}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.462, y: 0.71900004, z: 0.037999995}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3320340235888625084}
   - {fileID: 3320340236048974438}
-  - {fileID: 3320340234771691157}
   - {fileID: 3320340235840363683}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -4967,7 +4933,10 @@ MonoBehaviour:
   ThrowForce: 2
   KeepRotationOffsetOnGrab: 0
   KeepPositionOffsetOnGrab: 0
+  originalParent: {fileID: 0}
   stackPrefab: {fileID: 0}
+  toBeStacked: 0
+  lastCardInStack: 0
   _m_PositionOffset: {x: -0.013, y: 0.0211, z: 0.015}
   _m_RotationOffset: {x: 0.5015429, y: -0.45893267, z: -0.3452872, w: -0.6470026}
   _m_PositionOffset_right: {x: -0.008, y: 0.04, z: 0.015}
