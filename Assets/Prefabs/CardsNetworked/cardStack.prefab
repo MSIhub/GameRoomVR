@@ -58,6 +58,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostMaterial: {fileID: 2100000, guid: 6e38683053278b34d93ad14735b3d4be, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: a1c36b86c8211a647bc2c253bf7042bb, type: 2}
   cardsInStack: []
   ghostPosition: {x: 0, y: 0, z: 0}
   ghostRotation: {x: 0, y: 0, z: 0, w: 0}
+  _selectCardInputActionRightHand: {fileID: 1443005053615697449, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+  _selectCardInputActionLeftHand: {fileID: 6976394061837971580, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}

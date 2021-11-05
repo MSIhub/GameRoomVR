@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace cardGame
 {
     public class CardStack : MonoBehaviour
     {
         [SerializeField] private Material ghostMaterial;
+        [SerializeField] private Material highlightMaterial;
 
         private GameObject ghost;
         private bool ghostShow = false;
@@ -16,7 +18,6 @@ namespace cardGame
         public Vector3 ghostPosition;
         public Quaternion ghostRotation;
         
-        private Player PlayerRef;
         
         private bool highlightCard = false;
         private Transform cardSelectorTransform;
@@ -25,11 +26,22 @@ namespace cardGame
         private int previousCardHighlightNumber = 99;
         private Material initialCardMaterial;
         
-        
+        [SerializeField] private InputActionReference _selectCardInputActionRightHand;
+        [SerializeField] private InputActionReference _selectCardInputActionLeftHand;
+
         private void Awake()
         {
-            PlayerRef = FindObjectOfType<Player>();
+            _selectCardInputActionRightHand.action.performed += getCardFromStack;
+            _selectCardInputActionLeftHand.action.performed += getCardFromStack;;
         }
+
+        private void getCardFromStack(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            if(highlightCard){
+                Debug.Log("grab card card number = " + previousCardHighlightNumber);
+            }
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -55,7 +67,7 @@ namespace cardGame
                     }
                     previousCardHighlightNumber = cardNumberToHighlight;
                     initialCardMaterial = cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material;
-                    cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material = ghostMaterial;
+                    cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material = highlightMaterial;
 
                 }
             }
@@ -86,15 +98,19 @@ namespace cardGame
                 ghostRotation = ghost.transform.localRotation;
             }
 
-            if (other.gameObject.layer == LayerMask.NameToLayer("cardSelector"))
+            if (other.CompareTag("cardSelector"))
             {
+                Debug.Log("cardSelector entered stack - hand = " + other.GetComponent<stackedCardSelector>().selectorHandSide);
                 if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
                 {
+                    
                     if (!GetComponentInParent<Player>().LeftHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
+                    
                 }
                 else
                 {
                     if (!GetComponentInParent<Player>().RightHand.m_Grabbing && cardsInStack != null && cardsInStack.Count > 0) highlightCard = true;
+                    Debug.Log("highlight card = true (right hand)");
                 }
                 cardSelectorTransform = other.transform;
             }
@@ -149,6 +165,12 @@ namespace cardGame
                 ghostShow = false;
                 Destroy(ghost);
             }
+        }
+
+        private void OnDisable()
+        {
+            _selectCardInputActionLeftHand.action.performed -= getCardFromStack;
+            _selectCardInputActionRightHand.action.performed -= getCardFromStack;
         }
     }
 }

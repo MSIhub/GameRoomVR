@@ -181,7 +181,12 @@ public class GrabbableObject : NetworkBehaviour
             transform.localRotation = Quaternion.identity;
             localGameManager.stackSpawned = true;
             //deactivate fingertip cardSelector
-            m_HoldingHand.transform.parent.GetComponentInChildren<stackedCardSelector>().gameObject.SetActive(false);
+            foreach (var currentCardSelector in m_HoldingHand.transform.parent.GetComponentsInChildren<stackedCardSelector>(true))
+            {
+                if(currentCardSelector.selectorHandSide == m_HoldingHand.handSide) currentCardSelector.gameObject.SetActive(false);
+            }
+
+            
         }
         
     }
@@ -289,7 +294,11 @@ public class GrabbableObject : NetworkBehaviour
                 m_Body.velocity = m_Body.velocity * ThrowForce;
             }
         }
-        
+
+        if (lastCardInStack)
+        {
+            m_HoldingHand.transform.parent.GetComponentInChildren<stackedCardSelector>(true).gameObject.SetActive(true);
+        }
         
         
         m_HoldingHand = null;
