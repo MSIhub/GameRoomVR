@@ -173,7 +173,7 @@ MonoBehaviour:
   KeepRotationOffsetOnGrab: 0
   KeepPositionOffsetOnGrab: 0
   originalParent: {fileID: 0}
-  stackPrefab: {fileID: 0}
+  stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   lastCardInStack: 0
   _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
