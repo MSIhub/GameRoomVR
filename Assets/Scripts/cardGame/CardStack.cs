@@ -55,14 +55,10 @@ namespace cardGame
                 previousHighlightCard.transform.parent = cardGrabba.originalParent;
                 //remove card from stack
                 cardsInStack.Remove(previousHighlightCard);
-                //reset layer mask
-                cardGrabba.SetLayerMaskIncludingChildren("Default");
-                //remove Holding Hand
-                cardGrabba.m_HoldingHand = null;
                 //remove highlight logic
                 highlightCard = false;
-                
-                cardGrabba.toBeStacked = false;
+                //reset Card
+                cardGrabba.ResetCard();
                 //initiate grab with other hand
                 if (selectorHandSide == Hand.HandSide.left)
                 {
@@ -73,7 +69,28 @@ namespace cardGame
                     _rightHandReference.GrabCardFromStack(previousHighlightCard);
                 }
                 previousHighlightCard = null;
-                
+                //if it is the last card, destroy the stack
+                if (cardsInStack.Count == 0)
+                {
+                    destroyStack();
+                }
+                //collapse stack
+                GameObject previousCard = null;
+                foreach (var currentCard in cardsInStack)
+                {
+                    if (previousCard != null)
+                    {
+                        //check if distance is bigger than it should be
+                        if (currentCard.transform.rotation.eulerAngles.y -
+                            previousCard.transform.rotation.eulerAngles.y > 7.5f)
+                        {
+                            //shift left by 1
+                            currentCard.transform.Rotate(new Vector3(0,-7.5f, 0));
+                            currentCard.transform.Translate(new Vector3(-0.01f,-0.005f,0.005f));
+                        }
+                    }
+                    previousCard = currentCard;
+                }
             }
         }
 
@@ -95,7 +112,7 @@ namespace cardGame
                 GameObject cardToHighlight = cardsInStack[0];
                 foreach (var currentCard in cardsInStack)
                 {
-                    if (Vector3.Distance(currentCard.transform.position, cardSelectorTransform.position) < minDistance)
+                    if (Vector3.Distance(currentCard.transform.position, (cardSelectorTransform.position)) < minDistance)
                     {
                         cardToHighlight = currentCard;
                         minDistance = Vector3.Distance(currentCard.transform.position, cardSelectorTransform.position);
@@ -195,8 +212,7 @@ namespace cardGame
                     _rightHandReference.preventGrabbing = false;
                 }
                 highlightCard = false;
-
-                previousHighlightCard.GetComponentInChildren<Renderer>().material =
+                if(previousHighlightCard != null) previousHighlightCard.GetComponentInChildren<Renderer>().material =
                         initialCardMaterial;
                 previousHighlightCard = null;
             }
@@ -205,13 +221,12 @@ namespace cardGame
 
         public void destroyStack()
         {
-            //unparent all cards in Stack
-            Collider[] children = GetComponentsInChildren<Collider>();
-            foreach (var child in children)
+            //if there are still cards in the stack unparent them before destroying the whole stack
+            if (cardsInStack != null && cardsInStack.Count > 0)
             {
-                if (child.CompareTag("card"))
+                foreach (var currentCard in cardsInStack)
                 {
-                    child.transform.parent = child.transform.parent.GetComponent<GrabbableObject>().originalParent;
+                    currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }
             Destroy(gameObject);

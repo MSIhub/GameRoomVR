@@ -304,5 +304,13 @@ public class GrabbableObject : NetworkBehaviour
         m_HoldingHand = null;
     }
 
+    public void ResetCard()
+    {
+        SetLayerMaskIncludingChildren("Default");
+        m_HoldingHand = null;
+        toBeStacked = false;
+        GetComponentInChildren<Collider>().tag = "card";
+    }
+
 
 }
