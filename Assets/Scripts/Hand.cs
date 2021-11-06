@@ -13,7 +13,7 @@ public class Hand : NetworkBehaviour
     HighlightCollector m_HighlightCollector;
     Highlightable m_ActiveHighlight;
     public bool m_Grabbing;
-    
+    public bool preventGrabbing = false;
     
     
     [SerializeField] private InputActionReference _gripInputAction;
@@ -78,7 +78,7 @@ public class Hand : NetworkBehaviour
         PreviousInputAction = input.PreprocessActions( PreviousInputAction );
         UpdatePose( input.LocalPosition, input.LocalRotation );
         
-        if( input.GetAction( InputAction.GRAB ) )
+        if( input.GetAction( InputAction.GRAB ) && !preventGrabbing )
         {
             Grab();
         }

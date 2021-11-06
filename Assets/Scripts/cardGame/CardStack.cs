@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,19 +22,24 @@ namespace cardGame
         
         private bool highlightCard = false;
         private Transform cardSelectorTransform;
-        private float colliderXoffset = 0.125f;
+        private float colliderOffset = 0.125f;
 
-        private int previousCardHighlightNumber = 99;
+        private GameObject previousHighlightCard = null;
         private Material initialCardMaterial;
         private Hand.HandSide selectorHandSide = Hand.HandSide.right;
         
         [SerializeField] private InputActionReference _selectCardInputActionRightHand;
         [SerializeField] private InputActionReference _selectCardInputActionLeftHand;
 
+        private Hand _leftHandReference;
+        private Hand _rightHandReference;
+
         private void Awake()
         {
             _selectCardInputActionRightHand.action.performed += getCardFromStack;
-            _selectCardInputActionLeftHand.action.performed += getCardFromStack;;
+            _selectCardInputActionLeftHand.action.performed += getCardFromStack;
+            _leftHandReference = GetComponentInParent<Player>().LeftHand;
+            _rightHandReference = GetComponentInParent<Player>().RightHand;
         }
 
         private void getCardFromStack(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -41,32 +47,32 @@ namespace cardGame
             if(highlightCard)
             {
                 
-                Debug.Log("grab card card number = " + previousCardHighlightNumber);
-                GameObject card = cardsInStack[previousCardHighlightNumber];
-                GrabbableObject cardGrabba = card.GetComponent<GrabbableObject>();
+                Debug.Log("grab card card number = " + previousHighlightCard.name);
+                GrabbableObject cardGrabba = previousHighlightCard.GetComponent<GrabbableObject>();
                 //reset material
-                card.GetComponentInChildren<Renderer>().material = initialCardMaterial;
+                previousHighlightCard.GetComponentInChildren<Renderer>().material = initialCardMaterial;
                 //unparent card from stack
-                card.transform.parent = cardGrabba.originalParent;
+                previousHighlightCard.transform.parent = cardGrabba.originalParent;
                 //remove card from stack
-                cardsInStack.RemoveAt(previousCardHighlightNumber);
+                cardsInStack.Remove(previousHighlightCard);
                 //reset layer mask
                 cardGrabba.SetLayerMaskIncludingChildren("Default");
                 //remove Holding Hand
                 cardGrabba.m_HoldingHand = null;
                 //remove highlight logic
                 highlightCard = false;
-                previousCardHighlightNumber = 99;
+                
                 cardGrabba.toBeStacked = false;
                 //initiate grab with other hand
                 if (selectorHandSide == Hand.HandSide.left)
                 {
-                    GetComponentInParent<Player>().LeftHand.GrabCardFromStack(card);
+                    _leftHandReference.GrabCardFromStack(previousHighlightCard);
                 }
                 else
                 {
-                    GetComponentInParent<Player>().RightHand.GrabCardFromStack(card);
+                    _rightHandReference.GrabCardFromStack(previousHighlightCard);
                 }
+                previousHighlightCard = null;
                 
             }
         }
@@ -74,7 +80,9 @@ namespace cardGame
         // Start is called before the first frame update
         void Start()
         {
-            colliderXoffset = GetComponent<Collider>().bounds.extents.x;
+            Bounds colliderBounds = GetComponent<Collider>().bounds;
+            colliderOffset = Vector3.Distance(colliderBounds.extents, (Vector3.zero));
+            Debug.Log("Stack initiated, colliderOffset = " + colliderOffset);
         }
 
         // Update is called once per frame
@@ -82,21 +90,29 @@ namespace cardGame
         {
             if (highlightCard)
             {
-                //calculate x position of cardSelector
-                float distanceToStackOrigin = Vector3.Distance(new Vector3(cardSelectorTransform.position.x, 0, 0),
-                    new Vector3(transform.position.x - colliderXoffset, 0, 0))/(colliderXoffset*2);
-                int cardNumberToHighlight = Mathf.FloorToInt(distanceToStackOrigin * cardsInStack.Count);
-                if (cardNumberToHighlight != previousCardHighlightNumber)
+                //calculate distance to each card
+                float minDistance = 100000000f;
+                GameObject cardToHighlight = cardsInStack[0];
+                foreach (var currentCard in cardsInStack)
+                {
+                    if (Vector3.Distance(currentCard.transform.position, cardSelectorTransform.position) < minDistance)
+                    {
+                        cardToHighlight = currentCard;
+                        minDistance = Vector3.Distance(currentCard.transform.position, cardSelectorTransform.position);
+                    }
+                }
+                //change highlight if hover is over another card
+                if (cardToHighlight != previousHighlightCard)
                 {
                     //check if this is the first card to be highlighted or not, if it is not the first card, then reset the previous cards material
-                    if (previousCardHighlightNumber < cardsInStack.Count)
+                    if (previousHighlightCard != null)
                     {
-                        cardsInStack[previousCardHighlightNumber].GetComponentInChildren<Renderer>().material =
+                        previousHighlightCard.GetComponentInChildren<Renderer>().material =
                             initialCardMaterial;
                     }
-                    previousCardHighlightNumber = cardNumberToHighlight;
-                    initialCardMaterial = cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material;
-                    cardsInStack[cardNumberToHighlight].GetComponentInChildren<Renderer>().material = highlightMaterial;
+                    previousHighlightCard = cardToHighlight;
+                    initialCardMaterial = cardToHighlight.GetComponentInChildren<Renderer>().material;
+                    cardToHighlight.GetComponentInChildren<Renderer>().material = highlightMaterial;
 
                 }
             }
@@ -132,10 +148,11 @@ namespace cardGame
 
                 if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
                 {
-
-                    if (!GetComponentInParent<Player>().LeftHand.m_Grabbing && cardsInStack != null &&
+                    //for Left hand
+                    if (!_leftHandReference.m_Grabbing && cardsInStack != null &&
                         cardsInStack.Count > 0)
                     {
+                        _leftHandReference.preventGrabbing = true;
                         highlightCard = true;
                         selectorHandSide = Hand.HandSide.left;
                     }
@@ -143,9 +160,11 @@ namespace cardGame
                 }
                 else
                 {
-                    if (!GetComponentInParent<Player>().RightHand.m_Grabbing && cardsInStack != null &&
+                    //for Right hand
+                    if (!_rightHandReference.m_Grabbing && cardsInStack != null &&
                         cardsInStack.Count > 0)
                     {
+                        _rightHandReference.preventGrabbing = true;
                         highlightCard = true;
                         selectorHandSide = Hand.HandSide.right;
                     }
@@ -165,12 +184,21 @@ namespace cardGame
                 other.transform.parent.GetComponent<GrabbableObject>().toBeStacked = false;
             }
             
-            if (other.gameObject.layer == LayerMask.NameToLayer("cardSelector"))
+            if (other.CompareTag("cardSelector"))
             {
+                if (selectorHandSide == Hand.HandSide.left)
+                {
+                    _leftHandReference.preventGrabbing = false;
+                }
+                else
+                {
+                    _rightHandReference.preventGrabbing = false;
+                }
                 highlightCard = false;
-                cardsInStack[previousCardHighlightNumber].GetComponentInChildren<Renderer>().material =
-                    initialCardMaterial;
-                previousCardHighlightNumber = 99;
+
+                previousHighlightCard.GetComponentInChildren<Renderer>().material =
+                        initialCardMaterial;
+                previousHighlightCard = null;
             }
             
         }
