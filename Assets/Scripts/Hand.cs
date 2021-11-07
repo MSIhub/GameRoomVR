@@ -82,7 +82,7 @@ public class Hand : NetworkBehaviour
         {
             Grab();
         }
-        if( input.GetAction( InputAction.DROP ) )
+        if( input.GetAction( InputAction.DROP ) && !preventGrabbing  )
         {
             Drop();
         }

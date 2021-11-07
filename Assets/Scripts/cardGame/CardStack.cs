@@ -34,6 +34,8 @@ namespace cardGame
         private Hand _leftHandReference;
         private Hand _rightHandReference;
 
+        public Hand stackHoldingHand = null;
+
         private void Awake()
         {
             _selectCardInputActionRightHand.action.performed += getCardFromStack;
@@ -72,6 +74,7 @@ namespace cardGame
                 //if it is the last card, destroy the stack
                 if (cardsInStack.Count == 0)
                 {
+                    Debug.Log("cards in stack count is 0");
                     destroyStack();
                 }
                 //collapse stack
@@ -221,6 +224,7 @@ namespace cardGame
 
         public void destroyStack()
         {
+            Debug.Log("stack destruction requested");
             //if there are still cards in the stack unparent them before destroying the whole stack
             if (cardsInStack != null && cardsInStack.Count > 0)
             {
@@ -229,6 +233,8 @@ namespace cardGame
                     currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }
+            FindObjectOfType<gameManagerLocal>().stackSpawned = false;
+            FindObjectOfType<gameManagerLocal>().Stack = null;
             Destroy(gameObject);
         }
 

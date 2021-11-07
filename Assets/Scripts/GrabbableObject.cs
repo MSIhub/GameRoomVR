@@ -38,7 +38,7 @@ public class GrabbableObject : NetworkBehaviour
     private bool objectIsCard = false;
     [SerializeField] private GameObject stackPrefab;
     public bool toBeStacked = false;
-    public bool lastCardInStack;
+    private bool stackedCard = false;
 
     private void Awake()
     {
@@ -83,28 +83,21 @@ public class GrabbableObject : NetworkBehaviour
             //reparent the object to the hand
             if (objectIsCard)
             {
-                if (!lastCardInStack && !toBeStacked)
+                if (stackedCard)
                 {
-                    transform.SetParent(originalParent);
-                    SetLayerMaskIncludingChildren("Default");
-                }
-                if (lastCardInStack)
-                {
-                    //this is the last card, so we need to destroy the stack
-                    localGameManager.Stack.GetComponent<CardStack>().destroyStack();
-                    lastCardInStack = false;
-                    localGameManager.stackSpawned = false;
-                    transform.SetParent(originalParent);
-                    foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
+                    if (localGameManager.stackSpawned)
                     {
-                        currentCollider.gameObject.tag = "card";
+                        localGameManager.Stack.GetComponent<CardStack>().destroyStack();
                     }
-                    SetLayerMaskIncludingChildren("Default");
                     
                 }
-                
-                //if the current card drop is a drop in the stack
-                if (toBeStacked)
+                if (!toBeStacked)
+                {
+                    ResetCard();
+                }
+              
+               //if the current card drop is a drop in the stack
+                if (toBeStacked && !stackedCard)
                 {
                     Debug.Log("card to be added to stack > " + name);
                     //add card to stack at ghost position
@@ -112,13 +105,16 @@ public class GrabbableObject : NetworkBehaviour
                     {
                         currentCollider.gameObject.tag = "stackedCard";
                     }
-                    
+                    //set hands and grabbed state
+                    m_HoldingHand = localGameManager.Stack.GetComponent<CardStack>().stackHoldingHand;
                     transform.SetParent(localGameManager.Stack.transform);
                     transform.localPosition = localGameManager.Stack.GetComponent<CardStack>().ghostPosition;
                     transform.localRotation = localGameManager.Stack.GetComponent<CardStack>().ghostRotation;
                     localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
                     toBeStacked = false;
+                    stackedCard = true;
                 }
+
 
                 
                 
@@ -169,12 +165,12 @@ public class GrabbableObject : NetworkBehaviour
         }
         else
         {
-            lastCardInStack = true;
             foreach (var currentCollider in gameObject.GetComponentsInChildren<Collider>(true))
             {
                 currentCollider.gameObject.tag = "stackedCard";
             }
             localGameManager.Stack = Instantiate(stackPrefab,m_HoldingHand.AttachPoint);
+            localGameManager.Stack.GetComponent<CardStack>().stackHoldingHand = m_HoldingHand;
             localGameManager.Stack.GetComponent<CardStack>().addCardToStack(gameObject);
             transform.SetParent(localGameManager.Stack.transform);
             transform.localPosition = Vector3.zero;
@@ -186,7 +182,8 @@ public class GrabbableObject : NetworkBehaviour
                 if(currentCardSelector.selectorHandSide == m_HoldingHand.handSide) currentCardSelector.gameObject.SetActive(false);
             }
 
-            
+            stackedCard = true;
+
         }
         
     }
@@ -295,10 +292,6 @@ public class GrabbableObject : NetworkBehaviour
             }
         }
 
-        if (lastCardInStack)
-        {
-            m_HoldingHand.transform.parent.GetComponentInChildren<stackedCardSelector>(true).gameObject.SetActive(true);
-        }
         
         
         m_HoldingHand = null;
@@ -310,6 +303,7 @@ public class GrabbableObject : NetworkBehaviour
         m_HoldingHand = null;
         toBeStacked = false;
         GetComponentInChildren<Collider>().tag = "card";
+        stackedCard = false;
     }
 
 
