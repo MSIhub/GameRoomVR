@@ -128,10 +128,10 @@ namespace cardGame
                 GameObject cardToHighlight = cardsInStack[0];
                 foreach (var currentCard in cardsInStack)
                 {
-                    if (Vector3.Distance(currentCard.transform.position, (cardSelectorTransform.position)) < minDistance)
+                    if (Vector3.Distance(currentCard.GetComponent<GrabbableObject>().SelectionPoint.position, (cardSelectorTransform.position)) < minDistance)
                     {
                         cardToHighlight = currentCard;
-                        minDistance = Vector3.Distance(currentCard.transform.position, cardSelectorTransform.position);
+                        minDistance = Vector3.Distance(currentCard.GetComponent<GrabbableObject>().SelectionPoint.position, cardSelectorTransform.position);
                     }
                 }
                 //change highlight if hover is over another card

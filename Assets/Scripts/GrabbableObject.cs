@@ -34,12 +34,11 @@ public class GrabbableObject : NetworkBehaviour
     private gameManagerLocal localGameManager;
     
     //TODO: card variables. These should reside in a specific card grab class which inherits from this class
-    
     private bool objectIsCard = false;
     [SerializeField] private GameObject stackPrefab;
     public bool toBeStacked = false;
     private bool stackedCard = false;
-
+    public Transform SelectionPoint;
     private void Awake()
     {
         m_Body = GetComponent<Rigidbody>();

@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4960098798783543622}
-  - component: {fileID: 885161650712485713}
   m_Layer: 0
   m_Name: selectionPoint
   m_TagString: Untagged
@@ -25,24 +24,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 131443844683246314}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.021, y: 0, z: -0.0329}
+  m_LocalPosition: {x: -0.025, y: 0, z: 0.0373}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9119106504919259540}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &885161650712485713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131443844683246314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbeb1ad24ac6ea64f96ceada5ec1b989, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1157962623337459237
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,7 +206,7 @@ MonoBehaviour:
   originalParent: {fileID: 0}
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
-  lastCardInStack: 0
+  SelectionPoint: {fileID: 4960098798783543622}
   _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
   _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
   _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}

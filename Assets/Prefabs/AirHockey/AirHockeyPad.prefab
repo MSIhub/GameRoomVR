@@ -252,7 +252,7 @@ MonoBehaviour:
   originalParent: {fileID: 0}
   stackPrefab: {fileID: 0}
   toBeStacked: 0
-  lastCardInStack: 0
+  SelectionPoint: {fileID: 0}
   _m_PositionOffset: {x: 0.034, y: -0.0071, z: 0.0065}
   _m_RotationOffset: {x: 0.0616284, y: -0.70441604, z: 0.0616284, w: 0.70441604}
   _m_PositionOffset_right: {x: -0.0474, y: 0.0024, z: 0.008}
