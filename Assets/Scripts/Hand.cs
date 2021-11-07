@@ -111,6 +111,7 @@ public class Hand : NetworkBehaviour
 
     void Grab()
     {
+        Debug.Log("Original Grab called");
         Drop();
         
         if( m_HighlightCollector.CurrentHighlight != null )
@@ -136,10 +137,10 @@ public class Hand : NetworkBehaviour
 
     public void Drop()
     {
-        
+        Debug.Log("Native Drop Called");
         if( m_ActiveHighlight != null )
         {
-            Debug.Log("m_ActiveHighlight = " + m_ActiveHighlight.name);
+            Debug.Log("Native Drop m_ActiveHighlight = " + m_ActiveHighlight.name);
             m_ActiveHighlight.Drop();
             m_ActiveHighlight = null;
         }
@@ -153,6 +154,13 @@ public class Hand : NetworkBehaviour
         _thumbInputAction.action.started -= ThumbDown;
         _thumbInputAction.action.canceled -= ThumbUp;
     }
+
+    //TODO: 
+    public void ResetAttachPoint()
+    {
+        AttachPoint.localPosition = Vector3.zero;
+        AttachPoint.localRotation = Quaternion.identity;
+        }
 
 
 }

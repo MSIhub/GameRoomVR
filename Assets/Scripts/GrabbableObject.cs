@@ -93,6 +93,7 @@ public class GrabbableObject : NetworkBehaviour
                 }
                 if (!toBeStacked)
                 {
+                    transform.SetParent(originalParent);
                     ResetCard();
                 }
               
@@ -261,24 +262,13 @@ public class GrabbableObject : NetworkBehaviour
 
         //remove object specific object
         //add offset from object
-        m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
-        m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
-        //reactivate finger tip selector
-        if (gameObject.CompareTag("card"))
-        {
-            m_HoldingHand.handAnimator.SetBool("cardInHand", false);
-        }
-        if (gameObject.CompareTag("Striker"))
-        {
-            m_HoldingHand.handAnimator.SetBool("strikerInHand", false);
-        }
-        if (gameObject.CompareTag("Chalk"))
-        {
-            m_HoldingHand.handAnimator.SetBool("penInHand", false);
-        }
+        resetHand();
+        
+        
 
         if (!toBeStacked)
         {
+            Debug.Log("object <"+ gameObject.name +"> is not to be stacked, turn physics on");
             gameObject.GetComponent<Rigidbody>().isKinematic = false;
             gameObject.GetComponent<Rigidbody>().useGravity = true;
 
@@ -295,6 +285,30 @@ public class GrabbableObject : NetworkBehaviour
         
         
         m_HoldingHand = null;
+    }
+
+    public void resetHand()
+    {
+        if (m_HoldingHand != null)
+        {
+            Debug.Log("resetHand - m_HoldingHand = " + m_HoldingHand.name);
+            m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
+            m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
+            if (gameObject.CompareTag("card"))
+            {
+                m_HoldingHand.handAnimator.SetBool("cardInHand", false);
+            }
+
+            if (gameObject.CompareTag("Striker"))
+            {
+                m_HoldingHand.handAnimator.SetBool("strikerInHand", false);
+            }
+
+            if (gameObject.CompareTag("Chalk"))
+            {
+                m_HoldingHand.handAnimator.SetBool("penInHand", false);
+            }
+        }
     }
 
     public void ResetCard()

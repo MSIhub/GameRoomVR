@@ -49,7 +49,7 @@ namespace cardGame
             if(highlightCard)
             {
                 
-                Debug.Log("grab card card number = " + previousHighlightCard.name);
+                Debug.Log("grab card <" + previousHighlightCard.name + "> from Stack");
                 GrabbableObject cardGrabba = previousHighlightCard.GetComponent<GrabbableObject>();
                 //reset material
                 previousHighlightCard.GetComponentInChildren<Renderer>().material = initialCardMaterial;
@@ -85,15 +85,10 @@ namespace cardGame
                     {
                         if (previousCard != null)
                         {
-                            Debug.Log("stack order. Previous Card(" + previousCard.name + ") y angle = " + previousCard.transform.localRotation.eulerAngles.y);
-                            Debug.Log("stack order. Current Card(" + currentCard.name + ") y angle = " + currentCard.transform.localRotation.eulerAngles.y);
-
                             //check if distance is bigger than it should be
                             if ((currentCard.transform.localRotation.eulerAngles.y -
                                 previousCard.transform.localRotation.eulerAngles.y) > 8f)
                             {
-                                Debug.Log("shifting, as delta is = " + (currentCard.transform.localRotation.eulerAngles.y -
-                                          previousCard.transform.localRotation.eulerAngles.y));
                                 //shift left by 1
                                 currentCard.transform.Rotate(new Vector3(0,-7.5f, 0));
                                 currentCard.transform.Translate(new Vector3(-0.01f,-0.005f,0.005f));
@@ -252,6 +247,10 @@ namespace cardGame
                     currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }
+            //reset hand
+            stackHoldingHand.ResetAttachPoint();
+            //TODO: remove hard coded reference to handAnimator. This should be flexible, maybe there will be a specific stack animator in the future
+            stackHoldingHand.handAnimator.SetBool("cardInHand", false);
             FindObjectOfType<gameManagerLocal>().stackSpawned = false;
             FindObjectOfType<gameManagerLocal>().Stack = null;
             Destroy(gameObject);
