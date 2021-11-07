@@ -84,7 +84,6 @@ public class Hand : NetworkBehaviour
         }
         if( input.GetAction( InputAction.DROP ) && !preventGrabbing  )
         {
-            Debug.Log("native Drop called");
             Drop();
         }
         

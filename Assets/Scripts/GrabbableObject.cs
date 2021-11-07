@@ -39,6 +39,9 @@ public class GrabbableObject : NetworkBehaviour
     public bool toBeStacked = false;
     private bool stackedCard = false;
     public Transform SelectionPoint;
+    private bool throwCooldownTimerRunning = false;
+    private float throwCooldownTimerTime = 0.5f;
+    private float throwCooldownTimer = 0f;
     private void Awake()
     {
         m_Body = GetComponent<Rigidbody>();
@@ -58,6 +61,17 @@ public class GrabbableObject : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        if (throwCooldownTimerRunning)
+        {
+            throwCooldownTimer += Runner.DeltaTime;
+            if (throwCooldownTimer >= throwCooldownTimerTime)
+            {
+                throwCooldownTimerRunning = false;
+                Debug.Log("Delayed Layer Reset before = " + gameObject.layer.ToString());
+                SetLayerMaskIncludingChildren("Default");
+                Debug.Log("Delayed Layer Reset after = " + gameObject.layer.ToString());
+            }
+        }
         if (parentToHand)
         {
             parentToHand = false;
@@ -79,6 +93,7 @@ public class GrabbableObject : NetworkBehaviour
         if (unparentFromHand)
         {
             unparentFromHand = false;
+            
             //reparent the object to the hand
             if (objectIsCard)
             {
@@ -93,7 +108,8 @@ public class GrabbableObject : NetworkBehaviour
                 if (!toBeStacked)
                 {
                     transform.SetParent(originalParent);
-                    ResetCard();
+                    ResetCard(false);
+                    throwCooldownTimerRunning = true;
                 }
               
                //if the current card drop is a drop in the stack
@@ -121,7 +137,7 @@ public class GrabbableObject : NetworkBehaviour
             } else
             {
                 transform.SetParent(originalParent);
-                SetLayerMaskIncludingChildren("Default");
+                throwCooldownTimerRunning = true;
             }
 
             
@@ -310,9 +326,12 @@ public class GrabbableObject : NetworkBehaviour
         }
     }
 
-    public void ResetCard()
+    public void ResetCard(bool instantRelayering)
     {
-        SetLayerMaskIncludingChildren("Default");
+        if (instantRelayering)
+        {
+            SetLayerMaskIncludingChildren("Default");
+        }
         m_HoldingHand = null;
         toBeStacked = false;
         GetComponentInChildren<Collider>().tag = "card";

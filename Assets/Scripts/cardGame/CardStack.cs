@@ -60,7 +60,7 @@ namespace cardGame
                 //remove highlight logic
                 highlightCard = false;
                 //reset Card
-                cardGrabba.ResetCard();
+                cardGrabba.ResetCard(true);
                 //initiate grab with other hand
                 if (selectorHandSide == Hand.HandSide.left)
                 {
@@ -243,7 +243,7 @@ namespace cardGame
             {
                 foreach (var currentCard in cardsInStack)
                 {
-                    currentCard.GetComponent<GrabbableObject>()?.ResetCard();
+                    currentCard.GetComponent<GrabbableObject>()?.ResetCard(false);
                     currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }
