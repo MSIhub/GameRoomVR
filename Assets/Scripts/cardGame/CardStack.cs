@@ -77,23 +77,41 @@ namespace cardGame
                     Debug.Log("cards in stack count is 0");
                     destroyStack();
                 }
-                //collapse stack
-                GameObject previousCard = null;
-                foreach (var currentCard in cardsInStack)
+                else
                 {
-                    if (previousCard != null)
+                    //collapse stack
+                    GameObject previousCard = null;
+                    foreach (var currentCard in cardsInStack)
                     {
-                        //check if distance is bigger than it should be
-                        if (currentCard.transform.rotation.eulerAngles.y -
-                            previousCard.transform.rotation.eulerAngles.y > 7.5f)
+                        if (previousCard != null)
                         {
-                            //shift left by 1
-                            currentCard.transform.Rotate(new Vector3(0,-7.5f, 0));
-                            currentCard.transform.Translate(new Vector3(-0.01f,-0.005f,0.005f));
+                            Debug.Log("stack order. Previous Card(" + previousCard.name + ") y angle = " + previousCard.transform.localRotation.eulerAngles.y);
+                            Debug.Log("stack order. Current Card(" + currentCard.name + ") y angle = " + currentCard.transform.localRotation.eulerAngles.y);
+
+                            //check if distance is bigger than it should be
+                            if ((currentCard.transform.localRotation.eulerAngles.y -
+                                previousCard.transform.localRotation.eulerAngles.y) > 8f)
+                            {
+                                Debug.Log("shifting, as delta is = " + (currentCard.transform.localRotation.eulerAngles.y -
+                                          previousCard.transform.localRotation.eulerAngles.y));
+                                //shift left by 1
+                                currentCard.transform.Rotate(new Vector3(0,-7.5f, 0));
+                                currentCard.transform.Translate(new Vector3(-0.01f,-0.005f,0.005f));
+                            }
                         }
+                        else
+                        {
+                            //check if the first card in the stack is at the right position
+                            if (currentCard.transform.localRotation.eulerAngles.y > 0)
+                            {
+                                currentCard.transform.Rotate(new Vector3(0,-7.5f, 0));
+                                currentCard.transform.Translate(new Vector3(-0.01f,-0.005f,0.005f));
+                            }
+                        }
+                        previousCard = currentCard;
                     }
-                    previousCard = currentCard;
                 }
+                
             }
         }
 
@@ -230,6 +248,7 @@ namespace cardGame
             {
                 foreach (var currentCard in cardsInStack)
                 {
+                    currentCard.GetComponent<GrabbableObject>()?.ResetCard();
                     currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }

@@ -84,6 +84,7 @@ public class Hand : NetworkBehaviour
         }
         if( input.GetAction( InputAction.DROP ) && !preventGrabbing  )
         {
+            Debug.Log("native Drop called");
             Drop();
         }
         
@@ -138,6 +139,7 @@ public class Hand : NetworkBehaviour
         
         if( m_ActiveHighlight != null )
         {
+            Debug.Log("m_ActiveHighlight = " + m_ActiveHighlight.name);
             m_ActiveHighlight.Drop();
             m_ActiveHighlight = null;
         }

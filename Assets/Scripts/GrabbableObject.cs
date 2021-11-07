@@ -304,6 +304,8 @@ public class GrabbableObject : NetworkBehaviour
         toBeStacked = false;
         GetComponentInChildren<Collider>().tag = "card";
         stackedCard = false;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        gameObject.GetComponent<Rigidbody>().useGravity = true;
     }
 
 
