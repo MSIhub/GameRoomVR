@@ -253,6 +253,11 @@ namespace cardGame
             stackHoldingHand.handAnimator.SetBool("cardInHand", false);
             FindObjectOfType<gameManagerLocal>().stackSpawned = false;
             FindObjectOfType<gameManagerLocal>().Stack = null;
+            //reenable selector
+            foreach (var selector in stackHoldingHand.transform.parent.GetComponentsInChildren<stackedCardSelector>(true))
+            {
+                selector.gameObject.SetActive(true);
+            }
             Destroy(gameObject);
         }
 
