@@ -6,7 +6,7 @@ public class LocalRigSpawner : SimulationBehaviour, ISpawned
 
     public GUISkin GUISkin;
 
-    public bool AutoSpawnXR = true;
+    public bool AutoSpawnXR = false;
     public GameObject XRRig;
     [Space]
     public bool AutoSpawnPC = false;

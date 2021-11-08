@@ -16,6 +16,7 @@ namespace CardDispenser
         private GameObject _currentCardSpawned;
         private ButtonController _button;
         
+
         public void Spawned()
         {
             var networkCardParent = GetComponentInChildren<NetworkCardParent>();
@@ -23,14 +24,14 @@ namespace CardDispenser
             _cardsList = new List<GameObject>();
             foreach (var rb in cardSet)
             {
-                rb.isKinematic = true; //removing
-                _cardsList.Add(rb.gameObject);
+               _cardsList.Add(rb.gameObject);
                rb.gameObject.SetActive(false);
             }
             _isCardSlotFree = true;
 
             _button = GetComponentInChildren<ButtonController>();
         }
+
 
         public override void FixedUpdateNetwork()
         {
@@ -39,6 +40,7 @@ namespace CardDispenser
                 if (_isCardSlotFree)//On grab the object becomes kinematics
                 {
                     _currentCardSpawned = SpawnRandomCard();
+                    _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = true; //removing
                 }
                 CheckSlotAvailability();
                 PushCardOnButtonPress();
@@ -53,6 +55,7 @@ namespace CardDispenser
             {
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = false;
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().AddForce(_currentCardSpawned.transform.forward * _buttonThrowForce, ForceMode.Impulse);
+                _currentCardSpawned.transform.parent = null; // parenting to the world frame
             }
         }
 
