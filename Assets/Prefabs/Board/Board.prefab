@@ -559,7 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74ca95d522105844b82fee2503522fb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Highlight: {fileID: 0}
+  Highlight: {fileID: 4176934456729326322}
 --- !u!114 &7626192076215356306
 MonoBehaviour:
   m_ObjectHideFlags: 0

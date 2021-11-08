@@ -15,7 +15,7 @@ namespace CardDispenser
         private bool _isCardSlotFree;
         private GameObject _currentCardSpawned;
         private ButtonController _button;
-
+        
         public void Spawned()
         {
             var networkCardParent = GetComponentInChildren<NetworkCardParent>();
@@ -23,8 +23,9 @@ namespace CardDispenser
             _cardsList = new List<GameObject>();
             foreach (var rb in cardSet)
             {
+                rb.isKinematic = true; //removing
                 _cardsList.Add(rb.gameObject);
-                rb.gameObject.SetActive(false);
+               rb.gameObject.SetActive(false);
             }
             _isCardSlotFree = true;
 
@@ -50,6 +51,7 @@ namespace CardDispenser
             //Add force if button pressed
             if (_button.IsButtonPressed & _currentCardSpawned!=null)
             {
+                _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = false;
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().AddForce(_currentCardSpawned.transform.forward * _buttonThrowForce, ForceMode.Impulse);
             }
         }
