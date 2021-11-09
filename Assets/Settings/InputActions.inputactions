@@ -76,6 +76,22 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "LeftTurn",
+                    "type": "Button",
+                    "id": "fdd1a883-c8bc-47ac-a975-3af498de540e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "RightTurn",
+                    "type": "Button",
+                    "id": "a832b302-cb60-433f-9c18-de709802c84d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -232,6 +248,28 @@
                     "action": "Thumb",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6ba3433e-6f2f-438f-ae5d-b890417c1d32",
+                    "path": "<Joystick>/stick/left",
+                    "interactions": "",
+                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "groups": "",
+                    "action": "LeftTurn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "84643187-c443-457d-96fb-f835e7b98c3b",
+                    "path": "<Joystick>/stick/right",
+                    "interactions": "",
+                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "groups": "",
+                    "action": "RightTurn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -307,6 +345,22 @@
                     "name": "Thumb",
                     "type": "Button",
                     "id": "939016ae-7644-4f97-8994-738498116171",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "LeftTurn",
+                    "type": "Button",
+                    "id": "b1692f53-0ba0-470f-b605-5b052fa0f19b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "RightTurn",
+                    "type": "Button",
+                    "id": "5c93db96-1c78-4f72-a5be-1d6a114ec1e0",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -464,6 +518,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Thumb",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e7fd8ec6-2b17-4979-93d7-d54febdb8895",
+                    "path": "<Joystick>/stick/right",
+                    "interactions": "",
+                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "groups": "",
+                    "action": "LeftTurn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c944d40-51c1-4d7d-b0b0-50b641fe1ea9",
+                    "path": "<Joystick>/stick/right",
+                    "interactions": "",
+                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "groups": "",
+                    "action": "RightTurn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

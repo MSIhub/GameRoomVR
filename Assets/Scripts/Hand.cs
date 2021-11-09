@@ -14,7 +14,8 @@ public class Hand : NetworkBehaviour
     Highlightable m_ActiveHighlight;
     public bool m_Grabbing;
     public bool preventGrabbing = false;
-    
+    [SerializeField] private float RotationDegrees = 15f;
+    public GameObject rig;
     
     [SerializeField] private InputActionReference _gripInputAction;
     [SerializeField] private InputActionReference _triggerInputAction;
@@ -85,6 +86,14 @@ public class Hand : NetworkBehaviour
         if( input.GetAction( InputAction.DROP ) && !preventGrabbing  )
         {
             Drop();
+        }
+        if( input.GetAction( InputAction.LEFTTURN ))
+        {
+            rig.transform.Rotate(new Vector3(0,-RotationDegrees,0));
+        }
+        if( input.GetAction( InputAction.RIGHTTURN ))
+        {
+            rig.transform.Rotate(new Vector3(0,RotationDegrees,0));
         }
         
         

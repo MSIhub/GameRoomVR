@@ -11,6 +11,7 @@ public class Player : NetworkBehaviour
     public GameObject HeadVisuals;
     public Hand LeftHand;
     public Hand RightHand;
+    public GameObject rig;
 
     public PlayerInputHandler LocalInput;
     public Renderer[] Renderers;

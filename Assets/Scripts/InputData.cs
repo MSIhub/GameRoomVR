@@ -8,6 +8,8 @@ public enum InputAction
     GRAB = 1 << 0,
     DROP = 1 << 1,
     TELEPORT = 1 << 2,
+    LEFTTURN = 1 << 3,
+    RIGHTTURN = 1 << 4
 }
 
 [System.Flags]

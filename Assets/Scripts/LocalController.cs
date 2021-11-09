@@ -15,6 +15,8 @@ public class LocalController : MonoBehaviour
     public InputActionProperty Grab;
     public InputActionProperty Drop;
     public InputActionProperty Teleport;
+    public InputActionProperty LeftTurn;
+    public InputActionProperty RightTurn;
     [Header( "States" )]
     public InputActionProperty TeleportMode;
 
@@ -49,6 +51,8 @@ public class LocalController : MonoBehaviour
         container.Actions ^= Grab.action.triggered ? InputAction.GRAB : 0; // xor to flip the corresponding bit
         container.Actions ^= Drop.action.triggered ? InputAction.DROP : 0;
         container.Actions ^= Teleport.action.triggered ? InputAction.TELEPORT : 0;
+        container.Actions ^= LeftTurn.action.triggered ? InputAction.LEFTTURN : 0;
+        container.Actions ^= RightTurn.action.triggered ? InputAction.RIGHTTURN : 0;
     }
 
     public void UpdateInputFixed( ref InputDataController container )

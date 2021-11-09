@@ -77,7 +77,8 @@ public class LocalRigSpawner : SimulationBehaviour, ISpawned
         rig.transform.localRotation = Quaternion.identity;
 
         GetComponent<Player>().LocalInput = GetComponentInChildren<PlayerInputHandler>();
-
+        GetComponent<Player>().LeftHand.rig = rig;
+        GetComponent<Player>().RightHand.rig = rig;
         this.enabled = false;
     }
 }
