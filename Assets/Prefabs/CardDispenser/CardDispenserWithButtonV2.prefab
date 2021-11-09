@@ -1663,8 +1663,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnPoint: {fileID: 2697563001436488156}
+  _spawnButtonController: {fileID: 0}
+  _resetButtonController: {fileID: 0}
   _distMovedForNextSpawn: 0.1
   _buttonThrowForce: 0.5
+  _resetButtonWaitTime: 0.5
 --- !u!1 &2697563001625583733
 GameObject:
   m_ObjectHideFlags: 0
