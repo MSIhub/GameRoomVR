@@ -4,7 +4,7 @@
     "PeerMode": 0,
     "Scenes": [
         "Assets/Scenes/VR_Start.unity",
-        "Assets/Scenes/Game.unity"
+        "Assets/Scenes/NewGame.unity"
     ],
     "PhysicsEngine": 0,
     "ServerPhysicsMode": 1,
