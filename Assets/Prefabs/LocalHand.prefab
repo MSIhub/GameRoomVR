@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6565861094546626051}
   - component: {fileID: 7457177274747063087}
   m_Layer: 0
-  m_Name: 'LocalLeftHand '
+  m_Name: LocalHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,6 +104,18 @@ MonoBehaviour:
         m_Action: Teleport Mode
         m_Flags: 0
     m_Reference: {fileID: -4667234071960788385, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+  SnapTurn:
+    m_UseReference: 1
+    m_Action:
+      m_Name: Snap Turn
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: 01a021b9-e657-4126-9ef5-f50db37df363
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+    m_Reference: {fileID: 946210327907234193, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+  snapTurnThreshold: 0.3
   TeleportMode:
     m_UseReference: 1
     m_Action:

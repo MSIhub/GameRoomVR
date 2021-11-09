@@ -78,18 +78,10 @@
                     "interactions": ""
                 },
                 {
-                    "name": "LeftTurn",
-                    "type": "Button",
+                    "name": "SnapTurnAction",
+                    "type": "Value",
                     "id": "fdd1a883-c8bc-47ac-a975-3af498de540e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "RightTurn",
-                    "type": "Button",
-                    "id": "a832b302-cb60-433f-9c18-de709802c84d",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 }
@@ -252,22 +244,11 @@
                 {
                     "name": "",
                     "id": "6ba3433e-6f2f-438f-ae5d-b890417c1d32",
-                    "path": "<Joystick>/stick/left",
+                    "path": "<XRController>{LeftHand}/thumbstick",
                     "interactions": "",
-                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "processors": "",
                     "groups": "",
-                    "action": "LeftTurn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "84643187-c443-457d-96fb-f835e7b98c3b",
-                    "path": "<Joystick>/stick/right",
-                    "interactions": "",
-                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
-                    "groups": "",
-                    "action": "RightTurn",
+                    "action": "SnapTurnAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -350,18 +331,10 @@
                     "interactions": ""
                 },
                 {
-                    "name": "LeftTurn",
-                    "type": "Button",
-                    "id": "b1692f53-0ba0-470f-b605-5b052fa0f19b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "RightTurn",
-                    "type": "Button",
-                    "id": "5c93db96-1c78-4f72-a5be-1d6a114ec1e0",
-                    "expectedControlType": "Button",
+                    "name": "SnapTurnAction",
+                    "type": "Value",
+                    "id": "ca1eff43-b706-4fe3-9ac6-d5f7cf8a2f30",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 }
@@ -523,23 +496,12 @@
                 },
                 {
                     "name": "",
-                    "id": "e7fd8ec6-2b17-4979-93d7-d54febdb8895",
-                    "path": "<Joystick>/stick/right",
+                    "id": "277e6a19-3079-49d1-b81d-8744daee7113",
+                    "path": "<XRController>{RightHand}/thumbstick",
                     "interactions": "",
-                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
+                    "processors": "StickDeadzone(min=0.33,max=1)",
                     "groups": "",
-                    "action": "LeftTurn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4c944d40-51c1-4d7d-b0b0-50b641fe1ea9",
-                    "path": "<Joystick>/stick/right",
-                    "interactions": "",
-                    "processors": "AxisDeadzone(min=0.5,max=0.99)",
-                    "groups": "",
-                    "action": "RightTurn",
+                    "action": "SnapTurnAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

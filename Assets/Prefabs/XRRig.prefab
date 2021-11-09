@@ -301,9 +301,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1443005053615697449, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
     - target: {fileID: 6565861094546626051, guid: b1d89d6af1ad32246a71dc576cfc32bd, type: 3}
+      propertyPath: LeftTurn.m_Reference
+      value: 
+      objectReference: {fileID: 7897699338513079144, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+    - target: {fileID: 6565861094546626051, guid: b1d89d6af1ad32246a71dc576cfc32bd, type: 3}
+      propertyPath: SnapTurn.m_Reference
+      value: 
+      objectReference: {fileID: 7897699338513079144, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+    - target: {fileID: 6565861094546626051, guid: b1d89d6af1ad32246a71dc576cfc32bd, type: 3}
       propertyPath: Teleport.m_Reference
       value: 
       objectReference: {fileID: -67774348043679940, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+    - target: {fileID: 6565861094546626051, guid: b1d89d6af1ad32246a71dc576cfc32bd, type: 3}
+      propertyPath: RightTurn.m_Reference
+      value: 
+      objectReference: {fileID: 7897699338513079144, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
     - target: {fileID: 6565861094546626051, guid: b1d89d6af1ad32246a71dc576cfc32bd, type: 3}
       propertyPath: TeleportMode.m_Reference
       value: 
