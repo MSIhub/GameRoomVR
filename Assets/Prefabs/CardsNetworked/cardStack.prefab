@@ -43,8 +43,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.25, y: 0.05, z: 0.15}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.2489963, y: 0.049999993, z: 0.14262791}
+  m_Center: {x: 0.022083443, y: -0.000000010673579, z: 0.028313076}
 --- !u!114 &1661979748926844199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,3 +64,4 @@ MonoBehaviour:
   ghostRotation: {x: 0, y: 0, z: 0, w: 0}
   _selectCardInputActionRightHand: {fileID: 1443005053615697449, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
   _selectCardInputActionLeftHand: {fileID: 6976394061837971580, guid: 28d0adc60806f894a93b9bd0f80bd24a, type: 3}
+  stackHoldingHand: {fileID: 0}

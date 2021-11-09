@@ -121,6 +121,15 @@ public class GrabbableObject : NetworkBehaviour
                     {
                         currentCollider.gameObject.tag = "stackedCard";
                     }
+                    //as the hand must be in the trigger on dropping the card, trigger it
+                    //get collider
+                    /*Collider FingerTip = null;
+                    foreach (var tip in m_HoldingHand.transform.parent.GetComponentsInChildren<stackedCardSelector>())
+                    {
+                        if (m_HoldingHand.handSide == tip.selectorHandSide) FingerTip = tip.transform.GetComponent<Collider>();
+                    }
+                    localGameManager.Stack.GetComponent<CardStack>().handleFingerTipEnteredStack(FingerTip);
+                    */
                     //set hands and grabbed state
                     m_HoldingHand = localGameManager.Stack.GetComponent<CardStack>().stackHoldingHand;
                     transform.SetParent(localGameManager.Stack.transform);

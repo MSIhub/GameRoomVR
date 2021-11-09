@@ -156,7 +156,7 @@ namespace cardGame
             if (other.CompareTag("card") && !ghostShow)
             {
                 //create ghost and indicate position
-                Debug.Log("card entered Stack = " + other.transform.parent.name);
+                Debug.Log("card to enter Stack = " + other.transform.parent.name);
                 ghost = Instantiate(other.transform.parent.gameObject, transform);
                 ghost.GetComponent<Rigidbody>().isKinematic = true;
                 ghost.GetComponent<Rigidbody>().useGravity = false;
@@ -178,33 +178,36 @@ namespace cardGame
 
             if (other.CompareTag("cardSelector"))
             {
-
-                if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
-                {
-                    //for Left hand
-                    if (!_leftHandReference.m_Grabbing && cardsInStack != null &&
-                        cardsInStack.Count > 0)
-                    {
-                        _leftHandReference.preventGrabbing = true;
-                        highlightCard = true;
-                        selectorHandSide = Hand.HandSide.left;
-                    }
-                    
-                }
-                else
-                {
-                    //for Right hand
-                    if (!_rightHandReference.m_Grabbing && cardsInStack != null &&
-                        cardsInStack.Count > 0)
-                    {
-                        _rightHandReference.preventGrabbing = true;
-                        highlightCard = true;
-                        selectorHandSide = Hand.HandSide.right;
-                    }
-
-                }
-                cardSelectorTransform = other.transform;
+                handleFingerTipEnteredStack(other);
             }
+        }
+
+        public void handleFingerTipEnteredStack(Collider other)
+        {
+            if (other.GetComponent<stackedCardSelector>().selectorHandSide == Hand.HandSide.left)
+            {
+                //for Left hand
+                if (!_leftHandReference.m_Grabbing && cardsInStack != null &&
+                    cardsInStack.Count > 0)
+                {
+                    _leftHandReference.preventGrabbing = true;
+                    highlightCard = true;
+                    selectorHandSide = Hand.HandSide.left;
+                }
+            }
+            else
+            {
+                //for Right hand
+                if (!_rightHandReference.m_Grabbing && cardsInStack != null &&
+                    cardsInStack.Count > 0)
+                {
+                    _rightHandReference.preventGrabbing = true;
+                    highlightCard = true;
+                    selectorHandSide = Hand.HandSide.right;
+                }
+            }
+
+            cardSelectorTransform = other.transform;
         }
 
         private void OnTriggerExit(Collider other)
@@ -243,7 +246,7 @@ namespace cardGame
             {
                 foreach (var currentCard in cardsInStack)
                 {
-                    currentCard.GetComponent<GrabbableObject>()?.ResetCard(false);
+                    currentCard.GetComponent<GrabbableObject>()?.ResetCard(true);
                     currentCard.transform.parent = currentCard.GetComponent<GrabbableObject>().originalParent;
                 }
             }
