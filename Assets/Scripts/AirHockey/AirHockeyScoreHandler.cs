@@ -1,18 +1,23 @@
 using System;
 using DG.Tweening;
+using Unity.Collections;
 using UnityEngine;
 
 namespace AirHockey
 {
     public class AirHockeyScoreHandler : MonoBehaviour
     {
-        public bool isScoreTrigger1 = false;
-        public bool isScoreTrigger2 = false;
-
         [SerializeField] private GameObject _airHockeyPuckPrefab;
         [SerializeField] private AudioSource _audioSource;
         [SerializeField] private AudioClip _audioClipInstantiate;
         [SerializeField] private AudioClip _audioClipGoal;
+        [Space]
+        [SerializeField] private Transform _spawnPoint1;
+        [SerializeField] private Transform _spawnPoint2;
+        [SerializeField] private Transform _spawnCenter;//TODO: detect out of table and spawn puck in the center
+        public bool isScoreTrigger1 = false;
+        public bool isScoreTrigger2 = false;
+
 
         private Transform _baseNode;
         private Vector3 _puckSpawnPosition;
@@ -41,13 +46,13 @@ namespace AirHockey
             _audioSource.Play();
             if (isScoreTrigger1)
             {
-                _puckSpawnPosition = _baseNode.position + new Vector3(-0.7f, 0.7f, 0f); // Value based on measurement
-                
+                _puckSpawnPosition = _spawnPoint2.position;
+
             }
 
             if (isScoreTrigger2)
             {
-                _puckSpawnPosition = _baseNode.position + new Vector3(0.7f, 0.7f, 0f); // Value based on measurement
+                _puckSpawnPosition = _spawnPoint1.position;
             }
             Destroy(other.transform.parent.gameObject);
             //Using dotween instead of invoke
