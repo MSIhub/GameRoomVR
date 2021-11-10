@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Fusion;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,15 +10,19 @@ namespace CardDispenser
 {
     public class CardDispenseManager : SimulationBehaviour, ISpawned
     {
+        [SerializeField] private GameObject _networkCardParent;
         [SerializeField] private Transform _spawnPoint;
         [SerializeField] private ButtonController _spawnButtonController;
         [SerializeField] private ButtonController _resetButtonController;
+        [SerializeField] private TextMeshProUGUI _countText;
+        [Space]
         [SerializeField] private float _distMovedForNextSpawn = 0.1f;
         [SerializeField] private float _buttonThrowForce = 0.5f;
-        [SerializeField] private float _resetButtonWaitTime = 4f;
+        [SerializeField] private float _resetButtonWaitTime = 2f;
         private List<GameObject> _cardsStack;
         private bool _isCardSlotFree;
         private GameObject _currentCardSpawned;
+        
 
         private float _resetTime = 0.0f;
         private bool _didReset = false;
@@ -24,7 +30,7 @@ namespace CardDispenser
 
         public void Spawned()
         {
-           
+            _cardsStack = new List<GameObject>();
             AddAllCardsToStack();
             _isCardSlotFree = true;
 
@@ -34,7 +40,7 @@ namespace CardDispenser
 
         public override void FixedUpdateNetwork()
         {
-            
+            _countText.text = _cardsStack.Count.ToString();
             if (_cardsStack.Count > 0)
             {
                 if (_isCardSlotFree)//On grab the object becomes kinematics
@@ -45,39 +51,18 @@ namespace CardDispenser
                 CheckSlotAvailability();
                 PushCardOnButtonPress();
             }
-            //Handling reset button
-            if (_resetButtonController.IsButtonPressed)
-            {
-                _resetTime += Runner.DeltaTime;
-                if (_resetTime >= _resetButtonWaitTime)
-                {
-                    if (!_didReset)
-                    {
-                        _didReset = ResetCards();    
-                    }
-                    if (_didReset)
-                    {
-                        _resetTime = 0.0f;
-                    }
-                }
-            }
-            
-            if (!_resetButtonController.IsButtonPressed)
-            {
-                _resetTime = 0.0f;
-                _didReset = false;
-            }
+            ResetButtonHandling();
         }
-        
+
         private void AddAllCardsToStack()
         {
-            var networkCardParent = GetComponentInChildren<NetworkCardParent>();
-            var cardSet = networkCardParent.GetComponentsInChildren<Rigidbody>();
-            _cardsStack = new List<GameObject>();
+            _cardsStack.Clear();
+            var cardSet = _networkCardParent.GetComponentsInChildren<Rigidbody>();
             foreach (var rb in cardSet)
             {
                 _cardsStack.Add(rb.gameObject);
                 rb.gameObject.SetActive(false);
+                rb.transform.parent = transform;
             }
         }
 
@@ -89,7 +74,7 @@ namespace CardDispenser
             {
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = false;
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().AddForce(_currentCardSpawned.transform.forward * _buttonThrowForce, ForceMode.Impulse);
-                _currentCardSpawned.transform.parent = null; // parenting to the world frame
+                _currentCardSpawned.transform.parent = _networkCardParent.transform; // parenting to the world frame
             }
         }
 
@@ -106,16 +91,60 @@ namespace CardDispenser
             _cardsStack[cardIndex].transform.rotation = _spawnPoint.rotation;
             _cardsStack[cardIndex].SetActive(true);
             var currentCard = _cardsStack[cardIndex];
-            _cardsStack.RemoveAt(cardIndex);
+            _cardsStack.RemoveAt(cardIndex); 
             _isCardSlotFree = false;
             return currentCard;
+           
         }
         
         private bool ResetCards()
         {
-            //TODO: REmove all the cards in the scene spawned. Maintain Another list and delete it
+            RestockRemainingCard();
             AddAllCardsToStack();
             return true;
+        }
+
+        private void RestockRemainingCard()
+        {
+            //Adding remaining cards back to the original parent
+            if (_cardsStack.Count > 0)
+            {
+                foreach (var cardToReset in _cardsStack)
+                {
+                    cardToReset.SetActive(true);
+                    cardToReset.transform.parent = _networkCardParent.transform;
+                }
+
+                _cardsStack.Clear();
+            }
+        }
+        
+        
+        private void ResetButtonHandling()
+        {
+            //Handling reset button
+            if (_resetButtonController.IsButtonPressed)
+            {
+                _resetTime += Runner.DeltaTime;
+                if (_resetTime >= _resetButtonWaitTime)
+                {
+                    if (!_didReset)
+                    {
+                        _didReset = ResetCards();
+                    }
+
+                    if (_didReset)
+                    {
+                        _resetTime = 0.0f;
+                    }
+                }
+            }
+
+            if (!_resetButtonController.IsButtonPressed)
+            {
+                _resetTime = 0.0f;
+                _didReset = false;
+            }
         }
 
     }
