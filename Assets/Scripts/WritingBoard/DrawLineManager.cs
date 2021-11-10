@@ -8,12 +8,17 @@ namespace WritingBoard
     public class DrawLineManager : MonoBehaviour
     {
         [SerializeField] private GameObject _chalkLineRendererPrefab;
-        
+
         private BoardVisualComponent _boardVisualComponent;
         private LineRenderer _currLine;
         private int _numTouch = 0;
-
         private Vector3 _previousPoint = Vector3.zero;
+
+        private void Start()
+        {
+            
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (!other.gameObject.TryGetComponent<BoardManager>(out var board)) return;

@@ -42,6 +42,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 8c5b779a11becea4c991dd7cb179bd15
+--- !u!114 &-8672642961949147773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: CardDispenser
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: d1d09798363f9c84f98605b7e2336eb5
 --- !u!114 &-7886831777327383859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,8 +609,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: CardDispenserWithButtonV2
+  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: ~MISSING~CardDispenserWithButtonV2
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: b74ac583b372c24469a26d70d9b048c1
