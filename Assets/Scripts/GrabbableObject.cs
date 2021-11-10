@@ -149,8 +149,36 @@ public class GrabbableObject : NetworkBehaviour
                 throwCooldownTimerRunning = true;
             }
 
+
             
         }
+        
+        if (!objectIsCard)
+        {
+            if( m_HoldingHand != null )
+            {
+            
+                Vector3 targetPosition = m_HoldingHand.AttachPoint.position;
+                m_Body.velocity = ( targetPosition - transform.position ) / Runner.DeltaTime;
+
+
+                Quaternion targetRotation = m_HoldingHand.AttachPoint.transform.rotation;
+                Quaternion rotationDelta = targetRotation * Quaternion.Inverse( m_Body.rotation );
+                rotationDelta.ToAngleAxis( out var angleInDegrees, out var rotationAxis );
+                if( angleInDegrees > 180f )
+                    angleInDegrees -= 360f;
+
+                var angularVelocity = ( rotationAxis * angleInDegrees * Mathf.Deg2Rad ) / Runner.DeltaTime;
+                if( float.IsNaN( angularVelocity.x ) == false )
+                {
+                    m_Body.angularVelocity = angularVelocity;
+                }
+
+           
+            
+            }
+        }
+        
      
     }
 
@@ -201,8 +229,12 @@ public class GrabbableObject : NetworkBehaviour
     {
        // Debug.Log("grabba " + transform.name);
         SetLayerMaskIncludingChildren("grabbed");
-        gameObject.GetComponent<Rigidbody>().isKinematic = true;
-        gameObject.GetComponent<Rigidbody>().useGravity = false;
+        if (objectIsCard)
+        {
+            gameObject.GetComponent<Rigidbody>().isKinematic = true;
+            gameObject.GetComponent<Rigidbody>().useGravity = false;
+        }
+        
         
         parentToHand = true;    
         if( m_HoldingHand != null )
