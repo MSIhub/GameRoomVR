@@ -6044,10 +6044,10 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0, y: 0.1, z: 0}
-  _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  _m_PositionOffset_right: {x: 0, y: 0.1, z: 0}
-  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
+  _m_PositionOffset: {x: 0.048, y: -0.103, z: 0.041}
+  _m_RotationOffset: {x: 0.121850595, y: 0.019116687, z: 0.17021918, w: 0.9776566}
+  _m_PositionOffset_right: {x: -0.064, y: -0.064, z: -0.083}
+  _m_RotationOffset_right: {x: -0.1414288, y: -0.97851676, z: -0.14271769, w: 0.046201527}
 --- !u!114 &1640100623007331255
 MonoBehaviour:
   m_ObjectHideFlags: 0
