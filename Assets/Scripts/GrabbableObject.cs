@@ -147,10 +147,41 @@ public class GrabbableObject : NetworkBehaviour
             {
                 transform.SetParent(originalParent);
                 throwCooldownTimerRunning = true;
+                //remove object specific object
+                //add offset from object
+                resetHand();
+        
+        
+
+                
+
+        
+        
+                
             }
 
+            if (!toBeStacked)
+            {
+                Debug.Log("object <"+ gameObject.name +"> is not to be stacked, turn physics on");
+                //copy attach point position
+                //m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
+                //m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
+                transform.Translate(m_HoldingHand.AttachPoint.localPosition);
+                transform.Rotate(m_HoldingHand.AttachPoint.localRotation.eulerAngles);
+                    
+                gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                gameObject.GetComponent<Rigidbody>().useGravity = true;
 
-            
+                if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
+                {
+                    m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
+                }
+                else
+                {
+                    m_Body.velocity = m_Body.velocity * ThrowForce;
+                }
+            }
+            m_HoldingHand = null;
         }
         
         if (!objectIsCard)
@@ -289,32 +320,6 @@ public class GrabbableObject : NetworkBehaviour
         //reparent the object to the original parent
         unparentFromHand = true;
         
-
-        //remove object specific object
-        //add offset from object
-        resetHand();
-        
-        
-
-        if (!toBeStacked)
-        {
-            Debug.Log("object <"+ gameObject.name +"> is not to be stacked, turn physics on");
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-
-            if( m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null )
-            {
-                m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
-            }
-            else
-            {
-                m_Body.velocity = m_Body.velocity * ThrowForce;
-            }
-        }
-
-        
-        
-        m_HoldingHand = null;
     }
 
     public void resetHand()
