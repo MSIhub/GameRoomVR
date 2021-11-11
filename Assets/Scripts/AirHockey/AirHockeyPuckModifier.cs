@@ -15,8 +15,13 @@ namespace AirHockey
         }
         private void OnCollisionEnter(Collision other)
         {
-            _rb.velocity = _rb.velocity.normalized * _impactIntensity;
-            
+            if (_rb==null) return;
+            if (other.gameObject.CompareTag("SideWalls") || other.gameObject.CompareTag("Striker"))
+            {
+                _rb.velocity = _rb.velocity.normalized * _impactIntensity;
+                _rb.angularVelocity = _rb.angularVelocity.normalized * _impactIntensity*4f;
+            }
+
             if (!other.gameObject.CompareTag("SideWalls")) return;
             _audioSource.Play();
         }
