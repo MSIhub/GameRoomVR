@@ -45795,10 +45795,10 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0, y: -0.1, z: 0}
-  _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  _m_PositionOffset_right: {x: 0, y: -0.1, z: 0}
-  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
+  _m_PositionOffset: {x: 0.076, y: 0.002, z: 0.048}
+  _m_RotationOffset: {x: 0.09788107, y: 0.24039249, z: -0.78936446, w: -0.55635834}
+  _m_PositionOffset_right: {x: -0.063, y: 0.02, z: 0.034}
+  _m_RotationOffset_right: {x: -0.2140667, y: 0.24530905, z: -0.8174764, w: 0.47511193}
 --- !u!1 &6997561522772715871
 GameObject:
   m_ObjectHideFlags: 0
