@@ -391,7 +391,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6710314414281753066}
   - component: {fileID: 6710314414281753068}
-  - component: {fileID: 5271107168303169620}
+  - component: {fileID: 6710314414281753069}
   m_Layer: 0
   m_Name: ButtonManager
   m_TagString: Untagged
@@ -426,7 +426,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.01, y: 0.01, z: 0.02}
   m_Center: {x: 0.005, y: 0.005, z: -0.01}
---- !u!114 &5271107168303169620
+--- !u!114 &6710314414281753069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

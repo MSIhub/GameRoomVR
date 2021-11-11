@@ -1662,9 +1662,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ad9c871dc70f85479a8045b6cde36e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _networkCardParent: {fileID: 0}
   _spawnPoint: {fileID: 2697563001436488156}
+  _spawnButtonController: {fileID: 0}
+  _resetButtonController: {fileID: 0}
+  _countText: {fileID: 0}
   _distMovedForNextSpawn: 0.1
   _buttonThrowForce: 0.5
+  _resetButtonWaitTime: 2
 --- !u!1 &2697563001625583733
 GameObject:
   m_ObjectHideFlags: 0

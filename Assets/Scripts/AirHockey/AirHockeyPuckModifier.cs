@@ -16,6 +16,7 @@ namespace AirHockey
         private void OnCollisionEnter(Collision other)
         {
             _rb.velocity = _rb.velocity.normalized * _impactIntensity;
+            
             if (!other.gameObject.CompareTag("SideWalls")) return;
             _audioSource.Play();
         }

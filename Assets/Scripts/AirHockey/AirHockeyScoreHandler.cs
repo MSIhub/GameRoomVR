@@ -14,7 +14,6 @@ namespace AirHockey
         [Space]
         [SerializeField] private Transform _spawnPoint1;
         [SerializeField] private Transform _spawnPoint2;
-        [SerializeField] private Transform _spawnCenter;//TODO: detect out of table and spawn puck in the center
         public bool isScoreTrigger1 = false;
         public bool isScoreTrigger2 = false;
 
@@ -55,11 +54,6 @@ namespace AirHockey
                 _puckSpawnPosition = _spawnPoint1.position;
             }
             Destroy(other.transform.parent.gameObject);
-            //Using dotween instead of invoke
-            /*DOVirtual.DelayedCall(1f, () =>
-            {
-               // Destroy(other.transform.parent.gameObject);
-            });*/
             DOVirtual.DelayedCall(3f, () =>
             {
                 Instantiate(_airHockeyPuckPrefab, _puckSpawnPosition, _puckSpawnRotation, _baseNode);

@@ -10,7 +10,7 @@ namespace CardDispenser
         [SerializeField] private float _offset = 0.01f;
         private float _off;
         private bool _isDirectionFlipped = false;
-        private Vector3 _translation;
+        private Vector3 _translationDirection;
         public bool IsButtonPressed { get; set; }
 
         public void Spawned()
@@ -35,16 +35,18 @@ namespace CardDispenser
 
         private void TranslateButtonIn()
         {
-            _translation = _buttonPress.localToWorldMatrix * _buttonPress.up;
+            _translationDirection = _buttonPress.worldToLocalMatrix * _buttonPress.up;
             _isDirectionFlipped =
-                Math.Round(_translation.x) < 0 | Math.Round(_translation.y) < 0 | Math.Round(_translation.z) < 0;
+                Math.Round(_translationDirection.x) < 0 | Math.Round(_translationDirection.y) < 0 | Math.Round(_translationDirection.z) < 0;
             _off = _isDirectionFlipped ? _offset : -_offset;
-            _buttonPress.Translate(_translation * (_off), _buttonBase);
+            _buttonPress.localPosition += _translationDirection * (_off);
+              
+            
         }
         
         private void TranslateButtonOut()
         {
-            _buttonPress.Translate(_translation * (-_off), _buttonBase);
+            _buttonPress.localPosition -= _translationDirection * (_off);
         }
 
     }

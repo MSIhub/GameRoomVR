@@ -51,8 +51,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: AirHockeyPad
+  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: ~MISSING~AirHockeyPad
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 65c0dee776d17e9409dfd2f6bc6459f2
@@ -238,6 +238,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 899e91a14d0ac0a49a6a33934ed14e82
+--- !u!114 &-2150002299703834792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: AirHockeyPad2
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: e98a6fd730213c4499b96194286c191c
+--- !u!114 &-1292895422205937297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: AirHockeyPad1
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: 0452617d42b000f47815c2350a1792d7
 --- !u!114 &-465291207295852542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,8 +371,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Beads
+  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: ~MISSING~Beads
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 188cf8a1864251947aea22e555b7264c
@@ -502,6 +530,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 0bf2b31f27613f845a65b0b94347e08e
+--- !u!114 &5584231173172147318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: CardDispenser
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: d1d09798363f9c84f98605b7e2336eb5
 --- !u!114 &5809567771645410385
 MonoBehaviour:
   m_ObjectHideFlags: 0
