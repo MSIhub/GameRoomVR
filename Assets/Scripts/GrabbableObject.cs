@@ -287,6 +287,10 @@ public class GrabbableObject : NetworkBehaviour
         {
             m_HoldingHand.handAnimator.SetBool("penInHand", true);
         }
+        if (gameObject.CompareTag("board") || gameObject.CompareTag("eraser"))
+        {
+            m_HoldingHand.handAnimator.SetBool("BoardInHand", true);
+        }
         //save attachpoint
         _originalAttachPointPosition = m_HoldingHand.AttachPoint.localPosition;
         _originalAttachPointRotation = m_HoldingHand.AttachPoint.localRotation;
@@ -342,6 +346,10 @@ public class GrabbableObject : NetworkBehaviour
             if (gameObject.CompareTag("Chalk"))
             {
                 m_HoldingHand.handAnimator.SetBool("penInHand", false);
+            }
+            if (gameObject.CompareTag("board") || gameObject.CompareTag("eraser"))
+            {
+                m_HoldingHand.handAnimator.SetBool("BoardInHand", false);
             }
         }
     }

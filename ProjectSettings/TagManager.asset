@@ -12,6 +12,10 @@ TagManager:
   - stack
   - stackedCard
   - cardSelector
+  - board
+  - chalk
+  - eraser
+  - dispenser
   layers:
   - Default
   - TransparentFX
