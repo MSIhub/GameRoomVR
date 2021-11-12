@@ -152,6 +152,10 @@ public class Hand : NetworkBehaviour
             m_ActiveHighlight.Drop();
             m_ActiveHighlight = null;
         }
+        else
+        {
+            Debug.Log("m_ActiveHighlight = null");
+        }
         
         m_Grabbing = false;
     }
