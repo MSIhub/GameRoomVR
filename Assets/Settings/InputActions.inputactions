@@ -84,6 +84,14 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "VolumeDown",
+                    "type": "Button",
+                    "id": "e45edd41-ef02-492a-8fd0-27000a0ba7e6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -251,6 +259,17 @@
                     "action": "SnapTurnAction",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb28d937-1efb-494e-98be-b9a30a4878a3",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VolumeDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -335,6 +354,14 @@
                     "type": "Value",
                     "id": "ca1eff43-b706-4fe3-9ac6-d5f7cf8a2f30",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "VolumeUp",
+                    "type": "Button",
+                    "id": "fc839daa-6865-4b03-81f1-096fd241e57b",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 }
@@ -502,6 +529,17 @@
                     "processors": "StickDeadzone(min=0.33,max=1)",
                     "groups": "",
                     "action": "SnapTurnAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e835cfc6-0863-46e6-89fd-152542197419",
+                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "VolumeUp",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

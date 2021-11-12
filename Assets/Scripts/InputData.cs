@@ -9,7 +9,7 @@ public enum InputAction
     DROP = 1 << 1,
     TELEPORT = 1 << 2,
     LEFTTURN = 1 << 3,
-    RIGHTTURN = 1 << 4
+    RIGHTTURN = 1 << 4,
 }
 
 [System.Flags]
