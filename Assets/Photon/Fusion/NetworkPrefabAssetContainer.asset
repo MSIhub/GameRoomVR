@@ -320,6 +320,20 @@ MonoBehaviour:
   m_Script: {fileID: -225830702, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: NetworkPrefabAssetContainer
   m_EditorClassIdentifier: 
+--- !u!114 &557599753300332840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: StartPosition_1
+  m_EditorClassIdentifier: 
+  AssetGuid:
+    RawGuidValue: 8c94a802fd3bf784bb38c8456742b544
 --- !u!114 &910383922038800290
 MonoBehaviour:
   m_ObjectHideFlags: 0
