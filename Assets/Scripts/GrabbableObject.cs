@@ -42,6 +42,7 @@ public class GrabbableObject : NetworkBehaviour
     private bool throwCooldownTimerRunning = false;
     private float throwCooldownTimerTime = 0.5f;
     private float throwCooldownTimer = 0f;
+    private Hand oldHoldingHand;
     private void Awake()
     {
         m_Body = GetComponent<Rigidbody>();
@@ -192,15 +193,15 @@ public class GrabbableObject : NetworkBehaviour
         //copy attach point position
         //m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
         //m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
-        transform.Translate(m_HoldingHand.AttachPoint.localPosition);
-        transform.Rotate(m_HoldingHand.AttachPoint.localRotation.eulerAngles);
+        transform.Translate(oldHoldingHand.AttachPoint.localPosition);
+        transform.Rotate(oldHoldingHand.AttachPoint.localRotation.eulerAngles);
 
         gameObject.GetComponent<Rigidbody>().isKinematic = false;
         gameObject.GetComponent<Rigidbody>().useGravity = true;
 
-        if (m_HoldingHand != null && m_HoldingHand.VelocityBuffer != null)
+        if (oldHoldingHand != null && oldHoldingHand.VelocityBuffer != null)
         {
-            m_Body.velocity = m_HoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
+            m_Body.velocity = oldHoldingHand.VelocityBuffer.GetAverageVelocity() * ThrowForce;
         }
         else
         {
@@ -322,6 +323,9 @@ public class GrabbableObject : NetworkBehaviour
       //  Debug.Log("droppa " + transform.name);
         //reparent the object to the original parent
         unparentFromHand = true;
+        oldHoldingHand = m_HoldingHand;
+        resetHand();
+        
         
     }
 
