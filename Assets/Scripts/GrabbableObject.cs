@@ -279,10 +279,10 @@ public class GrabbableObject : NetworkBehaviour
         
         
         parentToHand = true;    
-        if( m_HoldingHand != null )
+        /*if( m_HoldingHand != null )
         {
             m_HoldingHand.Drop();
-        }
+        }*/
         m_HoldingHand = other;
         if (gameObject.CompareTag("card"))
         {

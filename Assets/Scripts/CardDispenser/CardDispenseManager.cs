@@ -46,7 +46,7 @@ namespace CardDispenser
                 if (_isCardSlotFree)//On grab the object becomes kinematics
                 {
                     _currentCardSpawned = SpawnRandomCard();
-                    _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = true; //removing
+                    //_currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = true; //removing
                 }
                 CheckSlotAvailability();
                 PushCardOnButtonPress();
@@ -57,22 +57,22 @@ namespace CardDispenser
         private void AddAllCardsToStack()
         {
             _cardsStack.Clear();
-            var cardSet = _networkCardParent.GetComponentsInChildren<Rigidbody>();
+            var cardSet = _networkCardParent.GetComponentsInChildren<Rigidbody>(true);
             foreach (var rb in cardSet)
             {
                 _cardsStack.Add(rb.gameObject);
                 rb.gameObject.SetActive(false);
-                rb.transform.parent = transform;
             }
         }
 
 
         private void PushCardOnButtonPress()
-        {
+        {     
             //Add force if button pressed
             if (_spawnButtonController.IsButtonPressed & _currentCardSpawned!=null)
             {
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = false;
+                _currentCardSpawned.GetComponentInChildren<Rigidbody>().useGravity = true;
                 _currentCardSpawned.GetComponentInChildren<Rigidbody>().AddForce(_currentCardSpawned.transform.forward * _buttonThrowForce, ForceMode.Impulse);
                 _currentCardSpawned.transform.parent = _networkCardParent.transform; // parenting to the world frame
             }
@@ -87,6 +87,8 @@ namespace CardDispenser
         private GameObject SpawnRandomCard()
         {
             var cardIndex = Random.Range(0, _cardsStack.Count);
+            
+            _cardsStack[cardIndex].transform.parent = transform;
             _cardsStack[cardIndex].transform.position = _spawnPoint.position;
             _cardsStack[cardIndex].transform.rotation = _spawnPoint.rotation;
             _cardsStack[cardIndex].SetActive(true);

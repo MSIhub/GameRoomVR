@@ -119,7 +119,7 @@ public class Hand : NetworkBehaviour
 
     void Grab()
     {
-        Debug.Log("Original Grab called");
+        Debug.Log("Native Grab called");
         Drop();
         
         if( m_HighlightCollector.CurrentHighlight != null )
