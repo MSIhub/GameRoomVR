@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using Fusion;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,6 +42,11 @@ namespace cardGame
             _selectCardInputActionRightHand.action.performed += getCardFromStack;
             _selectCardInputActionLeftHand.action.performed += getCardFromStack;
             _leftHandReference = GetComponentInParent<Player>().LeftHand;
+            Debug.Log("Card Stack spawned, local player id = " +
+                        GetComponentInParent<Player>().Runner.LocalPlayer.PlayerId);
+            Debug.Log("Card Stack spawned, trraversed player id = " +
+                      GetComponentInParent<Player>().GetInstanceID());
+
             _rightHandReference = GetComponentInParent<Player>().RightHand;
         }
 

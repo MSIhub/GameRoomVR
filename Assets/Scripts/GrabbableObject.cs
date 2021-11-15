@@ -193,9 +193,24 @@ public class GrabbableObject : NetworkBehaviour
         //copy attach point position
         //m_HoldingHand.AttachPoint.localPosition = _originalAttachPointPosition;
         //m_HoldingHand.AttachPoint.localRotation = _originalAttachPointRotation;
-        transform.Translate(oldHoldingHand.AttachPoint.localPosition);
-        transform.Rotate(oldHoldingHand.AttachPoint.localRotation.eulerAngles);
-
+        if (m_HoldingHand != null)
+        {
+            transform.Translate(m_HoldingHand.AttachPoint.localPosition);
+            transform.Rotate(m_HoldingHand.AttachPoint.localRotation.eulerAngles);
+        }
+        else
+        {
+            if (oldHoldingHand != null)
+            {
+                transform.Translate(oldHoldingHand.AttachPoint.localPosition);
+                transform.Rotate(oldHoldingHand.AttachPoint.localRotation.eulerAngles);
+            }
+            else
+            {
+                Debug.Log("m_HoldingHand = null and oldHoldingHand = null");
+            }
+        }
+        
         gameObject.GetComponent<Rigidbody>().isKinematic = false;
         gameObject.GetComponent<Rigidbody>().useGravity = true;
 
