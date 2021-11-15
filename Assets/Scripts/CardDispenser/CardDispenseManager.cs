@@ -45,6 +45,7 @@ namespace CardDispenser
             {
                 if (_isCardSlotFree)//On grab the object becomes kinematics
                 {
+                    
                     _currentCardSpawned = SpawnRandomCard();
                     //_currentCardSpawned.GetComponentInChildren<Rigidbody>().isKinematic = true; //removing
                 }
