@@ -8669,7 +8669,7 @@ MonoBehaviour:
   ServerPort: 27015
   DefaultRoomName: 
   AlwaysShowStats: 0
-  InitialScenePath: Assets/Scenes/NewGame.unity
+  InitialScenePath: Assets/Scenes/ReductionTest.unity
 --- !u!4 &669013369
 Transform:
   m_ObjectHideFlags: 0
