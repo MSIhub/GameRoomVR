@@ -4900,7 +4900,7 @@ MonoBehaviour:
   m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 1
+  _interpolationDataSource: 0
   _interpolationTarget: {fileID: 3320340235888625084}
   DetachInterpTarget: 0
   SyncParent: 1
