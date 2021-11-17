@@ -1,6 +1,397 @@
+# 0.9.0
+
+## Beta Nightly
+
+### Build 331 (Oct 26, 2021)
+
+- Please remove the files at 'Assets\Photon\PhotonLibs\[Metro,WebSocket,Photon3Unity3D.*]' as they are not necessary anymore
+
+**What's New**
+
+- `NetworkArray` and `NetworkDictionary` properties are now Unity-editable
+- Arrays and reference type `[Networked]` properties can now have its defaults set in the inspector
+- A debug warning if no `INetworkSceneObjectProvider` is passed to the runner in Unity builds
+
+**Changes**
+
+- Photon Realtime SDK to v4.1.6.10
+- `NetworkBehaviour.Defaults` to `NetworkBehaviour.CopyBackingFieldsToState` and `NetworkBehaviour.ReadDefaults` to `NetworkBehaviour.CopyStateToBackingFields`
+- `NetworkBehaviour` inspector: networked properties are no longer displayed in a separate foldout. Instead, the "default" variables are updated
+
+**Bug Fixes**
+
+- Fixed: An issue in the interpolated prediction error correction of NRBs modified after the `NetworkPhysicsSimulation`
+- Fixed: Issue with shared mode backend not applying state updates from client and a regular interval
+- Fixed: `NetworkSceneManagerDefault` not registering GameObjects in `RunnerVisibilityNode`
+- Fixed: Nested scene `NetworkBehaviours` not being attached to
+- Fixed: `NullReferenceException` in `BehaviourEditorUtils.GetDelegateFromMember`
+
+### Build 330 (Oct 25, 2021)
+
+**Changes**
+
+- Expose Current Runner.NATType
+
+**Bug Fixes**
+
+- Fixed: NetworkMecanAnimator.SetTrigger() calls now will pass-through to Animator.SetTrigger() when HasInputAuthority is true
+
+### Build 329 (Oct 23, 2021)
+
+**What's New**
+
+- NAT Type Discovery
+
+**Changes**
+
+- Optimization on the Reflexive Address Query
+
+**Bug Fixes**
+
+- Fixed: Issue with delta snapshot discarding valid snapshots on server
+
+### Build 328 (Oct 22, 2021)
+
+**What's New**
+
+- Added support for predictive despawn on clients in server<>client topology
+
+**Bug Fixes**
+
+- Fixed: Missing check of PlayerCount from StartArgs
+- Fixed: A typo in `NetworkSceneManagerDefault`
+
+# 0.8.0
+
+## Beta Nightly
+
+### Build 327 (Oct 21, 2021)
+
+**Breaking Changes**
+
+- Scene loading overhaul - Scene loading is now implemented on Unity's side with `INetworkSceneObjectProvider` interface. The default implementation is provided with `NetworkSceneManagerDefault`
+
+**What's New**
+
+- BitSet64, BitSet128, BitSet192, BitSet256
+- `BitSet` types
+- Added support for sending large chunks of reliable data via the NetworkRunner.SendReliableDataFromServerToPlayer and NetworkRunner.SendReliableDataFromClientToServer
+
+**Changes**
+
+- Multiple peer mode no longer uses "wrapper" scenes. Scenes are loaded and held on to just like with single peer mode
+- `OnBeforeSpawned` callback is now called before `PredictedSpawnSpawned` on the Client, instead of before the regular `Spawned`
+
+**Removed**
+
+- NetworkProjectConfig.Scenes. `NetworkSceneManagerDefault` treats `SceneRef` as the scene's build index instead, but generally speaking `SceneRef` can mean whatever `INetworkSceneObjectProvider` implementation wants it to - a build index, a bitfield etc
+
+**Bug Fixes**
+
+- Fixed: Bug with TimerDelta ignoring first delta
+
+### Build 325 (Oct 20, 2021)
+
+**What's New**
+
+- Interpolated error correction of the transform state on client-side prediction
+- Added per-object rpc stats
+
+### Build 324 (Oct 19, 2021)
+
+**What's New**
+
+- Added per object bandwidth stats in EC mode
+
+**Changes**
+
+- Show MaxPlayers and PlayerCount on Lobby
+
+**Bug Fixes**
+
+- Fixed: `Runner.IsFirstTick` and `IsLastTick` being swapped on client-side resimulations
+- Fixed: Shutdown State when reusing Fusion Runner
+
+### Build 322 (Oct 18, 2021)
+
+**What's New**
+
+- Support to Custom Authentication
+- New OnCustomAuthenticationResponse on INetworkRunnerCallbacks
+- New Shutdown Reasons related to Custom Authentication
+
+**Changes**
+
+- Re-work Async StartGame Handling exposing info about faulted initializations
+
+**Bug Fixes**
+
+- Fixed: Issue with spiking bandwidth when client would fall too far behind snapshot history
+- Fixed: VisibilityNode handling for nested NetworkObject spawning fixed
+
+### Build 321 (Oct 14, 2021)
+
+**What's New**
+
+- More control over FusionStats window at edit time and runtime
+- FusionStats enum to select which stats to display
+
+**Bug Fixes**
+
+- Fixed: FusionStats readable at all sizes and aspect ratios
+
+### Build 320 (Oct 13, 2021)
+
+**What's New**
+
+- NT/NRB/NCC/NTA all now encode extra state info for teleports, which act as lerp targets interpolating up to the teleport event (otherwise teleports freeze for one frame)
+- Added LocalScale sync to NT/NRB
+- Added more interpolation handling for parenting/scaling edge cases
+- Experimental option added for InterpolationTarget to detach from NetworkObject, and reparent as needed to improve scaling interpolation
+
+**Bug Fixes**
+
+- Fixed: Infinite loop in NetworkRunner.TryFindBehaviour<T>
+
+### Build 318 (Oct 08, 2021)
+
+**What's New**
+
+- Added NetwokRunner.TryGetNetworkBehaviour<T> to convert NetworkBehaviourId to a NetworkBehaviour
+- Added NetworkDictionary<K, V>.Get
+- Added NetworkDictionary<K, V>.Set
+
+### Build 317 (Oct 07, 2021)
+
+**Changes**
+
+- Increased STUN Attempts
+
+**Bug Fixes**
+
+- Fixed: Occasional null error in NetworkRunner inspector editor code, when running in single player mode
+
+### Build 316 (Oct 07, 2021)
+
+**Bug Fixes**
+
+- Fixed: Inverted NetworkDictionary.TryGet case
+- Fixed: `NetworkObjectGuid` and `NetworkPrefabRef` not being accepted as Rpc parameters
+
+### Build 315 (Oct 07, 2021)
+
+**What's New**
+
+- Added indexer on NetworkDictionary
+- Added ContainsValue on NetworkDictionary
+
+**Changes**
+
+- Renamed NetworkDictionary.Contains to NetworkDictionary.ContainsKey to be consistent with .NET dictionary API
+- Moved call to InvokeSceneLoadStart to happen in base class instead
+
+**Bug Fixes**
+
+- Fixed: AddCallbacks and RemoveCallbacks now check for existance of internal callback list and can be called before NetworkRunner.StartGame
+- Fixed: Issues with network dictionary memory alignment
+
+### Build 314 (Oct 06, 2021)
+
+**What's New**
+
+- Standard Unity property attributes for `[Networked]` properties - UnityHeader, UnityRange etc
+
+**Improvements**
+
+- Odin compatibility
+- ILWeaver - `[Networked]` property attributes that can also be used on a field (depending on their `AttributeTargets`) are now applied to the underlying field as well. This means Odin attributes can be used directly on `[Networked]` properties
+
+**Changes**
+
+- InlineHelpAttribute visibility to public
+- ProvideInput is now true by default for Client and Host
+
+### Build 313 (Oct 06, 2021)
+
+**What's New**
+
+- Added NetworkDelegates which is similar to NetworkEvents but using regular C# delegates instead of Unity Events
+- Added INetworkRunnerCallbacks.OnSceneLoadStart
+- Added INetworkRunnerCallbacks.OnSceneLoadDone
+
+**Changes**
+
+- Removed INetworkRunnerCallbacks.OnObjectWordsChanged as it was no longer called/used
+
+**Bug Fixes**
+
+- Fixed: Constructor on NetworkDictionary<K, V> is now public
+
+### Build 311 (Oct 05, 2021)
+
+**Changes**
+
+- NetworkBehaviourId now implements IEquatable<T>, == and != operator overloads and GetHashCode()
+
+**Bug Fixes**
+
+- Fixed: Issue where it would not be possible to spawn networked objects in ISceneLoadDone callback
+- Fixed: NetworkDictionary<K, V> now accepts enums as K generic argument
+
+### Build 310 (Oct 05, 2021)
+
+**What's New**
+
+- Added support to weaver for System.Guid
+
+**Changes**
+
+- Exposed NetworkRunner.IsSharedModeMasterClient
+
+### Build 309 (Oct 04, 2021)
+
+**What's New**
+
+- Added support for NetworkDictionary<K, V>
+
 # 0.7.0
 
 ## Beta Nightly
+
+### Build 308 (Oct 03, 2021)
+
+**What's New**
+
+- HelpURL references added to components
+
+**Changes**
+
+- Clicking headers always pings the script in the Project folder, even if the header is tied to launch a URL
+
+### Build 307 (Oct 02, 2021)
+
+**What's New**
+
+- IPv6 Support
+- Support to Custom STUN Server
+
+**Changes**
+
+- STUN Servers Resolution
+- Disable NAT Punch when no Reflexive Info is found
+
+### Build 306 (Oct 01, 2021)
+
+**What's New**
+
+- Added ISceneLoadStart
+- Fixed issues with ISceneLoaded not being called
+
+**Changes**
+
+- Renamed ISceneLoaded to ISceneLoadDone
+
+**Bug Fixes**
+
+- Fixed: Issue with ISceneLoadStart not being registered as a callback interface
+- Fixed: Issue with Refused connection not being sent from server
+
+### Build 304 (Sep 30, 2021)
+
+**Bug Fixes**
+
+- Fixed: Issue with scene object staying disabled on server in certain scenario
+- Fixed: New Odin handling was hiding Odin's virtual OnEnable in NetworkBehaviourEditor.cs
+
+### Build 303 (Sep 29, 2021)
+
+**Changes**
+
+- Scene objects are now disabled by default after being loaded and only enabled once their replicated data is received
+
+**Bug Fixes**
+
+- Fixed: Inline help for Odin editor not being visible. Odin editor for Fusion types can be disabled with `FUSION_ODIN_DISABLED` define
+- Fixed: Inline help sizing issues when there's no vertical scrollbar
+- Fixed: Inline help does not try do load xml doc for Unity assemblies
+- Fixed: Connection Accept/Refuse in OnConnectRequest callback
+
+### Build 302 (Sep 28, 2021)
+
+**Improvements**
+
+- Inspector inline help loading times
+
+**Bug Fixes**
+
+- Fixed: Auto-generated `NetworkBehaviour.Defaults()` overrides not invoking base class' implementation
+
+### Build 300 (Sep 27, 2021)
+
+**What's New**
+
+- `NetworkPrefabTable.Count` and `NetworkPrefabTable.LastId`
+- Added non-generic NetworkBehaviour.GetInterpolator to get a RawInterpolator struct to allow for interpolation of user defined structs
+
+**Changes**
+
+- Inline help button is placed on the left again
+- Exposed Simulation.SnapshotHistory buffer for low level access
+
+**Bug Fixes**
+
+- Fixed: Issue with objects not being released back to pool
+- Fixed: Issue with calling shutdown inside of FUN
+
+### Build 299 (Sep 24, 2021)
+
+**Breaking Changes**
+
+- Removed Fusion.Odin.asmdef and all `Fusion.*Odin` behaviour types. Use regular Fusion behaviour classes instead, `Fusion.BehaviourEditor` is Odin-aware. Due to Unity limitations, `Assets/Photon/Scripts/Odin` needs to be removed manually, if this build is used to update existing Fusion integration
+- Removed Fusion.Odin.asmdef and all `Fusion.*Odin` behaviour types. Use regular Fusion behaviour classes instead, `Fusion.BehaviourEditor` is Odin-aware
+
+### Build 298 (Sep 23, 2021)
+
+**What's New**
+
+- `AssemblyNameAttribute` and `AssemblyNameAttributeDrawer`, put to use in `NetworkProjectConfig.AssembliesToWeave`
+
+**Improvements**
+
+- Inspector: Inline help works for arrays now
+- Inspector: Improved compatibility with custom drawers
+
+**Changes**
+
+- Inspector: Inline help button is displayed on the right side of a property value
+- ILWeaver: assembly names are now case insensitive
+
+**Removed**
+
+- `Fusion.Behaviour.Editor*` properties. Use `[ScriptHelp]` attribute from now on
+
+### Build 297 (Sep 22, 2021)
+
+**Breaking Changes**
+
+- Due to changes in prefab pipeline, prefabs need to be reimported. This can be done with `Fusion/Rebuild Object Table`
+
+**What's New**
+
+- `[NetworkPrefab]` attribute. When added to a `NetworkObject` field, the object picker will only show prefabs with `FusionPrefab` label.  
+Remove: `NetworkProjectConfig.PrefabSources`: prefab source information is now stored in config's hidden nested assets and is generated based on prefabs marked with `FusionPrefab` label. This means that serialized config is now a lot smaller as it does not contain prefab information directly
+
+**Changes**
+
+- Prefabs with `NetworkObject` script are now labeled with `FusionPrefab` label during import
+- `NetworkPrefabRef` property drawer: object picker shows prefabs with `FusionPrefab` label
+- Config's initial `PrefabAssetsContainerPath` value to an empty string. This means that `NetworkPrefabAsset` (a reference-based alternative to `NetworkPrefabRef`/`NetworkObject` references) generation is now disabled by default. Existing configs are not affected
+- `NetworkPrefabTable.TryAdd` now accepts a guid and an `INetworkPrefabSource` instance. If prefabs need to be added at runtime, `NetworkPrefabSourceStatic` and `NetworkPrefabSourceUnityBase` subclasses can be used as `INetworkPrefabSource` implementations
+- NetworkPrefabAssets are disabled by default (they need `PrefabAssetsContainerPath` field set in `NetworkProjectConfig` inspector)
+
+**Bug Fixes**
+
+- Fixed: Config warning for initial weaving
 
 ### Build 296 (Sep 22, 2021)
 

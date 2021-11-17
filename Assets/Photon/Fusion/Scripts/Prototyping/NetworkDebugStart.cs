@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -18,11 +19,8 @@ using Fusion.Editor;
 /// </summary>
 [DisallowMultipleComponent]
 [AddComponentMenu("Fusion/Prototyping/Network Debug Start")]
+[ScriptHelp(BackColor = EditorHeaderBackColor.Steel)]
 public class NetworkDebugStart : Fusion.Behaviour {
-
-#if UNITY_EDITOR
-  public override EditorHeaderBackColor EditorHeaderBackColor => EditorHeaderBackColor.Steel;
-#endif
 
   /// <summary>
   /// Selection for how <see cref="NetworkDebugStart"/> will behave at startup.
@@ -51,6 +49,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
   /// such as <see cref="NetworkEvents"/> or your own custom INetworkInput implementations.
   /// </summary>
   [WarnIf(nameof(RunnerPrefab), 0, "No " + nameof(RunnerPrefab) + " supplied. Will search for a " + nameof(NetworkRunner) + " in the scene at startup.")]
+  [InlineHelp]
   public NetworkRunner RunnerPrefab;
 
   /// <summary>
@@ -63,6 +62,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
                                                          nameof(StartHostPlusClients) + "(), or " +
                                                          nameof(StartServerPlusClients) + "()"
   )]
+  [InlineHelp]
   public StartModes StartMode = StartModes.UserInterface;
 
   /// <summary>
@@ -71,12 +71,14 @@ public class NetworkDebugStart : Fusion.Behaviour {
   /// </summary>
   [UnityEngine.Serialization.FormerlySerializedAs("Server")]
   [DrawIf(nameof(StartMode), (long)StartModes.Automatic, DrawIfHideType.Hide)]
+  [InlineHelp]
   public GameMode AutoStartAs = GameMode.Shared;
 
   /// <summary>
   /// <see cref="NetworkDebugStartGUI"/> will not render GUI elements while <see cref="CurrentStage"/> == <see cref="Stage.AllConnected"/>.
   /// </summary>
   [DrawIf(nameof(StartMode), (long)StartModes.UserInterface, DrawIfHideType.Hide)]
+  [InlineHelp]
   public bool AutoHideGUI = true;
 
   /// <summary>
@@ -84,6 +86,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
   /// When using the Select start mode, this number will be the default value for the additional clients option box.
   /// </summary>
   [DrawIf(nameof(_showAutoClients), true, DrawIfHideType.Hide)]
+  [InlineHelp]
   public int AutoClients = 1;
 
   bool _usingMultiPeerMode => NetworkProjectConfig.Global.PeerMode == NetworkProjectConfig.PeerModes.Multiple;
@@ -92,18 +95,33 @@ public class NetworkDebugStart : Fusion.Behaviour {
   /// <summary>
   /// The port that server/host <see cref="NetworkRunner"/> will use.
   /// </summary>
+  [InlineHelp]
   public ushort ServerPort = 27015;
 
   /// <summary>
   /// The default room name to use when connecting to photon cloud.
   /// </summary>
+  [InlineHelp]
   public string DefaultRoomName = ""; // empty/null means Random Room Name
 
   /// <summary>
   /// Will automatically enable <see cref="FusionStats"/> once peers have finished connecting.
   /// </summary>
+  [InlineHelp]
   public bool AlwaysShowStats = false;
 
+  /// <summary>
+  /// Selects which telemetry statistics will be enabled in the <see cref="FusionStats"/> overlay.
+  /// </summary>
+  [InlineHelp]
+  [DrawIf(nameof(AlwaysShowStats), true, DrawIfHideType.Hide)]
+  [VersaMask]
+  public Simulation.Statistics.FusionStatFlags includedStats;
+
+  [InlineHelp]
+  [DrawIf(nameof(AlwaysShowStats), true, DrawIfHideType.Hide)]
+  [NormalizedRect]
+  public Rect StatsPosition = new Rect(0, 0, 0.33f, 1.0f);
 
   [NonSerialized]
   NetworkRunner _server;
@@ -113,6 +131,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
   /// If this field is null or invalid, will be set to the current scene when <see cref="NetworkDebugStart"/> runs Awake().
   /// </summary>
   [ScenePath]
+  [InlineHelp]
   public string InitialScenePath;
   static string _initialScenePath;
 
@@ -126,6 +145,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
     if (TryGetComponent<NetworkDebugStartGUI>(out var ndsg) == false) {
       ndsg = gameObject.AddComponent<NetworkDebugStartGUI>();
     }
+    includedStats = FusionStats.DefaultMask;
   }
 
 #endif
@@ -193,17 +213,14 @@ public class NetworkDebugStart : Fusion.Behaviour {
   }
 
   protected bool TryGetSceneRef(out SceneRef sceneRef) {
-    var scenePath = SceneManager.GetActiveScene().path;
-    var config = NetworkProjectConfig.Global;
-
-    if (config.TryGetSceneRef(scenePath, out sceneRef) == false) {
-      // Failed to find scene by full path, try with just name
-      if (config.TryGetSceneRef(SceneManager.GetActiveScene().name, out sceneRef) == false) {
-        Debug.LogError($"Could not find scene reference to scene {scenePath}, make sure it's added to {nameof(NetworkProjectConfig)}.");
-        return false;
-      }
+    var activeScene = SceneManager.GetActiveScene();
+    if (activeScene.buildIndex < 0 || activeScene.buildIndex >= SceneManager.sceneCountInBuildSettings) {
+      sceneRef = default;
+      return false;
+    } else {
+      sceneRef = activeScene.buildIndex;
+      return true;
     }
-    return true;
   }
 
   /// <summary>
@@ -355,10 +372,6 @@ public class NetworkDebugStart : Fusion.Behaviour {
       yield break;
     }
 
-    if (serverMode == GameMode.Shared) {
-      DefaultRoomName = string.IsNullOrEmpty(DefaultRoomName) == false ? DefaultRoomName : Guid.NewGuid().ToString();
-    }
-
     bool includesServerStart = serverMode != GameMode.Shared && serverMode != GameMode.Client;
 
     if (!includesServerStart && clientCount == 0) {
@@ -404,36 +417,40 @@ public class NetworkDebugStart : Fusion.Behaviour {
 
     DontDestroyOnLoad(gameObject);
 
-    // start scene
-    var scene = config.PeerMode == NetworkProjectConfig.PeerModes.Multiple ? currentScene : default(Scene?);
-
     // start server, just take address from it
     if (includesServerStart) {
       _server = Instantiate(RunnerPrefab);
       _server.name = serverMode.ToString();
       _server.ProvideInput = (serverMode == GameMode.Host || serverMode == GameMode.Single) && clientCount == 0;
 
-      InitializeNetworkRunner(_server, serverMode, NetAddress.Any(ServerPort), sceneRef, (runner) => {
+      var serverTask = InitializeNetworkRunner(_server, serverMode, NetAddress.Any(ServerPort), sceneRef, (runner) => {
 #if FUSION_DEV
         var name = _server.name; // closures do not capture values, need a local var to save it
         Debug.Log($"Server NetworkRunner '{name}' started.");
 #endif
         // this action is called after InitializeNetworkRunner for the server has completed startup
-        StartCoroutine(StartClients(clientCount, scene, serverMode, sceneRef));
+        StartCoroutine(StartClients(clientCount, serverMode, sceneRef));
       });
+
+      while(serverTask.IsCompleted == false) {
+        yield return new WaitForEndOfFrame();
+      }
+
+      if (serverTask.IsFaulted) {
+        ShutdownAll();
+      }
+
     } else {
-      StartCoroutine(StartClients(clientCount, scene, serverMode, sceneRef));
+      StartCoroutine(StartClients(clientCount, serverMode, sceneRef));
+    }
+
+    // Add stats last, so that event systems that may be getting created are already in place.
+    if (AlwaysShowStats && serverMode != GameMode.Shared) {
+      FusionStats.Create(_server, FusionStats.DefaultLayouts.Left, includedStats);
     }
   }
 
-  protected IEnumerator StartClients(int clientCount, Scene? unload, GameMode serverMode, SceneRef sceneRef = default) {
-
-    // If a server was started and there is a scene to unload - do so before clients are added (to avoid multiple AudioListener, etc warnings)
-    if (unload.HasValue && serverMode != GameMode.Shared && serverMode != GameMode.Client) {
-      CurrentStage = Stage.UnloadOriginalScene;
-      yield return SceneManager.UnloadSceneAsync(unload.Value);
-      unload = null;
-    }
+  protected IEnumerator StartClients(int clientCount, GameMode serverMode, SceneRef sceneRef = default) {
 
     var clientTasks = new List<Task>();
 
@@ -441,6 +458,8 @@ public class NetworkDebugStart : Fusion.Behaviour {
 
     for (int i = 0; i < clientCount; ++i) {
       var client = Instantiate(RunnerPrefab);
+      DontDestroyOnLoad(client);
+
       client.name = "Client#" + i;
       client.ProvideInput = i == 0;
 
@@ -457,6 +476,11 @@ public class NetworkDebugStart : Fusion.Behaviour {
 #endif
 
       clientTasks.Add(clientTask);
+
+      // Add stats last, so that event systems that may be getting created are already in place.
+      if (AlwaysShowStats && i == 0) {
+        FusionStats.Create(client, FusionStats.DefaultLayouts.Right, includedStats);
+      }
     }
 
     bool done;
@@ -467,34 +491,36 @@ public class NetworkDebugStart : Fusion.Behaviour {
       foreach (var task in clientTasks) {
         done &= task.IsCompleted;
 
+        if (done == false) {
+          break;
+        }
+
         if (task.IsFaulted) {
           Debug.LogWarning(task.Exception);
         }
       }
-      yield return null;
+      yield return new WaitForSeconds(0.5f);
 
     } while (done == false);
 
     CurrentStage = Stage.AllConnected;
-
-    // Add stats last, so that event systems that may be getting created are already in place.
-    if (AlwaysShowStats) {
-      FusionStats.Create();
-    }
-
-    // unload original scene if needed and has not been done yet.
-    if (unload.HasValue) {
-      yield return SceneManager.UnloadSceneAsync(unload.Value);
-    }
   }
 
   protected virtual Task InitializeNetworkRunner(NetworkRunner runner, GameMode gameMode, NetAddress address, SceneRef scene, Action<NetworkRunner> initialized) {
+    
+    var sceneObjectProvider = runner.GetComponents(typeof(MonoBehaviour)).OfType<INetworkSceneObjectProvider>().FirstOrDefault();
+    if (sceneObjectProvider == null) {
+      Debug.Log($"NetworkRunner does not have any component implementing {nameof(INetworkSceneObjectProvider)} interface, adding {nameof(NetworkSceneManagerDefault)}.", runner);
+      sceneObjectProvider = runner.gameObject.AddComponent<NetworkSceneManagerDefault>();
+    }
+
     return runner.StartGame(new StartGameArgs {
       GameMode = gameMode,
       Address = address,
       Scene = scene,
       SessionName = DefaultRoomName,
-      Initialized = initialized
+      Initialized = initialized,
+      SceneObjectProvider = sceneObjectProvider
     });
   }
 
@@ -505,7 +531,7 @@ public class NetworkDebugStart : Fusion.Behaviour {
     if (Application.isPlaying)
       return;
     var currentScene = SceneManager.GetActiveScene();
-    if (currentScene.GetSceneIndexInBuildSettings() == -1 || currentScene.GetSceneIndexInFusionSettings() == -1) {
+    if (currentScene.GetSceneIndexInBuildSettings() == -1) {
       GUILayout.Space(4);
       var clicked = Fusion.Editor.BehaviourEditorUtils.DrawWarnButton(new GUIContent("Add Scene To Settings", "Will add current scene to both Unity Build Settings and Fusion scene lists."), MessageType.Warning);
       if (clicked) {
@@ -516,8 +542,6 @@ public class NetworkDebugStart : Fusion.Behaviour {
         if (currentScene.name != "") {
           currentScene.AddSceneToBuildSettings();
         }
-
-        currentScene.AddSceneToFusionConfig();
       }
     }
   }

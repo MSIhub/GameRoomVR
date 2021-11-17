@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
@@ -6,11 +7,8 @@ using UnityEngine;
 /// <summary>
 /// A simple example of Fusion input collection. This component should be on the same GameObject as the <see cref="NetworkRunner"/>.
 /// </summary>
+[ScriptHelp(BackColor = EditorHeaderBackColor.Steel)]
 public class InputBehaviourPrototype : Fusion.Behaviour, INetworkRunnerCallbacks {
-
-#if UNITY_EDITOR
-  public override EditorHeaderBackColor EditorHeaderBackColor => EditorHeaderBackColor.Steel;
-#endif
 
   public void OnInput(NetworkRunner runner, NetworkInput input) {
     var frameworkInput = new NetworkInputPrototype();
@@ -81,12 +79,24 @@ public class InputBehaviourPrototype : Fusion.Behaviour, INetworkRunnerCallbacks
     // shutdown any client that has disconnected from server
     runner.Shutdown();
   }
-  public void OnPlayerJoined(NetworkRunner runner, PlayerRef player) { }
-  public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) { }
-  public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
-  public void OnObjectWordsChanged(NetworkRunner runner, NetworkObject obj, HashSet<int> changedWords, NetworkObjectMemoryPtr oldMemory) { }
-  public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-  public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) {  }
+  public void OnPlayerJoined(NetworkRunner          runner, PlayerRef            player)                                                           { }
+  public void OnPlayerLeft(NetworkRunner            runner, PlayerRef            player)                                                           { }
+  public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)                                                          { }
+  public void OnObjectWordsChanged(NetworkRunner    runner, NetworkObject        obj, HashSet<int> changedWords, NetworkObjectMemoryPtr oldMemory) { }
+  public void OnShutdown(NetworkRunner              runner, ShutdownReason       shutdownReason) { }
+  public void OnSessionListUpdated(NetworkRunner    runner, List<SessionInfo>    sessionList)    {  }
+  public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) {
+  }
+
+  public void OnSceneLoadDone(NetworkRunner runner) {
+    
+  }
+
+  public void OnSceneLoadStart(NetworkRunner runner) {
+  }
+
+  public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) {
+  }
 }
 
 /// <summary>

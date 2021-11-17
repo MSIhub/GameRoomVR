@@ -1,61 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-9195716880432092230
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: GrabbableCube
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 1bb90ef58682d264b83fe64fe4b4158c
---- !u!114 &-9090158067524044945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Timer
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 00484633d3151ac4997cbdfa394c0eb4
---- !u!114 &-8694940738099882151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: GrabbableCubeVariant
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 8c5b779a11becea4c991dd7cb179bd15
---- !u!114 &-7886831777327383859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: ~MISSING~AirHockeyPad
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 65c0dee776d17e9409dfd2f6bc6459f2
 --- !u!114 &-7695931259655582764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,20 +42,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 61b6ef4ffff3d8f4498968869591d6bf
---- !u!114 &-6951203926759802414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: ~MISSING~PlayerWithVoice
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 381adc3a925131f4dbb3c67431775c8b
 --- !u!114 &-6752618747029122786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,20 +70,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: c0ed1344923fb654e93ebacf2392f2c3
---- !u!114 &-6464768356517674587
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: WorldButton
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: a3810699613be264b99fcb583f10217b
 --- !u!114 &-6178940367813296691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,48 +98,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 86a57551904392140ac3eced8aab7ac5
---- !u!114 &-4791021009986252734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Chalk
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 1f9384047c8bfb54fb24daf9f0aff5d6
---- !u!114 &-3663379716694451316
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Duster
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 21600df5733e6dc4b959b667ca5e8137
---- !u!114 &-2846135090756357703
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: ~MISSING~SphereParent
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 8b059a4c1f68c2d4d83cc24e54017765
 --- !u!114 &-2760612021914292270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,34 +112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 899e91a14d0ac0a49a6a33934ed14e82
---- !u!114 &-2150002299703834792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: AirHockeyPad2
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: e98a6fd730213c4499b96194286c191c
---- !u!114 &-1292895422205937297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: AirHockeyPad1
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 0452617d42b000f47815c2350a1792d7
 --- !u!114 &-465291207295852542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -320,20 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: -225830702, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: NetworkPrefabAssetContainer
   m_EditorClassIdentifier: 
---- !u!114 &557599753300332840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: StartPosition_1
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 8c94a802fd3bf784bb38c8456742b544
 --- !u!114 &910383922038800290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,34 +194,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 15e42bb3b0e6cbe41a4bd2e953671d87
---- !u!114 &2133543461424415028
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Board
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 9093b4c5352787b4aa02c37ad9bc60f2
---- !u!114 &2183573832511422491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: ~MISSING~Beads
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 188cf8a1864251947aea22e555b7264c
 --- !u!114 &2411830450558927096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -502,20 +306,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 6931b98c76d5778429fbf20babb9dbee
---- !u!114 &4275246053027587614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: AirHockeyPuck
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 0e538ebd30c07e241b8403f96db31671
 --- !u!114 &4315611604675948342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -544,20 +334,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 0bf2b31f27613f845a65b0b94347e08e
---- !u!114 &5584231173172147318
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: CardDispenser
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: d1d09798363f9c84f98605b7e2336eb5
 --- !u!114 &5809567771645410385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -572,34 +348,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: a7e996aabfe873348b3886526d1b6e39
---- !u!114 &7108205787937742985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: CardPrefabNet
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: a88169d6da49dba4aad3d6bd1e3e9c84
---- !u!114 &7187231180766291887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: Player
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: 8e0d70155b246004288c5cd443930c28
 --- !u!114 &7196997976285107894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,34 +390,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AssetGuid:
     RawGuidValue: 3251faa3ac8a66642bf6f9e8433499da
---- !u!114 &8828464929852363604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -571403812, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: CardDispenserWithButtonV2
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: b74ac583b372c24469a26d70d9b048c1
---- !u!114 &8837048411717404672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 929548324, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: ~MISSING~Sphere
-  m_EditorClassIdentifier: 
-  AssetGuid:
-    RawGuidValue: b1e6f4430b46c864f8ac596aae92be65
 --- !u!114 &9142010562876797548
 MonoBehaviour:
   m_ObjectHideFlags: 0

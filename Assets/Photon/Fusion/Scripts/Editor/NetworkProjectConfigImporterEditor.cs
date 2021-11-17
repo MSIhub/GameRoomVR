@@ -2,6 +2,7 @@
 
   using System;
   using System.IO;
+  using System.Linq;
   using UnityEditor;
   using UnityEditor.AssetImporters;
   using UnityEngine;
@@ -9,7 +10,6 @@
   [CustomEditor(typeof(NetworkProjectConfigImporter))]
   internal class NetworkProjectConfigImporterEditor : ScriptedImporterEditor {
 
-    private string _expandedHelpName;
     private Exception _initializeException;
 
     private static bool _versionExpanded;
@@ -26,20 +26,19 @@
         if (_initializeException != null) {
           EditorGUILayout.HelpBox(_initializeException.ToString(), MessageType.Error, true);
         } else {
-          VersionInfoGUI();
+
+          FusionEditorGUI.InjectPropertyDrawers(extraDataSerializedObject);
+          FusionEditorGUI.ScriptPropertyField(extraDataSerializedObject);
+
+          VersionInfoGUI(); 
 
           using (new EditorGUI.DisabledScope(HasModified())) {
             if (GUILayout.Button("Rebuild Object Table (Slow)")) {
               NetworkProjectConfigUtilities.RebuildObjectTable();
             }
-
-            if (GUILayout.Button("Import Scenes From Build Settings")) {
-              NetworkProjectConfigUtilities.ImportScenesFromBuildSettings();
-            }
           }
 
-          //InlineHelpExtensions.OnInpsectorGUICustom(serializedObject, target, ref _expandedHelpName);
-          InlineHelpExtensions.OnInpsectorGUICustom(extraDataSerializedObject, target, ref _expandedHelpName);
+          FusionEditorGUI.DrawDefaultInspector(extraDataSerializedObject, drawScript: false);
         }
       } finally {
         ApplyRevertGUI();
@@ -95,6 +94,10 @@
         var extra = (NetworkProjectConfigAsset)extraData;
         extra.Config = NetworkProjectConfigImporter.LoadConfigFromFile(importer.assetPath);
         extra.PrefabAssetsContainerPath = importer.PrefabAssetsContainerPath;
+        extra.Prefabs = AssetDatabase.LoadAllAssetsAtPath(importer.assetPath)
+          .OfType<NetworkPrefabSourceUnityBase>()
+          .ToArray();
+
         _initializeException = null;
       } catch (Exception ex) {
         _initializeException = ex;

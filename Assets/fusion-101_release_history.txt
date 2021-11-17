@@ -1,0 +1,12 @@
+# 0.8.0
+
+## Build 12 (Oct 16, 2021)
+
+**What's New**
+
+- .gitignore file
+
+**Changes**
+
+- RPC sample will not use the input struct to sync the "rpc key". Instead the RPC is called directly in Player.Update()
+

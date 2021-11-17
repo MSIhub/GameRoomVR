@@ -4,6 +4,11 @@
         <name>Fusion.Runtime</name>
     </assembly>
     <members>
+        <member name="T:Fusion.PageShiftValues">
+            <summary>
+            Page Bit Shift Lookup Table
+            </summary>
+        </member>
         <member name="T:Fusion.AccuracyAttribute">
             <summary>
             Additional companion attribute to NetworkedAttribute, which indicates how floats should be compressed.
@@ -307,6 +312,17 @@
             Describes the total number of WORDs a <see cref="!:Fusion.INetworkedStruct"/> uses.
             </summary>
         </member>
+        <member name="T:Fusion.NormalizedRectAttribute">
+            <summary>
+            Enables a special inspector drawer for Unity Rect type, specially designed for editing RectTransforms using normalized values.
+            </summary>
+        </member>
+        <member name="M:Fusion.NormalizedRectAttribute.#ctor(System.Boolean)">
+            <summary>
+            Constructor for <see cref="T:Fusion.NormalizedRectAttribute"/>. InvertY inverts Y handling, for RectTransforms which treat lowerRight as origin, rather than upper left.
+            </summary>
+            <param name="invertY"></param>
+        </member>
         <member name="T:Fusion.Pow2SliderAttribute">
             <summary>
             Attribute used to mark a field that needs to change based on an exponent
@@ -316,6 +332,21 @@
         <member name="F:Fusion.Pow2SliderAttribute.AllowZero">
             <summary>
             Determines if a slider power of 0 results in an actual value of one, or zero.
+            </summary>
+        </member>
+        <member name="P:Fusion.ScriptHelpAttribute.Url">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Fusion.ScriptHelpAttribute.BackColor">
+            <summary>
+            Color of the inspector header for this component type. None indicates no header graphic should be used.
+            </summary>
+        </member>
+        <member name="P:Fusion.ScriptHelpAttribute.Icon">
+            <summary>
+            Icon used for the inspector header for this component type. None indicates no header graphic should be used.
             </summary>
         </member>
         <member name="T:Fusion.Units">
@@ -598,6 +629,16 @@
             Signal if the local peer will try or accept connections using NAT Punch
             </summary>
         </member>
+        <member name="P:Fusion.CloudServices.CustomSTUNServer">
+            <summary>
+            Custom STUN Server
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServices.NATType">
+            <summary>
+            Exposes the current NAT Type from the local Peer
+            </summary>
+        </member>
         <member name="M:Fusion.CloudServices.#ctor(Fusion.NetworkRunner)">
             <summary>
             Builds a new CloudService reference
@@ -609,7 +650,7 @@
             Update and perform all pending actions related to the Photon Cloud communication
             </summary>
         </member>
-        <member name="M:Fusion.CloudServices.ConnectToCloud">
+        <member name="M:Fusion.CloudServices.ConnectToCloud(Fusion.Photon.Realtime.AuthenticationValues)">
             <summary>
             Connect the local peer to Photon Cloud using an async process.
             </summary>
@@ -660,18 +701,6 @@
             </summary>
             <returns>Async Task of the disconnect from Photon Cloud process. Can be used to wait for the process to be finished</returns>
         </member>
-        <member name="M:Fusion.CloudServices.QueryReflexiveInfo">
-            <summary>
-            Run the STUN Service to retrieve the current Reflexive Addresses of the local peer
-            </summary>
-            <returns>Running Task of the STUN Query Procedure</returns>
-        </member>
-        <member name="M:Fusion.CloudServices.UpdateInitializeArgs(Fusion.NetworkRunnerInitializeArgs)">
-            <summary>
-            Update the internal <see cref="T:Fusion.NetworkRunnerInitializeArgs"/> used to start the Fusion Runner
-            </summary>
-            <param name="newArgs">New arguments</param>
-        </member>
         <member name="M:Fusion.CloudServices.OnInternalConnectionAttempt(Fusion.Sockets.NetConnection*,System.Int32,System.Int32,System.Boolean@,Fusion.Sockets.NetAddress@)">
             <summary>
             Callback fire on every connection attempt with a remote Server.
@@ -685,24 +714,10 @@
             <param name="shouldChange">Flag if target EndPoint should change</param>
             <param name="newAddress">New target EndPoint</param>
         </member>
-        <member name="M:Fusion.CloudServices.SendPing(Fusion.Sockets.NetAddress)">
+        <member name="M:Fusion.CloudServices.Dispose">
             <summary>
-            Send a "ping" to an EndPoint
+            Disposes the current <see cref="T:Fusion.CloudServices"/>
             </summary>
-            <param name="netAddress">EndPoint to send the ping</param>
-            <returns>True if the Ping was sent, false otherwise</returns>
-        </member>
-        <member name="M:Fusion.CloudServices.PerformPendingPings">
-            <summary>
-            Send pings to remote clients during the NAT Punch process.
-            This is necessary to map the remote client endpoint on the local NAT of the server.
-            </summary>
-        </member>
-        <member name="M:Fusion.CloudServices.CheckSubnet(Fusion.Sockets.NetAddress)">
-            <summary>
-            Check if Remote Private EndPoint appears to be in the same Subnet
-            </summary>
-            <returns>True if in same Subnet</returns>
         </member>
         <member name="M:Fusion.CloudServices.UpdateSessionInfo">
             <summary>
@@ -719,23 +734,6 @@
             Callback invoked when the Room list is updated with data from the Cloud
             </summary>
             <param name="roomList">New List of <see cref="T:Fusion.Photon.Realtime.RoomInfo"/></param>
-        </member>
-        <member name="M:Fusion.CloudServices.ConvertToSessionInfo(Fusion.Photon.Realtime.RoomInfo)">
-            <summary>
-            Converts a <see cref="T:Fusion.Photon.Realtime.RoomInfo"/> to a <see cref="T:Fusion.SessionInfo"/>
-            </summary>
-            <param name="roomInfo"><see cref="T:Fusion.Photon.Realtime.RoomInfo"/> ref</param>
-            <returns><see cref="T:Fusion.SessionInfo"/> ref</returns>
-        </member>
-        <member name="M:Fusion.CloudServices.InitRelayLogs">
-            <summary>
-            Initilize the Log system from the Realtime SDK to use the Fusion Log System
-            </summary>
-        </member>
-        <member name="M:Fusion.CloudServices.Dispose">
-            <summary>
-            Disposes the current <see cref="T:Fusion.CloudServices"/>
-            </summary>
         </member>
         <member name="M:Fusion.CloudServices.SendJoinMessage">
             <summary>
@@ -800,6 +798,107 @@
             </summary>
             <returns>True if the Join Confirmation was received, false otherwise</returns>
         </member>
+        <member name="M:Fusion.CloudServices.QueryReflexiveInfo">
+            <summary>
+            Run the STUN Service to retrieve the current Reflexive Addresses of the local peer
+            </summary>
+            <returns>Running Task of the STUN Query Procedure</returns>
+        </member>
+        <member name="M:Fusion.CloudServices.UpdateInitializeArgs(Fusion.NetworkRunnerInitializeArgs)">
+            <summary>
+            Update the internal <see cref="T:Fusion.NetworkRunnerInitializeArgs"/> used to start the Fusion Runner
+            </summary>
+            <param name="newArgs">New arguments</param>
+        </member>
+        <member name="M:Fusion.CloudServices.StartReversePing(Fusion.Sockets.NetAddress)">
+            <summary>
+            Reverse ping will send Empty UDP Packets to the RemoteAddr in order to setup the Routing Table
+            on the current NAT of the Server, forcing it to allow packages from the remote client to be received
+            </summary>
+            <param name="remoteAddr">Remove EndPoint to ping</param>
+        </member>
+        <member name="M:Fusion.CloudServices.SendPing(Fusion.Sockets.NetAddress)">
+            <summary>
+            Send a "ping" to an EndPoint
+            </summary>
+            <param name="netAddress">EndPoint to send the ping</param>
+            <returns>True if the Ping was sent, false otherwise</returns>
+        </member>
+        <member name="M:Fusion.CloudServices.CheckSubnet(Fusion.Sockets.NetAddress)">
+            <summary>
+            Check if Remote Private EndPoint appears to be in the same Subnet
+            </summary>
+            <returns>True if in same Subnet</returns>
+        </member>
+        <member name="M:Fusion.CloudServices.InitRelayLogs">
+            <summary>
+            Initilize the Log system from the Realtime SDK to use the Fusion Log System
+            </summary>
+        </member>
+        <member name="M:Fusion.CloudServices.ConvertToSessionInfo(Fusion.Photon.Realtime.RoomInfo)">
+            <summary>
+            Converts a <see cref="T:Fusion.Photon.Realtime.RoomInfo"/> to a <see cref="T:Fusion.SessionInfo"/>
+            </summary>
+            <param name="roomInfo"><see cref="T:Fusion.Photon.Realtime.RoomInfo"/> ref</param>
+            <returns><see cref="T:Fusion.SessionInfo"/> ref</returns>
+        </member>
+        <member name="T:Fusion.CloudServicesMetadata">
+            <summary>
+            Holds information about the local peer used to Join/Start/Connect to a remote Peer
+            using the Photon Cloud as backend
+            </summary>
+        </member>
+        <member name="F:Fusion.CloudServicesMetadata.JOIN_PM_TIMEOUT">
+            <summary>
+            Timeout between sending a <see cref="T:Fusion.Protocol.Join"/> Request and receive a Join Confirmation
+            </summary>
+        </member>
+        <member name="F:Fusion.CloudServicesMetadata.LobbyClientServer">
+            <summary>
+            Client Server Lobby
+            </summary>
+        </member>
+        <member name="F:Fusion.CloudServicesMetadata.LobbyShared">
+            <summary>
+            Shared Lobby
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.RunnerInitializeArgs">
+            <summary>
+            Reference to the initialization arguments set by the user.
+            They are used to start the Fusion Runner
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.CurrentPunchStage">
+            <summary>
+            Connection Stage related to the current EndPoint Type used by the client to connect a remote server
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.CurrentJoinStage">
+            <summary>
+            Describes the current state of the Join process
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.CurrentProtocolMessageVersion">
+            <summary>
+            Describe the current protocol version we are using to communicate with the Plugin
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.RemoteReflexiveInfo">
+            <summary>
+            Remote Server Reflexive Info. Stores private and public EndPoint of the remote server.
+            </summary>
+        </member>
+        <member name="P:Fusion.CloudServicesMetadata.LocalReflexiveInfo">
+            <summary>
+            Local Reflexive Info. Stores private and public EndPoint of the local peer.
+            </summary>
+        </member>
+        <member name="F:Fusion.CloudServicesMetadata.ScheduledRequests">
+            <summary>
+            Stores requests sent by the plugin
+            </summary>
+        </member>
         <member name="T:Fusion.ScheduledRequests">
             <summary>
             Define a list of Requests that may be asked by the Plugin Server
@@ -818,11 +917,6 @@
         <member name="F:Fusion.ScheduledRequests.WaitForReflexiveInfo">
             <summary>
             Request to Wait for Remote Reflexive Info
-            </summary>
-        </member>
-        <member name="F:Fusion.ScheduledRequests.ForceRelay">
-            <summary>
-            Force a Relayed Connection
             </summary>
         </member>
         <member name="T:Fusion.NATPunchStage">
@@ -906,64 +1000,6 @@
         <member name="F:Fusion.PeerPing.ReflexiveInfo">
             <summary>
             Remote Client Reflexive Info, used to getter the Public EndPoint to send the ping
-            </summary>
-        </member>
-        <member name="T:Fusion.CloudServicesMetadata">
-            <summary>
-            Holds information about the local peer used to Join/Start/Connect to a remote Peer
-            using the Photon Cloud as backend
-            </summary>
-        </member>
-        <member name="F:Fusion.CloudServicesMetadata.JOIN_PM_TIMEOUT">
-            <summary>
-            Timeout between sending a <see cref="T:Fusion.Protocol.Join"/> Request and receive a Join Confirmation
-            </summary>
-        </member>
-        <member name="F:Fusion.CloudServicesMetadata.LobbyClientServer">
-            <summary>
-            Client Server Lobby
-            </summary>
-        </member>
-        <member name="F:Fusion.CloudServicesMetadata.LobbyShared">
-            <summary>
-            Shared Lobby
-            </summary>
-        </member>
-        <member name="P:Fusion.CloudServicesMetadata.RunnerInitializeArgs">
-            <summary>
-            Reference to the initialization arguments set by the user.
-            They are used to start the Fusion Runner
-            </summary>
-        </member>
-        <member name="P:Fusion.CloudServicesMetadata.CurrentPunchStage">
-            <summary>
-            Connection Stage related to the current EndPoint Type used by the client to connect a remote server
-            </summary>
-        </member>
-        <member name="P:Fusion.CloudServicesMetadata.CurrentJoinStage">
-            <summary>
-            Describes the current state of the Join process
-            </summary>
-        </member>
-        <member name="P:Fusion.CloudServicesMetadata.RemoteReflexiveInfo">
-            <summary>
-            Remote Server Reflexive Info. Stores private and public EndPoint of the remote server.
-            </summary>
-        </member>
-        <member name="P:Fusion.CloudServicesMetadata.LocalReflexiveInfo">
-            <summary>
-            Local Reflexive Info. Stores private and public EndPoint of the local peer.
-            </summary>
-        </member>
-        <member name="F:Fusion.CloudServicesMetadata.ScheduledRequests">
-            <summary>
-            Stores requests sent by the plugin
-            </summary>
-        </member>
-        <member name="F:Fusion.CloudServicesMetadata.PeersToPing">
-            <summary>
-            List of Peer the Server must send pings.
-            This is part of the NAT Punch implementation.
             </summary>
         </member>
         <member name="T:Fusion.ScheduledRequestsExt">
@@ -1097,16 +1133,6 @@
             Interpolation will not be calculated nor applied.
             </summary>
         </member>
-        <member name="P:Fusion.NetworkBehaviour.EditorHeaderBackColor">
-            <summary>
-            Color of the inspector header for this component type. None indicates no header graphic should be used.
-            </summary>
-        </member>
-        <member name="P:Fusion.NetworkBehaviour.EditorHeaderIcon">
-            <summary>
-            Icon used for the inspector header for this component type. None indicates no header graphic should be used.
-            </summary>
-        </member>
         <member name="F:Fusion.NetworkBehaviour.Ptr">
             <summary>
             Pointer to the allocated memory associated with this Object. 
@@ -1115,6 +1141,11 @@
         <member name="F:Fusion.NetworkBehaviour.ObjectIndex">
             <summary>
             The index of this <see cref="T:Fusion.NetworkBehaviour"/>, in the <see cref="F:Fusion.NetworkObject.NetworkedBehaviours"/> array.
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkBehaviour._interpolationDataSource">
+            <summary>
+            Indicates whether the state authority snapshot tick data, or prediction tick data (if available in the current mode for the current peer) should be used for interpolation.
             </summary>
         </member>
         <member name="P:Fusion.NetworkBehaviour.InterpolationDataSource">
@@ -1126,6 +1157,16 @@
             <summary>
             Override this value for custom memory allocations. 
             This is for advanced use cases only, and cannot be used if <see cref="T:Fusion.NetworkedAttribute"/> is used in the derived class.  
+            </summary>
+        </member>
+        <member name="M:Fusion.NetworkBehaviour.CopyBackingFieldsToState">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Fusion.NetworkBehaviour.CopyStateToBackingFields">
+            <summary>
+            
             </summary>
         </member>
         <member name="M:Fusion.NetworkBehaviour.Spawned">
@@ -1146,6 +1187,23 @@
             <param name="data">The returned values.</param>
             <param name="force">Force interpolation to the current <see cref="T:Fusion.Simulation"/>s time frame</param>
             <returns>True valid state data was returned.</returns>
+        </member>
+        <member name="M:Fusion.NetworkBehaviour.GetInterpolationData(Fusion.InterpolationData@,System.Boolean@)">
+            <summary>
+            Get 'To' and 'From' states, and the Alpha (t) values needed for interpolation.
+            </summary>
+            <param name="data">The returned values.</param>
+            <param name="predicted">
+            If the interpolation data is in the predicted time frame (true) or between snapshots (false),
+            according to the <see cref="P:Fusion.NetworkBehaviour.InterpolationDataSource"/>.
+            </param>
+            <returns>True valid state data was returned.</returns>
+        </member>
+        <member name="M:Fusion.NetworkBehaviour.IsInterpolationDataPredicted">
+            <summary>
+            If the behaviour data should be interpolated between latest predicted states or between snapshots.
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Fusion.NetworkBehaviour.OnChangeClearAll">
             <summary>
@@ -1563,7 +1621,7 @@
             Only used when <see cref="F:Fusion.NetworkProjectConfig.PhysicsEngines.Physics3D"/> == true.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkRigidbodyBase._syncDragAndMass">
+        <member name="F:Fusion.NetworkRigidbodyBase.SyncDragAndMass">
             <summary>
             Enables syncing of Drag, AngularDrag and Mass values.
             </summary>
@@ -1580,6 +1638,11 @@
             Reference of the Rigidbody associated with this <see cref="T:Fusion.NetworkRigidbody"/>.
             </summary>
         </member>
+        <member name="M:Fusion.NetworkRigidbody.ReadBufferAndConvertToWorldSpace(System.Int32)">
+            <summary>
+            Reads the TRS values from state buffer for this tick, and converts them to world space if using <see cref="F:Fusion.Spaces.Local"/>.
+            </summary>
+        </member>
         <member name="T:Fusion.NetworkRigidbody2D">
             <summary>
             Replicates a Unity Rigidbody state from the <see cref="P:Fusion.NetworkObject.StateAuthority"/> to all other peers.
@@ -1590,6 +1653,11 @@
         <member name="P:Fusion.NetworkRigidbody2D.Rigidbody">
             <summary>
             Reference of the Rigidbody associated with this <see cref="T:Fusion.NetworkRigidbody"/>.
+            </summary>
+        </member>
+        <member name="M:Fusion.NetworkRigidbody2D.ReadBufferAndConvertToWorldSpace(System.Int32)">
+            <summary>
+            Reads the TRS values from state buffer for this tick, and converts them to world space if using <see cref="F:Fusion.Spaces.Local"/>.
             </summary>
         </member>
         <member name="T:Fusion.NetworkTransform">
@@ -1609,14 +1677,29 @@
             The Ptr offset location of the rotation values in allocated memory.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkTransform.SCALELCL_OFFSET">
+        <member name="F:Fusion.NetworkTransform.SCALE_OFFSET">
             <summary>
             The Ptr offset location of the local scale values in allocated memory.
             </summary>
         </member>
+        <member name="F:Fusion.NetworkTransform.TELE_POS_OFFSET">
+            <summary>
+            The Ptr offset for the secondary teleport position information. This position is used as the lerp TO target leading up to the teleport. 
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkTransform.TELE_ROT_OFFSET">
+            <summary>
+            The Ptr offset for the secondary teleport rotation information. This rotation is used as the lerp TO target leading up to the teleport. 
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkTransform.TELE_SCL_OFFSET">
+            <summary>
+            The Ptr offset for the secondary teleport scale information. This scale is used as the lerp TO target leading up to the teleport. 
+            </summary>
+        </member>
         <member name="F:Fusion.NetworkTransform.TELEPORT_OFFSET">
             <summary>
-            The Ptr offset of the Tick value for the next teleport action in allocated memory.
+            The Ptr offset of the teleport increment value. Increases by one every tick a teleport occurs.
             </summary>
         </member>
         <member name="F:Fusion.NetworkTransform.BASE_WORD_COUNT">
@@ -1629,26 +1712,53 @@
             Gets the Ptr offset of the Position values in allocated memory.
             </summary>
         </member>
-        <member name="P:Fusion.NetworkTransform.TeleportFrame">
+        <member name="F:Fusion.NetworkTransform.SyncScale">
+            <summary>
+            Indicates if Scale should be included in Transform sync and interpolation (when enabled).
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkTransform.Space">
+            <summary>
+            Select if the synced state uses World or Local position and rotation values.
+            </summary>
+        </member>
+        <member name="P:Fusion.NetworkTransform.TeleportCounter">
             <summary>
             The frame of the next Teleport action.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkTransform._lastInterpolatedAtTime">
+        <member name="F:Fusion.NetworkTransform.LastInterpolatedAtTime">
             <summary>
             Stores the last UnityEngine.Time.time when interpolation was run for this component. Used to ensure interpolation is only run once per screen refresh.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.Teleport(System.Boolean)">
+        <member name="F:Fusion.NetworkTransform._queuedTeleport">
             <summary>
-            Notifies this <see cref="T:Fusion.NetworkTransform"/> that the object's transform values should be treated as a teleport.
-            Teleport indicates that objects should not lerp from the previous state to this new state.
+            Most recent unconsumed Teleport() command.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.Teleport(UnityEngine.Vector3,System.Nullable{UnityEngine.Quaternion},System.Boolean)">
+        <member name="M:Fusion.NetworkTransform.Teleport(System.Nullable{UnityEngine.Vector3},System.Nullable{Fusion.Rotation},System.Nullable{UnityEngine.Vector3},System.Boolean,System.Nullable{UnityEngine.Vector3},System.Nullable{UnityEngine.Vector3})">
             <summary>
-            Notifies that the passed position (and optional rotation) values should be applied to the transform, and be treated as a teleport.
-            Teleport indicates that objects should not lerp from the previous state to this new state.
+            Teleport indicates that objects should not interpolate from the previous state to this new state.
+            </summary>
+            <param name="position">Sets the position or rigidbody.position to this value prior to state sync.</param>
+            <param name="rotation">If not null, Sets the position or rigidbody.rotation to this value prior to state sync. 
+            Accepts a Quaternion, Euler (Vector3), or 2d Z value (float)</param>
+            <param name="reset">Resets velocity, angular velocity, and controller states to default if applicable. 
+            Typically set to true if teleport is used for a respawn.</param>
+            <param name="velocity">Sets the velocity after teleport. Ignored if this is not a Rigidbody or CharacterController. Overrides reset.</param>
+            <param name="angularVelocity">Sets the angular velocity after teleport. Ignored if this is not a Rigidbody. Overrides reset.</param>
+        </member>
+        <member name="M:Fusion.NetworkTransform.PreTeleport">
+            <summary>
+            Captures the current state as the interpolation lerp TO target leading up to a teleport, and flags the next tick as a teleport.
+            Call this BEFORE making any TRS changes to the synced transform which represent the teleport.
+            For continuously moving rigidbodies, it is preferable to call the explicit Teleport() method.
+            </summary>
+        </member>
+        <member name="M:Fusion.NetworkTransform.ApplyQueuedTeleport">
+            <summary>
+            Applies the latest unconsumed Teleport() call after the Forward simulation is complete, and before the TRS state is captured.
             </summary>
         </member>
         <member name="T:Fusion.NetworkTransformAnchor">
@@ -1661,6 +1771,11 @@
         <member name="F:Fusion.NetworkTransformAnchor.PARENT_OFFSET">
             <summary>
             The Ptr offset for the memory position of the Parent info. The parenting info is 2 words (8 bytes).
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkTransformAnchor.TELE_PAR_OFFSET">
+            <summary>
+            The Ptr offset for the secondary teleport parent information. This parent is used by the lerp TO target leading up to the teleport. 
             </summary>
         </member>
         <member name="F:Fusion.NetworkTransformAnchor.ANCHOR_WORD_COUNT">
@@ -1688,17 +1803,30 @@
             Should be a non-physics GameObject. Typically a child of this GameObject without colliders, or a separate GameObject without colliders.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkTransformAnchor._space">
+        <member name="F:Fusion.NetworkTransformAnchor.DetachInterpTarget">
             <summary>
-            Select if the synced state uses World or Local position and rotation values.
+            EXPERIMENTAL: To improve interpolation of scaling, the interpolation target is detached from its <see cref="T:Fusion.NetworkObject"/>.
+            Only check this if you are syncing scaling. 
+            When re-parenting, this component's <see cref="P:Fusion.NetworkTransformAnchor.InterpolationTarget"/> will re-parent to the parent's <see cref="P:Fusion.NetworkTransformAnchor.InterpolationTarget"/>.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkTransformAnchor._transform">
+        <member name="F:Fusion.NetworkTransformAnchor.SyncParent">
+            <summary>
+            Indicates if Transform.parent will be synced. Parent syncing requires the parent of this object either be null or have a <see cref="T:Fusion.NetworkTransformAnchor"/> component.
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkTransformAnchor.Transform">
             <summary>
             Cached GameObject.transform reference.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransformAnchor.GetParentsForInterpolation(Fusion.NetworkTransformAnchor,Fusion.NetworkRunner,Fusion.InterpolationData@,System.Boolean@,System.Boolean@)">
+        <member name="M:Fusion.NetworkTransformAnchor.Copy2EngineAnchorState">
+            <summary>
+            
+            </summary>
+            <returns>Returns true if the parent has changed.</returns>
+        </member>
+        <member name="M:Fusion.NetworkTransformAnchor.GetParentsForInterpolation(Fusion.NetworkTransformAnchor,Fusion.NetworkRunner,System.Boolean,Fusion.InterpolationData@,System.Boolean@,System.Boolean@)">
             <summary>
             If using local space, tries to get the To and From parents. 
             If valid parents are found, they are forced to run Render() - as parents should always interpolate before children.
@@ -1706,14 +1834,6 @@
             <param name="fromParentIsValid">If a parent value has been serialized. Invalid means unknown parent.</param>
             <param name="toParentIsValid">If a parent value has been serialized. Invalid means unknown parent.</param>
             <returns>(From Parent, To Parent)</returns>
-        </member>
-        <member name="M:Fusion.NetworkTransformAnchor.GetToParentForInterpolation(Fusion.NetworkTransformAnchor,Fusion.NetworkRunner,Fusion.InterpolationData@,System.Boolean@)">
-            <summary>
-            Returns the networked value for parent <see cref="T:Fusion.NetworkTransformAnchor"/>, for the To state only. (Teleports only require the To).
-            If valid parent is found, it is forced to run Render() - as parents should always interpolate before children.
-            </summary>
-            <param name="toParentIsValid">If a parent value has been serialized. Invalid means unknown parent.</param>
-            <returns></returns>
         </member>
         <member name="T:Fusion.OrderAttribute">
             <summary>
@@ -1930,16 +2050,6 @@
             Base class for a Fusion aware Behaviour (derived from UnityEngine.MonoBehavour).
             Objects derived from this object can be associated with a <see cref="T:Fusion.NetworkRunner"/> and <see cref="T:Fusion.Simulation"/>.
             If a parent <see cref="T:Fusion.NetworkObject"/> is found, this component will also be associated with that network entity.
-            </summary>
-        </member>
-        <member name="P:Fusion.SimulationBehaviour.EditorHeaderBackColor">
-            <summary>
-            Color of the inspector header for this component type. None indicates no header graphic should be used.
-            </summary>
-        </member>
-        <member name="P:Fusion.SimulationBehaviour.EditorHeaderIcon">
-            <summary>
-            Icon used for the inspector header for this component type. None indicates no header graphic should be used.
             </summary>
         </member>
         <member name="F:Fusion.SimulationBehaviour.Runner">
@@ -2594,26 +2704,6 @@
             This allows for components that work both in Unity, as well as the Photon relays.
             </summary>
         </member>
-        <member name="P:Fusion.Behaviour.EditorHeaderClickTarget">
-            <summary>
-            Indicates the target when the header graphic is clicked. Typically a string URL. Can also be used to ping an asset.
-            </summary>
-        </member>
-        <member name="P:Fusion.Behaviour.EditorHeaderName">
-            <summary>
-            The name that will be displayed on the inspector header graphic for this component. Null will use the component name.
-            </summary>
-        </member>
-        <member name="P:Fusion.Behaviour.EditorHeaderBackColor">
-            <summary>
-            Color of the inspector header for this component type. None indicates no header graphic should be used.
-            </summary>
-        </member>
-        <member name="P:Fusion.Behaviour.EditorHeaderIcon">
-            <summary>
-            Icon used for the inspector header for this component type. None indicates no header graphic should be used.
-            </summary>
-        </member>
         <member name="P:Fusion.Behaviour.IsEnabled">
             <summary>
             Wrapper for Monobehaviour.enabled
@@ -2847,6 +2937,32 @@
             </summary>
             <param name="frameId"></param>
         </member>
+        <member name="T:Fusion.Rotation">
+            <summary>
+            Wrapper class which unifies rotation handling of Quaternion, Euler or Z-only (used by 2D).
+            Can store a Quaternion, Euler or Z-axis (for 2d rotation), and implicitly casts between those types.
+            </summary>
+        </member>
+        <member name="F:Fusion.Rotation.Type">
+            <summary>
+            Indicates of the stored rotation is a Quaternion or Euler type.
+            </summary>
+        </member>
+        <member name="P:Fusion.Rotation.AsQuaternion">
+            <summary>
+            Returns the rotation as a Quaternion. If original type was a Euler or Rotation Z-axis only, that is converted to a Quaternion.
+            </summary>
+        </member>
+        <member name="P:Fusion.Rotation.AsEuler">
+            <summary>
+            Returns the rotation as a Euler. If original type was Quaternion, that is converted to a Euler.
+            </summary>
+        </member>
+        <member name="P:Fusion.Rotation.AsFloatZ">
+            <summary>
+            Returns the z-axis value of the rotation. If original type was Quaternion, first converts to a Euler then returns the z value of that Euler.
+            </summary>
+        </member>
         <member name="P:Fusion.SceneRef.None">
             <summary>
             None scene
@@ -2902,11 +3018,6 @@
         <member name="F:Fusion.NetworkObject.Runner">
             <summary>
             The <see cref="T:Fusion.NetworkRunner"/> this entity is associated with.
-            </summary>
-        </member>
-        <member name="F:Fusion.NetworkObject.AoiMode">
-            <summary>
-            
             </summary>
         </member>
         <member name="F:Fusion.NetworkObject.DefaultPropertyGroups">
@@ -2967,6 +3078,11 @@
             </summary>
         </member>
         <member name="P:Fusion.NetworkObject.IsPredictedSpawn">
+            <summary>
+            If this is a predicted spawned object
+            </summary>
+        </member>
+        <member name="P:Fusion.NetworkObject.IsPredictedDespawn">
             <summary>
             If this is a predicted spawned object
             </summary>
@@ -3040,10 +3156,15 @@
             Removes state authority from whichever player has it for this object, this gives state authority back to the server.
             </summary>
         </member>
+        <member name="T:Fusion.NetworkPrefabRef">
+            <summary>
+            A decoupled <see cref="T:Fusion.NetworkObject"/> prefab reference. Internally stored as a GUID.
+            </summary>
+        </member>
         <member name="T:Fusion.NetworkPrefabAsset">
             <summary>
             Represents a base class for "prefab assets" - assets that point to a prefab and provide a way to load them.
-            </summary>
+            </summary> 
         </member>
         <member name="F:Fusion.NetworkPrefabAsset.AssetGuid">
             <summary>
@@ -3071,16 +3192,11 @@
             Data pointer to the first word of this objects data block
             </summary>
         </member>
-        <member name="T:Fusion.NetworkPrefabSource">
-            <summary>
-            Represents a base class for "prefab assets" - assets that point to a prefab and provide a way to load them.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkPrefabTable.TryAdd(Fusion.NetworkPrefabSource.EntryBase,Fusion.NetworkPrefabId@)">
+        <member name="M:Fusion.NetworkPrefabTable.TryAdd(Fusion.NetworkObjectGuid,Fusion.INetworkPrefabSource,Fusion.NetworkPrefabId@)">
             <summary>
             Adds prefab to the table and assigns it an id.
             </summary>
-            <param name="prefab"></param>
+            <param name="source"></param>
             <param name="id">The id assigned to the prefab (if returns true) or id of the prefab with the same guid that has already been added.</param>
             <returns>True if the prefab prefab had unique guid and was added.</returns>
         </member>
@@ -3205,7 +3321,7 @@
             <summary>
             Options for how physics is simulated on clients.
             <para>
-            <see cref="F:Fusion.NetworkProjectConfig.PhysicsModes.ServerOnly"/> - Clients do not predict remote objects, and render in their remote time frame (relative past).<br></br>
+            <see cref="F:Fusion.NetworkProjectConfig.PhysicsModes.ServerOnly"/> - Clients do not predict remote objects, and render in their remote time frame (relative past).<br/>
             <see cref="F:Fusion.NetworkProjectConfig.PhysicsModes.ClientPrediction"/> - Clients predict remote objects and have options for rendering them in local and/or remote time frames.
             </para>
             </summary>
@@ -3223,11 +3339,6 @@
         <member name="F:Fusion.NetworkProjectConfig.PeerMode">
             <summary>
             Setting for whether multiple peers can run per Unity instance (typically to allow easy testing of multiple peers inside of the editor).
-            </summary>
-        </member>
-        <member name="F:Fusion.NetworkProjectConfig.Scenes">
-            <summary>
-            Scenes registered with Fusion.
             </summary>
         </member>
         <member name="F:Fusion.NetworkProjectConfig.PhysicsEngine">
@@ -3260,6 +3371,18 @@
             The named global accuracies used by this project.
             </summary>
         </member>
+        <member name="F:Fusion.NetworkProjectConfig.AssembliesToWeave">
+            <summary>
+            Names of assemblies Fusion is going to weave. Not case sensetive.
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkProjectConfig.UseSerializableDictionary">
+            <summary>
+            Use Fusion.SerializableDictionary to store [Networked] dictionary properties initial value. If unchecked,
+            the weaver will emit System.Generic.Dictionary instead - a type that's not Unity-serializable, but custom
+            serializers (e.g. Odin) may support it.
+            </summary>
+        </member>
         <member name="M:Fusion.NetworkProjectConfig.Serialize(Fusion.NetworkProjectConfig)">
             <summary>
             Serialize the a NetworkProjectConfig into a JSON
@@ -3287,6 +3410,24 @@
         <member name="P:Fusion.NetworkProjectConfigAsset.FusionVersionInfo">
             <summary>
             Get the version information for the Fusion.Runntime.dll.
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkProjectConfigAsset.PrefabAssetsContainerPath">
+            <summary>
+            Path to <see cref="T:Fusion.NetworkPrefabAssetCollection"/> asset (created on demand if non-existent), which will serve as a host
+            for lightweight <see cref="T:Fusion.NetworkPrefabAsset"/> assets. They can be used to reference prefabs
+            alternatively to <see cref="T:Fusion.NetworkPrefabRef"/> and regular <see cref="T:Fusion.NetworkObject"/> references,
+            offering the best of two worlds: decoupling and Find References support.
+            <br/>
+            Suggested path: Assets/Photon/Fusion/User/NetworkPrefabAssetCollection.asset
+            </summary>
+        </member>
+        <member name="F:Fusion.NetworkProjectConfigAsset.Prefabs">
+            <summary>
+            An auto-generated list containing source information (e.g. Resource path, address, static reference) for all the prefabs that can be spawned, i.e. the ones with <see cref="T:Fusion.NetworkObject"/>
+            component and without <see cref="F:Fusion.NetworkObjectFlags.Ignore"/> flag.
+            <br/>
+            Additional prefabs can registered at runtime with <see cref="M:Fusion.NetworkPrefabTable.TryAdd(Fusion.NetworkObjectGuid,Fusion.INetworkPrefabSource,Fusion.NetworkPrefabId@)"/>.
             </summary>
         </member>
         <member name="T:Fusion.NetworkRunner">
@@ -3333,12 +3474,6 @@
             <summary>
             Get Fusion.Runtime.dll build type.
             </summary>
-        </member>
-        <member name="P:Fusion.NetworkRunner.EditorHeaderBackColor">
-            <inheritdoc />
-        </member>
-        <member name="P:Fusion.NetworkRunner.EditorHeaderIcon">
-            <inheritdoc />
         </member>
         <member name="T:Fusion.NetworkRunner.OnBeforeSpawned">
             <summary>
@@ -3496,10 +3631,16 @@
             Returns the Unity scene for this <see cref="T:Fusion.NetworkRunner"/>. With <see cref="F:Fusion.NetworkProjectConfig.PeerModes.Multiple"/>, multiple physics scenes may exist, and this getter should be used in place of SceneManager.GetActiveScene(). 
             </summary>
         </member>
-        <member name="P:Fusion.NetworkRunner.MultiPeerUnitySceneRoot">
+        <member name="P:Fusion.NetworkRunner.MultiplePeerUnityScene">
             <summary>
-            Returns the empty scene root object that all scene objects are re-parented to when running <see cref="F:Fusion.NetworkProjectConfig.PeerModes.Multiple"/>. Only valid when running <see cref="F:Fusion.NetworkProjectConfig.PeerModes.Multiple"/>.
+            A scene used when run in <see cref="F:Fusion.NetworkProjectConfig.PeerModes.Multiple"/> mode. 
             </summary>
+        </member>
+        <member name="M:Fusion.NetworkRunner.TryMultiplePeerAssignTempScene">
+            <summary>
+            
+            </summary>
+            <returns>false if the runner was on the temp scene already, true otherwise.</returns>
         </member>
         <member name="P:Fusion.NetworkRunner.Config">
             <summary>
@@ -3583,12 +3724,6 @@
             </summary>
             <param name="type"></param>
             <returns></returns>
-        </member>
-        <member name="M:Fusion.NetworkRunner.SetActiveScene(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="pathOrName"></param>
         </member>
         <member name="M:Fusion.NetworkRunner.SetActiveScene(Fusion.SceneRef)">
             <summary>
@@ -3851,6 +3986,11 @@
             Check the current Connection Type with the Remote Server
             </summary>
         </member>
+        <member name="P:Fusion.NetworkRunner.NATType">
+            <summary>
+            Exposes the current NAT Type from the local Peer
+            </summary>
+        </member>
         <member name="P:Fusion.NetworkRunner.IsSharedModeMasterClient">
             <summary>
             Signal if the Local Peer is in a Room and is the Room Master Client
@@ -3861,18 +4001,20 @@
             Responsible to manage the Photon Cloud related Services
             </summary>
         </member>
-        <member name="M:Fusion.NetworkRunner.ConnectToCloud">
+        <member name="M:Fusion.NetworkRunner.ConnectToCloud(Fusion.Photon.Realtime.AuthenticationValues)">
             <summary>
             Connect the local peer to Photon Cloud using an async process.
             </summary>
+            <param name="authentication">Authentication Values used to authenticate this peer</param>
             <returns>Async Task of the connect to Photon Cloud process. Can be used to wait for the process to be finished.</returns>
         </member>
-        <member name="M:Fusion.NetworkRunner.JoinSessionLobby(Fusion.SessionLobby,System.String)">
+        <member name="M:Fusion.NetworkRunner.JoinSessionLobby(Fusion.SessionLobby,System.String,Fusion.Photon.Realtime.AuthenticationValues)">
             <summary>
             Join the Peer to a specific Lobby, either a prebuild or a custom one
             </summary>
             <param name="sessionLobby">Lobby Type to Join</param>
             <param name="lobbyID">Lobby ID</param>
+            <param name="authentication">Authentication Values used to authenticate this peer</param>
             <returns>Async Task to Join a Session Lobby. Can be used to wait for the process to be finished.</returns>
         </member>
         <member name="M:Fusion.NetworkRunner.DisconnectFromCloud">
@@ -3924,7 +4066,13 @@
             <summary>
             Signal an update on the list of <see cref="P:Fusion.NetworkRunner.SessionInfo"/>
             </summary>
-            <param name="sessionList"></param>
+            <param name="sessionList">New Session Info</param>
+        </member>
+        <member name="M:Fusion.NetworkRunner.CustomAuthenticationResponse(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Signal an update on the list of <see cref="P:Fusion.NetworkRunner.SessionInfo"/>
+            </summary>
+            <param name="data">Custom Authentication Response</param>
         </member>
         <member name="T:Fusion.StartGameArgs">
             <summary>
@@ -3950,6 +4098,11 @@
         <member name="F:Fusion.StartGameArgs.ObjectPool">
             <summary>
             Object pool to use
+            </summary>
+        </member>
+        <member name="F:Fusion.StartGameArgs.SceneObjectProvider">
+            <summary>
+            
             </summary>
         </member>
         <member name="F:Fusion.StartGameArgs.Config">
@@ -3995,6 +4148,16 @@
         <member name="F:Fusion.StartGameArgs.CustomLobbyName">
             <summary>
             Session Custom Lobby to be published in
+            </summary>
+        </member>
+        <member name="F:Fusion.StartGameArgs.CustomSTUNServer">
+            <summary>
+            Specify a Custom STUN Server used to Resolve the peer Reflexive Addresses
+            </summary>
+        </member>
+        <member name="F:Fusion.StartGameArgs.AuthValues">
+            <summary>
+            Custom Authentication Data
             </summary>
         </member>
         <member name="T:Fusion.GameMode">
@@ -4110,6 +4273,16 @@
             Room Custom Properties
             </summary>
         </member>
+        <member name="P:Fusion.SessionInfo.PlayerCount">
+            <summary>
+            Current number of peers inside this Session, this includes the Server/Host and Clients
+            </summary>
+        </member>
+        <member name="P:Fusion.SessionInfo.MaxPlayers">
+            <summary>
+            Max number of peer that can join this Session, this value always include an extra slot for the Server/Host
+            </summary>
+        </member>
         <member name="M:Fusion.SessionInfo.op_Implicit(Fusion.SessionInfo)~System.Boolean">
             <summary>
             Check if the <see cref="T:Fusion.SessionInfo"/> reference is not Null and is Valid.
@@ -4213,6 +4386,21 @@
             Raised when a peer is trying to join a Room with already the max capacity of players
             </summary>
         </member>
+        <member name="F:Fusion.ShutdownReason.InvalidAuthentication">
+            <summary>
+            Raised when the Authentication Values are invalid
+            </summary>
+        </member>
+        <member name="F:Fusion.ShutdownReason.CustomAuthenticationFailed">
+            <summary>
+            Raised when the Custom Authentication has failed for some other reason
+            </summary>
+        </member>
+        <member name="F:Fusion.ShutdownReason.AuthenticationTicketExpired">
+            <summary>
+            Raised when the Authentication Ticket has expired
+            </summary>
+        </member>
         <member name="T:Fusion.INetworkRunnerCallbacks">
             <summary>
             Interface for <see cref="T:Fusion.NetworkRunner"/> callbacks.
@@ -4282,21 +4470,19 @@
             <param name="runner">The runner this message is for</param>
             <param name="message">The message pointer</param>
         </member>
-        <member name="M:Fusion.INetworkRunnerCallbacks.OnObjectWordsChanged(Fusion.NetworkRunner,Fusion.NetworkObject,System.Collections.Generic.HashSet{System.Int32},Fusion.NetworkObjectMemoryPtr)">
-            <summary>
-            This callback is invoked when the backing memory of an object has changed
-            </summary>
-            <param name="runner">The runner this object exists on</param>
-            <param name="networkedObject">The object whos memory changed</param>
-            <param name="changedWords">Which words changed in the memory</param>
-            <param name="oldMemory">If not null it's a pointer to the old memory block which contains the old values for this object</param>
-        </member>
         <member name="M:Fusion.INetworkRunnerCallbacks.OnSessionListUpdated(Fusion.NetworkRunner,System.Collections.Generic.List{Fusion.SessionInfo})">
             <summary>
             This callback is invoked when a new List of Sessions is received from Photon Cloud
             </summary>
             <param name="runner">The runner this object exists on</param>
             <param name="sessionList">Updated list of Session</param>
+        </member>
+        <member name="M:Fusion.INetworkRunnerCallbacks.OnCustomAuthenticationResponse(Fusion.NetworkRunner,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Callback is invoked when the Authentication procedure returns a response from the Authentication Server
+            </summary>
+            <param name="runner">The runner this object exists on</param>
+            <param name="data">Custom Authentication Reply Values</param>
         </member>
         <member name="T:Fusion.AccuracyDefaults">
             <summary>
@@ -4368,16 +4554,6 @@
             </summary>
             <returns>Returns false if the hash is invalid (hash 0 is considered valid, and remaps to <see cref="P:Fusion.AccuracyDefaults.ZeroHashAccuracyRemap"/>)</returns>
         </member>
-        <member name="P:Fusion.NetworkSceneManagerBase.IsAnySceneBeingLoaded">
-            <summary>
-            Are any of the managers loading a scene?
-            </summary>
-        </member>
-        <member name="P:Fusion.NetworkSceneManagerBase.IsLoadingScene">
-            <summary>
-            Is this manager a scene?
-            </summary>
-        </member>
         <member name="T:Fusion.Simulation">
             <summary>
             Main simulation class
@@ -4409,6 +4585,26 @@
             </summary>
             <param name="dt">Delta Time used to forward the simulation</param>
             <returns>How many Ticks executed on this Update</returns>
+        </member>
+        <member name="T:Fusion.Simulation.Statistics.FusionStatFlags">
+            <summary>
+            Flags variant of the <see cref="T:Fusion.Simulation.Statistics.FusionStats"/> enum.
+            </summary>
+        </member>
+        <member name="M:Fusion.Simulation.Statistics.GetStatBuffer(Fusion.Simulation.Statistics.FusionStatFlags)">
+            <summary>
+            Returns the requested <see cref="T:Fusion.Simulation.Statistics.StatsBuffer`1"/> associated with this <see cref="T:Fusion.Simulation"/>.
+            </summary>
+        </member>
+        <member name="M:Fusion.Simulation.Statistics.GetStatBuffer(Fusion.Simulation.Statistics.FusionStats)">
+            <summary>
+            Returns the requested <see cref="T:Fusion.Simulation.Statistics.StatsBuffer`1"/> associated with this <see cref="T:Fusion.Simulation"/>.
+            </summary>
+        </member>
+        <member name="M:Fusion.Simulation.Statistics.ExtractDescription(System.Enum)">
+            <summary>
+            Gets the long name for a statistic from the Description attribute.
+            </summary>
         </member>
         <member name="T:Fusion.SimulationConfig">
             <summary>
@@ -4646,6 +4842,31 @@
         <member name="F:Fusion.NetworkSimulationConfiguration.AdditionalLoss">
             <summary>
             After the Oscillation pattern between Min and Max is calculated, this additional loss chance is added.
+            </summary>
+        </member>
+        <member name="T:Fusion.SimulationGlobalState">
+            <summary>
+            Stores the global state of a simulation
+            </summary>
+        </member>
+        <member name="F:Fusion.SimulationGlobalState.SIZE">
+            <summary>
+            Total size of the Global State
+            </summary>
+        </member>
+        <member name="F:Fusion.SimulationGlobalState.Scene">
+            <summary>
+            Current Scene Ref
+            </summary>
+        </member>
+        <member name="F:Fusion.SimulationGlobalState.ServerMode">
+            <summary>
+            Current Simulation Mode
+            </summary>
+        </member>
+        <member name="F:Fusion.SimulationGlobalState.PlayerCount">
+            <summary>
+            Current player count
             </summary>
         </member>
         <member name="T:Fusion.SimulationModes">
