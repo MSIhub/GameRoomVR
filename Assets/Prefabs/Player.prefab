@@ -350,8 +350,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 5856064176601056178}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &3649389757985946428
 GameObject:
   m_ObjectHideFlags: 0
@@ -705,8 +719,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 5162854729359673277}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &4145174222178813542
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,7 +781,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 7621887840281044783}
-  _space: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
 --- !u!1 &4145174223250164459
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,7 +872,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71be2caf8fa01d54cad7677964703546, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GUISkin: {fileID: 0}
+  AutoSpawnXR: 0
   XRRig: {fileID: 2370450951321249329, guid: 11fb331bc0588d34b867a8ac7e6c249d, type: 3}
+  AutoSpawnPC: 0
+  PCRig: {fileID: 2370450951321249329, guid: cce765864772b4d49abd266626c2eb23, type: 3}
 --- !u!114 &4945582564059790120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -879,7 +925,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 0}
-  _space: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
 --- !u!1 &4509799051250164342
 GameObject:
   m_ObjectHideFlags: 0

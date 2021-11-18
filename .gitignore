@@ -153,6 +153,6 @@ sysinfo.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/unity,rider
 {"mode":"full","isActive":false}
-Assets/Fonts/Korataki Regular/Korataki Regular SDF Overlay Outline.asset
-Assets/Fonts/
-Assets/TextMesh Pro/Resources/Fonts & Materials/
+#Assets/Fonts/Korataki Regular/Korataki Regular SDF Overlay Outline.asset
+#Assets/Fonts/
+#Assets/TextMesh Pro/Resources/Fonts & Materials/

@@ -4,26 +4,25 @@ using Fusion;
 public class LocalRigSpawner : SimulationBehaviour, ISpawned
 {
 
-   // public GUISkin GUISkin;
+    public GUISkin GUISkin;
 
-  //  public bool AutoSpawnXR = false;
+    public bool AutoSpawnXR = false;
     public GameObject XRRig;
- //   [Space]
- //   public bool AutoSpawnPC = false;
- //   public GameObject PCRig;
+    [Space]
+    public bool AutoSpawnPC = false;
+    public GameObject PCRig;
 
-  //  static bool SavedSpawnSelectionXR = false;
- //   static bool SavedSpawnSelectionPC = false;
+    static bool SavedSpawnSelectionXR = false;
+    static bool SavedSpawnSelectionPC = false;
 
 
-//    bool m_ShowPlayerSpawnChoice = false;
+    bool m_ShowPlayerSpawnChoice = false;
 
     public void Spawned()
     {
         if( Object.HasInputAuthority )
         {
-            SpawnPlayer( XRRig );
-            /*m_ShowPlayerSpawnChoice = AutoSpawnPC == false && AutoSpawnXR == false;
+            m_ShowPlayerSpawnChoice = AutoSpawnPC == false && AutoSpawnXR == false;
 
             if( AutoSpawnXR || Application.platform == RuntimePlatform.Android || SavedSpawnSelectionXR )
             {
@@ -32,12 +31,12 @@ public class LocalRigSpawner : SimulationBehaviour, ISpawned
             else if( AutoSpawnPC || SavedSpawnSelectionPC )
             {
                 SpawnPlayer( PCRig );
-            }*/
+            }
         }
     }
 
     
-    /*
+    
     private void OnGUI()
     {
         if( m_ShowPlayerSpawnChoice == false )
@@ -67,14 +66,14 @@ public class LocalRigSpawner : SimulationBehaviour, ISpawned
         }
         GUILayout.EndArea();
     }
-    */
+    
     
 
     void SpawnPlayer( GameObject prefab )
     {
         ObserverCamera.DisableObserverCamera();
 
-       // m_ShowPlayerSpawnChoice = false;
+        m_ShowPlayerSpawnChoice = false;
         var rig = Instantiate( prefab, transform );
         rig.transform.localPosition = Vector3.zero;
         rig.transform.localRotation = Quaternion.identity;
