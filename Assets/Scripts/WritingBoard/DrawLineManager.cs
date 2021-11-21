@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace WritingBoard
 {
-    public class DrawLineManager : MonoBehaviour
+    public class DrawLineManager : SimulationBehaviour
     {
         [SerializeField] private GameObject _chalkLineRendererPrefab;
 
