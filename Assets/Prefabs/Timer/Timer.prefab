@@ -71,6 +71,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2305
   NetworkGuid:
@@ -144,10 +145,6 @@ MonoBehaviour:
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
   _m_HoldingHand: {fileID: 0}
-  _m_PositionOffset: {x: 0, y: 0.05, z: 0}
-  _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  _m_PositionOffset_right: {x: 0, y: 0.05, z: 0}
-  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &6710314414072487475
 MonoBehaviour:
   m_ObjectHideFlags: 0

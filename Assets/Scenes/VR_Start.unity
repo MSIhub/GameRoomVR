@@ -1646,7 +1646,7 @@ PrefabInstance:
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: 11400000, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_fontColor.b
       value: 1
@@ -1662,7 +1662,7 @@ PrefabInstance:
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: -6038493417829584904, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4294967295
@@ -1670,7 +1670,7 @@ PrefabInstance:
     - target: {fileID: 2285810984105147572, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: -6038493417829584904, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3810699613be264b99fcb583f10217b, type: 3}
 --- !u!1 &126297158
@@ -6404,15 +6404,19 @@ PrefabInstance:
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: 11400000, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
     - target: {fileID: 2285810984105147571, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: -6038493417829584904, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
+    - target: {fileID: 2285810984105147572, guid: a3810699613be264b99fcb583f10217b, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2285810984105147572, guid: a3810699613be264b99fcb583f10217b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: -6038493417829584904, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+      objectReference: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3810699613be264b99fcb583f10217b, type: 3}
 --- !u!1001 &515592802
@@ -8132,8 +8136,8 @@ MonoBehaviour:
 
     Press client button to join your friend'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
-  m_sharedMaterial: {fileID: -6038493417829584904, guid: cdcd5edf86427b94e84e021eb5c3c133, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
+  m_sharedMaterial: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8667,7 +8671,7 @@ MonoBehaviour:
   AutoHideGUI: 1
   AutoClients: 1
   ServerPort: 27015
-  DefaultRoomName: 
+  DefaultRoomName: GameRoom
   AlwaysShowStats: 0
   includedStats: 0
   StatsPosition:

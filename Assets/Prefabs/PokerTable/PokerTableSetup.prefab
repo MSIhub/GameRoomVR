@@ -3601,6 +3601,7 @@ Transform:
   - {fileID: 1381278227316278571}
   - {fileID: 1381278226809560283}
   - {fileID: 1381278226375804446}
+  - {fileID: 1381278227640557506}
   m_Father: {fileID: 1381278227855251249}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4195,7 +4196,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1381278227855251249}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1381278227611306128
 BoxCollider:
@@ -4251,13 +4252,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1381278227640557507}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0.099999994}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -0.10000016}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1381278227081525218}
-  m_Father: {fileID: 1381278227855251249}
-  m_RootOrder: 2
+  m_Father: {fileID: 1381278227439113299}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4392,8 +4393,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '00: 00'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c00e9bc35cdfaef4f81264f079ec11d0, type: 2}
-  m_sharedMaterial: {fileID: -6038493417829584904, guid: c00e9bc35cdfaef4f81264f079ec11d0, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
+  m_sharedMaterial: {fileID: -6038493417829584904, guid: 1a2f8e744bbb5e549b6fdef2715ef387, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4494,7 +4495,6 @@ Transform:
   m_Children:
   - {fileID: 1381278227439113299}
   - {fileID: 1381278226604202650}
-  - {fileID: 1381278227640557506}
   - {fileID: 1381278227611306134}
   m_Father: {fileID: 5635298714878206821}
   m_RootOrder: 4
@@ -4530,6 +4530,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -4553,8 +4554,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 1381278227439113299}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!114 &1381278227855251276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4588,10 +4603,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0, y: 0.05, z: 0}
-  _m_RotationOffset: {x: 0, y: 0, z: 0, w: 0}
-  _m_PositionOffset_right: {x: 0, y: 0.05, z: 0}
-  _m_RotationOffset_right: {x: 0, y: 0, z: 0, w: 0}
+  _m_HoldingHand: {fileID: 0}
 --- !u!114 &1381278227855251279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5985,6 +5997,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -6009,8 +6022,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 1640100622109622265}
-  _space: 0
-  _syncDragAndMass: 1
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!114 &1640100623007331242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6044,10 +6071,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0.048, y: -0.103, z: 0.041}
-  _m_RotationOffset: {x: 0.121850595, y: 0.019116687, z: 0.17021918, w: 0.9776566}
-  _m_PositionOffset_right: {x: -0.064, y: -0.064, z: -0.083}
-  _m_RotationOffset_right: {x: -0.1414288, y: -0.97851676, z: -0.14271769, w: 0.046201527}
+  _m_HoldingHand: {fileID: 0}
 --- !u!114 &1640100623007331255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6242,6 +6266,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -6284,10 +6309,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868704833260}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819337571874
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6318,8 +6340,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859728082351}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819368648244
 GameObject:
   m_ObjectHideFlags: 0
@@ -6593,6 +6629,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -6635,10 +6672,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868679437673}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819396455847
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6669,8 +6703,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859602417194}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819480664449
 GameObject:
   m_ObjectHideFlags: 0
@@ -7106,6 +7154,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7148,10 +7197,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868434869993}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819607494183
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7182,8 +7228,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859462149546}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819614553323
 GameObject:
   m_ObjectHideFlags: 0
@@ -7281,6 +7341,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7323,10 +7384,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868425788787}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819616648637
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7357,8 +7415,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859453462064}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819631928683
 GameObject:
   m_ObjectHideFlags: 0
@@ -7412,6 +7484,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7454,10 +7527,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868443952570}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819631928692
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7488,8 +7558,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859434176249}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819663033691
 GameObject:
   m_ObjectHideFlags: 0
@@ -7543,6 +7627,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7585,10 +7670,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868412945802}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819663033668
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7619,8 +7701,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859347824329}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819668076153
 GameObject:
   m_ObjectHideFlags: 0
@@ -7674,6 +7770,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7716,10 +7813,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868407879336}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819668076134
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7750,8 +7844,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859339251179}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819670721801
 GameObject:
   m_ObjectHideFlags: 0
@@ -7849,6 +7957,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -7891,10 +8000,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868385479483}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819690503157
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7925,8 +8031,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859375272056}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819706564563
 GameObject:
   m_ObjectHideFlags: 0
@@ -8767,6 +8887,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -8809,10 +8930,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868166840550}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819875549224
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8843,8 +8961,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859194420133}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819892114825
 GameObject:
   m_ObjectHideFlags: 0
@@ -8979,6 +9111,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9021,10 +9154,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868181815132}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819894079378
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9055,8 +9185,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859176227871}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819896286821
 GameObject:
   m_ObjectHideFlags: 0
@@ -9110,6 +9254,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9152,10 +9297,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868179697332}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819896286842
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9186,8 +9328,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859181549047}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819896734809
 GameObject:
   m_ObjectHideFlags: 0
@@ -9322,6 +9478,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9364,10 +9521,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183868099778924}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983819942590882
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9398,8 +9552,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952859127190063}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983819962050155
 GameObject:
   m_ObjectHideFlags: 0
@@ -9578,6 +9746,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9620,10 +9789,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867998531937}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820043833775
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9654,8 +9820,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858958969378}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820044217268
 GameObject:
   m_ObjectHideFlags: 0
@@ -9834,6 +10014,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9876,10 +10057,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867994501297}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820047929471
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9910,8 +10088,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858963065842}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820048136796
 GameObject:
   m_ObjectHideFlags: 0
@@ -10127,6 +10319,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -10169,10 +10362,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867955505903}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820086921761
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10203,8 +10393,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858983178668}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820122509388
 GameObject:
   m_ObjectHideFlags: 0
@@ -10302,6 +10506,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -10344,10 +10549,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867950401981}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820125481331
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10378,8 +10580,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858872857342}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820126448102
 GameObject:
   m_ObjectHideFlags: 0
@@ -10477,6 +10693,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -10519,10 +10736,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867946273347}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820129610381
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10553,8 +10767,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858876985600}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820140962962
 GameObject:
   m_ObjectHideFlags: 0
@@ -10608,6 +10836,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -10650,10 +10879,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867934950467}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820140962957
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10684,8 +10910,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858870484736}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820147897186
 GameObject:
   m_ObjectHideFlags: 0
@@ -10820,6 +11060,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -10862,10 +11103,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867915493518}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820160417856
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10896,8 +11134,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858905684941}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820165722236
 GameObject:
   m_ObjectHideFlags: 0
@@ -11032,6 +11284,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -11074,10 +11327,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867901499796}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820174489946
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11108,8 +11358,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858904007383}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820223066167
 GameObject:
   m_ObjectHideFlags: 0
@@ -11244,6 +11508,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -11286,10 +11551,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867849219973}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820226674507
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11320,8 +11582,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858838783174}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820244298605
 GameObject:
   m_ObjectHideFlags: 0
@@ -11500,6 +11776,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -11542,10 +11819,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867802813663}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820273067025
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11576,8 +11850,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858734186396}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820275865242
 GameObject:
   m_ObjectHideFlags: 0
@@ -11800,6 +12088,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -11842,10 +12131,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867724760212}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820317566042
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11876,8 +12162,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858693750743}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820318969450
 GameObject:
   m_ObjectHideFlags: 0
@@ -12056,6 +12356,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -12098,10 +12399,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867742586762}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820333295428
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12132,8 +12430,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858678021321}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820343393621
 GameObject:
   m_ObjectHideFlags: 0
@@ -12643,6 +12955,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -12685,10 +12998,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867680250347}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820395739429
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12719,8 +13029,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858607260328}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820403323881
 GameObject:
   m_ObjectHideFlags: 0
@@ -12980,6 +13304,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13022,10 +13347,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867628846939}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820413525909
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13056,8 +13378,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858656519192}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820414101209
 GameObject:
   m_ObjectHideFlags: 0
@@ -13111,6 +13447,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13153,10 +13490,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867628226056}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820414101190
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13187,8 +13521,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858656066891}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820416873974
 GameObject:
   m_ObjectHideFlags: 0
@@ -13242,6 +13590,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13284,10 +13633,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867625493799}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820416873961
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13318,8 +13664,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858660904548}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820455056955
 GameObject:
   m_ObjectHideFlags: 0
@@ -13498,6 +13858,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13540,10 +13901,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867559200777}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820483225799
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13574,8 +13932,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858590937930}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820484823976
 GameObject:
   m_ObjectHideFlags: 0
@@ -13798,6 +14170,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13840,10 +14213,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867493700296}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820548665862
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -13874,8 +14244,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858525309323}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820594957413
 GameObject:
   m_ObjectHideFlags: 0
@@ -13929,6 +14313,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -13971,10 +14356,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867481025716}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820594957434
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14005,8 +14387,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858403842039}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820595664136
 GameObject:
   m_ObjectHideFlags: 0
@@ -14060,6 +14456,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -14102,10 +14499,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867480290777}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820595664151
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14136,8 +14530,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858402487962}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820597932768
 GameObject:
   m_ObjectHideFlags: 0
@@ -14515,6 +14923,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -14557,10 +14966,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867431407321}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820644576791
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14591,8 +14997,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858433521050}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820651082725
 GameObject:
   m_ObjectHideFlags: 0
@@ -14646,6 +15066,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -14688,10 +15109,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867391251252}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820651082746
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14722,8 +15140,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858356177015}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820663250196
 GameObject:
   m_ObjectHideFlags: 0
@@ -14902,6 +15334,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -14944,10 +15377,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867402629819}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820673323637
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -14978,8 +15408,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858329151992}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820687269386
 GameObject:
   m_ObjectHideFlags: 0
@@ -15033,6 +15477,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -15075,10 +15520,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867355102939}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820687269397
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -15109,8 +15551,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858378712472}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820748054633
 GameObject:
   m_ObjectHideFlags: 0
@@ -15208,6 +15664,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -15250,10 +15707,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867292834480}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820749535870
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -15284,8 +15738,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858320376307}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820763345537
 GameObject:
   m_ObjectHideFlags: 0
@@ -15339,6 +15807,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -15381,10 +15850,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867312542288}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820763345566
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -15415,8 +15881,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858302765331}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820764756021
 GameObject:
   m_ObjectHideFlags: 0
@@ -15470,6 +15950,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -15512,10 +15993,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867311200484}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820764756010
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -15546,8 +16024,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858305221543}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820771648067
 GameObject:
   m_ObjectHideFlags: 0
@@ -15682,6 +16174,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -15724,10 +16217,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867299957331}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820775926429
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -15758,8 +16248,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858298564880}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820779267768
 GameObject:
   m_ObjectHideFlags: 0
@@ -15975,6 +16479,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -16017,10 +16522,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867254855339}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820787578469
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -16051,8 +16553,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858210573800}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820791856827
 GameObject:
   m_ObjectHideFlags: 0
@@ -16349,6 +16865,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -16391,10 +16908,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867160881660}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820881545522
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -16425,8 +16939,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858183967423}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820892145235
 GameObject:
   m_ObjectHideFlags: 0
@@ -16855,6 +17383,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -16897,10 +17426,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867084223718}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820958110760
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -16931,8 +17457,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858111672229}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820959077565
 GameObject:
   m_ObjectHideFlags: 0
@@ -17155,6 +17695,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -17197,10 +17738,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183867104922956}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983820970962306
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17231,8 +17769,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952858107725327}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983820991054469
 GameObject:
   m_ObjectHideFlags: 0
@@ -17573,6 +18125,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -17615,10 +18168,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866979994602}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821062433572
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17649,8 +18199,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857948553385}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821076081483
 GameObject:
   m_ObjectHideFlags: 0
@@ -17704,6 +18268,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -17746,10 +18311,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866999802778}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821076081492
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17780,8 +18342,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857926582489}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821081244177
 GameObject:
   m_ObjectHideFlags: 0
@@ -17835,6 +18411,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -17877,10 +18454,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866961187520}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821081244174
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17911,8 +18485,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857984145795}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821087791583
 GameObject:
   m_ObjectHideFlags: 0
@@ -18010,6 +18598,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -18052,10 +18641,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866923731610}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821118630484
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18086,8 +18672,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857884164569}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821121108388
 GameObject:
   m_ObjectHideFlags: 0
@@ -18347,6 +18947,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -18389,10 +18990,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866908726122}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821167195044
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18423,8 +19021,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857902323753}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821178558868
 GameObject:
   m_ObjectHideFlags: 0
@@ -18735,6 +19347,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -18777,10 +19390,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866824512364}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821217854370
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18811,8 +19421,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857852319791}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821265640378
 GameObject:
   m_ObjectHideFlags: 0
@@ -18866,6 +19490,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -18908,10 +19533,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866776763243}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821265640357
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18942,8 +19564,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857746010152}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &1888983821275137132
 GameObject:
   m_ObjectHideFlags: 0
@@ -19335,6 +19971,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -19377,10 +20014,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 8462558437866657962, guid: be460c7b31f95f643b633adad75924e8, type: 3}
   toBeStacked: 0
   SelectionPoint: {fileID: 2337183866628267847}
-  _m_PositionOffset: {x: 0.044, y: 0.04, z: 0.046}
-  _m_RotationOffset: {x: 0.43012005, y: -0.2392348, z: 0.4371797, w: -0.75275326}
-  _m_PositionOffset_right: {x: -0.064, y: 0.048, z: 0.043}
-  _m_RotationOffset_right: {x: -0.45084092, y: -0.20300823, z: 0.48450017, w: 0.7216577}
+  _m_HoldingHand: {fileID: 0}
 --- !u!54 &1888983821447724937
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -19411,8 +20045,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 8406952857626055684}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!1 &2382071727212804234
 GameObject:
   m_ObjectHideFlags: 0
@@ -22147,7 +22795,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 52
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -44455,7 +45103,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 55
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -44713,6 +45361,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -44736,8 +45385,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 3567823630378691654}
-  _space: 0
-  _syncDragAndMass: 0
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!114 &2625151161784582243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44771,10 +45434,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0.076, y: 0.002, z: 0.048}
-  _m_RotationOffset: {x: 0.09788107, y: 0.24039249, z: -0.78936446, w: -0.55635834}
-  _m_PositionOffset_right: {x: -0.063, y: 0.02, z: 0.034}
-  _m_RotationOffset_right: {x: -0.2140667, y: 0.24530905, z: -0.8174764, w: 0.47511193}
+  _m_HoldingHand: {fileID: 0}
 --- !u!1 &6997561522772715871
 GameObject:
   m_ObjectHideFlags: 0
@@ -46527,6 +47187,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -46566,8 +47227,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 2607297892211968784}
-  _space: 0
-  _syncDragAndMass: 1
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!114 &7248453686314384207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46601,10 +47276,7 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: 0.001, y: -0.1245, z: -0.0313}
-  _m_RotationOffset: {x: 0.16969965, y: -0.33719957, z: 0.06193337, w: 0.92393875}
-  _m_PositionOffset_right: {x: -0.0321, y: -0.108, z: -0.014}
-  _m_RotationOffset_right: {x: 0.3335012, y: 0.16233033, z: 0.546354, w: 0.75094825}
+  _m_HoldingHand: {fileID: 0}
 --- !u!1 &8406952857626347556
 GameObject:
   m_ObjectHideFlags: 0
@@ -50922,6 +51594,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -50961,8 +51634,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _interpolationTarget: {fileID: 3946701871850775627}
-  _space: 0
-  _syncDragAndMass: 1
+  DetachInterpTarget: 0
+  SyncParent: 1
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  SyncScale: 0
+  Space: 0
+  SyncDragAndMass: 0
 --- !u!114 &8437347424169332017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50996,7 +51683,4 @@ MonoBehaviour:
   stackPrefab: {fileID: 0}
   toBeStacked: 0
   SelectionPoint: {fileID: 0}
-  _m_PositionOffset: {x: -0.013, y: 0.0211, z: 0.015}
-  _m_RotationOffset: {x: 0.5015429, y: -0.45893267, z: -0.3452872, w: -0.6470026}
-  _m_PositionOffset_right: {x: -0.008, y: 0.04, z: 0.015}
-  _m_RotationOffset_right: {x: -0.43301275, y: -0.25000006, z: -0.43301275, w: 0.75}
+  _m_HoldingHand: {fileID: 0}
