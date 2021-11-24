@@ -197,7 +197,7 @@ namespace Photon.Voice
 #else
                         var t = new Thread(ReverseStreamThread);
                         t.Start();
-                        t.Name = "WebRTCAudioProcessor reverse stream";
+                        Util.SetThreadName(t, "[PV] WebRTCProcRevStream");
 #endif
                     }
 

@@ -334,7 +334,7 @@ public class FusionStats : Fusion.Behaviour {
   // Changes to enabled graphs and layout in OnValidate need to be deferred to apply correctly.
   void LazyEditorRepaint(int extraWaitTicks, bool hideCanvas) {
 #if UNITY_EDITOR
-    if (hideCanvas && _canvas) {
+    if (hideCanvas && _canvas && UnityEditor.BuildPipeline.isBuildingPlayer == false) {
       _canvas.enabled = false;
       _canvasHidden = true;
     }

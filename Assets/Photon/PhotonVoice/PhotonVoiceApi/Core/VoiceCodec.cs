@@ -61,7 +61,11 @@ namespace Photon.Voice
         /// <summary>If not null, the object is in invalid state.</summary>
         string Error { get; }
         /// <summary>Consumes the given encoded data.</summary>
-        void Input(byte[] buf, FrameFlags flags);
+        /// <remarks>
+        /// The callee can call buf.Retain() to prevent the caller from disposing the buffer.
+        /// In this case, the callee should call buf.Release() when buffer is no longer needed.
+        /// </remarks>
+        void Input(ref FrameBuffer buf);
     }
 
     /// <summary>Interface for an decoder which outputs data via explicit call.</summary>

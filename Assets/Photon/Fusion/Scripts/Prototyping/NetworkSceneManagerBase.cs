@@ -1,12 +1,11 @@
-﻿// #define FUSION_NETWORK_SCENE_MANAGER_TRACE
+// #define FUSION_NETWORK_SCENE_MANAGER_TRACE
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+
 
 namespace Fusion {
  
@@ -72,17 +71,6 @@ namespace Fusion {
       LogTrace($"Scene transition {prevScene}->{_currentScene}");
       _runningCoroutine = SwitchSceneWrapper(prevScene, _currentScene);
       StartCoroutine(_runningCoroutine);
-    }
-
-    internal static bool TryGetSceneRefFromPathInBuildSettings(string scenePath, out SceneRef sceneRef) {
-      var result = SceneUtility.GetBuildIndexByScenePath(scenePath);
-      if (result >= 0) {
-        sceneRef = result;
-        return true;
-      } else {
-        sceneRef = default;
-        return false;
-      }
     }
 
     public static bool IsScenePathOrNameEqual(Scene scene, string nameOrPath) {
@@ -236,7 +224,7 @@ namespace Fusion {
         Assert.Check(s_currentlyLoading.TryGetTarget(out var target) && target == this);
         s_currentlyLoading.SetTarget(null);
 
-        LogTrace($"Corutine finished for {newScene}");
+        LogTrace($"Coroutine finished for {newScene}");
         _runningCoroutine = null;
       }
 
@@ -253,10 +241,11 @@ namespace Fusion {
 
 #if UNITY_EDITOR
     private static Lazy<GUIStyle> s_hierarchyOverlayLabelStyle = new Lazy<GUIStyle>(() => {
-      var result = new GUIStyle(UnityEditor.EditorStyles.miniBoldLabel);
-      result.alignment = TextAnchor.MiddleRight;
-      result.padding.right += 20;
-      result.padding.bottom += 2;
+      var result = new GUIStyle(UnityEditor.EditorStyles.miniButton);
+      result.alignment = TextAnchor.MiddleCenter;
+      result.fontSize = 9;
+      result.padding = new RectOffset(4, 4, 0, 0);
+      result.fixedHeight = 13f;
       return result;
     });
 
@@ -273,7 +262,19 @@ namespace Fusion {
         return;
       }
 
-      UnityEditor.EditorGUI.LabelField(position, Runner.name, s_hierarchyOverlayLabelStyle.Value);
+      var rect = new Rect(position) { 
+        xMin = position.xMax - 50, 
+        xMax = position.xMax - 2,
+        yMin = position.yMin + 1,
+        //yMax = position.yMax - 2.25f 
+      };
+
+      if (GUI.Button(rect, Runner.name, s_hierarchyOverlayLabelStyle.Value)) {
+        if (Runner) {
+          UnityEditor.EditorGUIUtility.PingObject(Runner);
+          UnityEditor.Selection.activeGameObject = Runner.gameObject;
+        }
+      }
     }
 #endif
   }

@@ -180,9 +180,38 @@ namespace Photon.Voice.Unity
         private string photonMicrophoneDeviceIdString;
         #endif
 
+        private object microphoneDeviceChangeDetectedLock = new object();
+        internal bool microphoneDeviceChangeDetected;
+
         #endregion
 
         #region Properties
+
+        internal bool MicrophoneDeviceChangeDetected
+        {
+            get
+            {
+                lock (this.microphoneDeviceChangeDetectedLock)
+                {
+                    return this.microphoneDeviceChangeDetected;
+                }
+            }
+            set
+            {
+                lock (this.microphoneDeviceChangeDetectedLock)
+                {
+                    if (this.microphoneDeviceChangeDetected == value)
+                    {
+                        if (this.Logger.IsWarningEnabled)
+                        {
+                            this.Logger.LogWarning("Unexpected: MicrophoneDeviceChangeDetected to be overriden with same value: {0}", value);
+                        }
+                        return;
+                    }
+                    this.microphoneDeviceChangeDetected = value;
+                }
+            }
+        }
 
         private bool subscribedToSystemChanges
         {
@@ -1517,6 +1546,7 @@ namespace Photon.Voice.Unity
                         {
                             #if PHOTON_MICROPHONE_ENUMERATOR
                             DeviceInfo hwMicDev = this.MicrophoneDevice;
+                            int hwMicDevId = hwMicDev.IsDefault ? -1 : hwMicDev.IDInt;
                             if (this.Logger.IsInfoEnabled)
                             {
                                 this.Logger.LogInfo("Setting recorder's source to Photon microphone device={0}", hwMicDev);
@@ -1532,7 +1562,7 @@ namespace Photon.Voice.Unity
                             {
                                 this.Logger.LogInfo("Setting recorder's source to WindowsAudioInPusher");
                             }
-                            this.inputSource = new Windows.WindowsAudioInPusher(hwMicDev.IDInt, this.Logger);
+                            this.inputSource = new Windows.WindowsAudioInPusher(hwMicDevId, this.Logger);
                             #elif PHOTON_MICROPHONE_WSA
                             int channels = 1;
                             if (this.Logger.IsInfoEnabled)
@@ -1551,7 +1581,7 @@ namespace Photon.Voice.Unity
                             {
                                 this.Logger.LogInfo("Setting recorder's source to MacOS.AudioInPusher");
                             }
-                            this.inputSource = new MacOS.AudioInPusher(hwMicDev.IDInt, this.Logger);
+                            this.inputSource = new MacOS.AudioInPusher(hwMicDevId, this.Logger);
                             #elif UNITY_ANDROID && !UNITY_EDITOR
                             if (this.Logger.IsInfoEnabled)
                             {
@@ -1761,7 +1791,7 @@ namespace Photon.Voice.Unity
             }
             if (this.SkipDeviceChangeChecks || deviceWasChanged)
             {
-                this.HandleDeviceChange();
+                this.MicrophoneDeviceChangeDetected = true;
             }
         }
 
@@ -1771,11 +1801,15 @@ namespace Photon.Voice.Unity
             {
                 this.Logger.LogInfo("Microphones change detected by Photon native plugin");
             }
-            this.HandleDeviceChange();
+            this.MicrophoneDeviceChangeDetected = true;
         }
 
-        private void HandleDeviceChange()
+        internal void HandleDeviceChange()
         {
+            if (!this.MicrophoneDeviceChangeDetected && this.Logger.IsWarningEnabled)
+            {
+                this.Logger.LogWarning("Unexpected: HandleDeviceChange called while MicrophoneDeviceChangedDetected is false.");
+            }
             #if PHOTON_MICROPHONE_ENUMERATOR
             #pragma warning disable 612
             if (photonMicrophoneEnumerator != null)
@@ -1820,6 +1854,7 @@ namespace Photon.Voice.Unity
                 {
                     if (this.ResetLocalAudio())
                     {
+                        this.MicrophoneDeviceChangeDetected = false;
                         if (this.Logger.IsInfoEnabled)
                         {
                             this.Logger.LogInfo("Local audio reset as a result of audio config/device change.");
@@ -2254,6 +2289,10 @@ namespace Photon.Voice.Unity
             }
             this.wasRecordingBeforePause = false;
             this.RemoveVoice(true);
+            if (this.MicrophoneDeviceChangeDetected)
+            {
+                this.MicrophoneDeviceChangeDetected = false;
+            }
         }
 
         internal void CheckAndAutoStart()

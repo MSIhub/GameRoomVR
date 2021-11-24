@@ -121,6 +121,11 @@ namespace Photon.Voice.Unity
         {
             get { return this.remoteVoiceLink; }
         }
+        #else
+        internal RemoteVoiceLink RemoteVoiceLink
+        {
+            get { return this.remoteVoiceLink; }
+        }
         #endif
 
         /// <summary> If true, component will work only when enabled and active in hierarchy.  </summary>
@@ -230,7 +235,7 @@ namespace Photon.Voice.Unity
                 this.Logger.LogDebug("Initializing.");
             }
             #if USE_ONAUDIOFILTERREAD
-            this.outBuffer = new AudioSyncBuffer<float>(this.playbackDelaySettings.MinDelaySoft, this.Logger, string.Empty, this.Logger.IsInfoEnabled);
+            this.outBuffer = new AudioSyncBuffer<float>(this.playbackDelaySettings.MinDelaySoft, this.Logger, string.Empty, this.Logger.IsDebugEnabled);
             this.outputSampleRate = AudioSettings.outputSampleRate;
             Func<IAudioOut<float>> factory = () => this.outBuffer;
             #else
@@ -240,7 +245,7 @@ namespace Photon.Voice.Unity
                 High = this.playbackDelaySettings.MaxDelaySoft,
                 Max = this.playbackDelaySettings.MaxDelayHard
             };
-            Func<IAudioOut<float>> factory = () => new UnityAudioOut(this.GetComponent<AudioSource>(), pdc, this.Logger, string.Empty, this.Logger.IsInfoEnabled);
+            Func<IAudioOut<float>> factory = () => new UnityAudioOut(this.GetComponent<AudioSource>(), pdc, this.Logger, string.Empty, this.Logger.IsDebugEnabled);
             #endif
 
             #if !UNITY_EDITOR && (UNITY_PS4 || UNITY_SHARLIN)
@@ -270,14 +275,13 @@ namespace Photon.Voice.Unity
             }
             if (this.Logger.IsDebugEnabled)
             {
-                this.Logger.LogDebug("OnRemoteVoiceInfo {0}/{1}", stream.PlayerId, stream.PlayerId);
+                this.Logger.LogDebug("OnRemoteVoiceInfo {0}", stream);
             }
             if (this.IsLinked)
             {
                 if (this.Logger.IsWarningEnabled)
                 {
-                    this.Logger.LogWarning("Speaker already linked to {0}/{1}, cancelled linking to {2}/{3}",
-                        this.remoteVoiceLink.PlayerId, this.remoteVoiceLink.VoiceId, stream.PlayerId, stream.VoiceId);
+                    this.Logger.LogWarning("Speaker already linked to {0}, cancelled linking to {1}", this.remoteVoiceLink, stream);
                 }
                 return false;
             }
@@ -285,8 +289,7 @@ namespace Photon.Voice.Unity
             {
                 if (this.Logger.IsErrorEnabled)
                 {
-                    this.Logger.LogError("Received voice info channels is not expected: {0} <= 0, cancelled linking to {1}/{2}", stream.Info.Channels, 
-                        stream.PlayerId, stream.VoiceId);
+                    this.Logger.LogError("Received voice info channels is not expected (<= 0), cancelled linking to {0}", stream);
                 }
                 return false;
             }
@@ -307,7 +310,7 @@ namespace Photon.Voice.Unity
         {
             if (this.Logger.IsDebugEnabled)
             {
-                this.Logger.LogDebug("OnRemoteVoiceRemove {0}/{1}", this.remoteVoiceLink.PlayerId, this.remoteVoiceLink.PlayerId);
+                this.Logger.LogDebug("OnRemoteVoiceRemove {0}", this.remoteVoiceLink);
             }
             this.StopPlaying();
             if (this.OnRemoteVoiceRemoveAction != null) { this.OnRemoteVoiceRemoveAction(this); }
@@ -362,14 +365,13 @@ namespace Photon.Voice.Unity
             {
                 if (this.Logger.IsErrorEnabled)
                 {
-                    this.Logger.LogError("Cannot start playback because remoteVoiceLink.Info.Channels == 0");
+                    this.Logger.LogError("Cannot start playback because Channels == 0, stream {0}", this.remoteVoiceLink);
                 }
                 return false;
             }
             if (this.Logger.IsInfoEnabled)
             {
-                this.Logger.LogInfo("Speaker about to start playback (v#{0}/p#{1}/c#{2}), i=[{3}], d={4}", 
-                    this.remoteVoiceLink.VoiceId, this.remoteVoiceLink.PlayerId, this.remoteVoiceLink.ChannelId, voiceInfo, this.playbackDelaySettings);
+                this.Logger.LogInfo("Speaker about to start playback stream {0}, delay {1}", this.remoteVoiceLink, this.playbackDelaySettings);
             }
             this.audioOutput.Start(voiceInfo.SamplingRate, voiceInfo.Channels, voiceInfo.FrameDurationSamples);
             this.remoteVoiceLink.FloatFrameDecoded += this.OnAudioFrame;

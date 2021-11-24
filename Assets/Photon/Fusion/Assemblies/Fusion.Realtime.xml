@@ -344,6 +344,12 @@
             <param name="val">The potential guid to check.</param>
             <returns>True if new Guid(val) did not fail.</returns>
         </member>
+        <member name="M:Fusion.Photon.Realtime.AppSettings.GetCopy">
+            <summary>
+            Get a Copy from the <see cref="T:Fusion.Photon.Realtime.AppSettings"/> into a new instance.
+            </summary>
+            <returns>Copy of <see cref="T:Fusion.Photon.Realtime.AppSettings"/></returns>
+        </member>
         <member name="P:Fusion.Photon.Realtime.ConnectionHandler.Client">
             <summary>
             Photon client to log information and statistics from.

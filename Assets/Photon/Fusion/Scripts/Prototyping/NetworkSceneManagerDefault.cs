@@ -1,4 +1,6 @@
-﻿using System;
+// #define FUSION_NETWORK_SCENE_MANAGER_TRACE
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,14 +65,14 @@ namespace Fusion {
       var loadSceneParameters = new LoadSceneParameters(LoadSceneMode.Additive, NetworkProjectConfig.ConvertPhysicsMode(Runner.Config.PhysicsEngine));
 
       var sceneToUnload = Runner.MultiplePeerUnityScene;
-      Assert.Check(prevScene != default || sceneToUnload.IsValid() && sceneToUnload.GetRootGameObjects().Length == 0, "Expected initial scene to be empty");
+      var tempSceneSpawnedPrefabs = Runner.IsMultiplePeerSceneTemp ? sceneToUnload.GetRootGameObjects() : Array.Empty<GameObject>();
 
       if (canTakeOverActiveScene && NetworkRunner.GetRunnerForScene(activeScene) == null && SceneManager.sceneCount > 1) {
         LogTrace("Going to attempt to unload the initial scene as it needs a separate Physics stage");
         yield return UnloadSceneAsync(activeScene);
       }
 
-      if (SceneManager.sceneCount == 1) {
+      if (SceneManager.sceneCount == 1 && tempSceneSpawnedPrefabs.Length == 0) {
         // can load non-additively, stuff will simply get unloaded
         LogTrace($"Only one scene remained, going to load non-additively");
         loadSceneParameters.loadSceneMode = LoadSceneMode.Single;
@@ -99,6 +101,13 @@ namespace Fusion {
       var tempScene = Runner.MultiplePeerUnityScene;
       Runner.MultiplePeerUnityScene = loadedScene;
       if (tempScene.IsValid()) {
+        if (tempSceneSpawnedPrefabs.Length > 0) {
+          LogTrace($"Temp scene has {tempSceneSpawnedPrefabs.Length} spawned prefabs, need to move them to the loaded scene.");
+          foreach (var go in tempSceneSpawnedPrefabs) {
+            Assert.Check(go.GetComponent<NetworkObject>(), $"Expected {nameof(NetworkObject)} on a GameObject spawned on the temp scene {tempScene.name}");
+            SceneManager.MoveGameObjectToScene(go, loadedScene);
+          }
+        }
         LogTrace($"Unloading temp scene {tempScene}");
         yield return UnloadSceneAsync(tempScene);
       }

@@ -81,13 +81,11 @@ namespace Photon.Voice.Unity.UtilityScripts
         /// <summary>Checks for shift+tab input combination (to toggle statsOn).</summary>
         private void Update()
         {
-            this.statsWindowOn = !this.statsWindowOn;
-            this.statsOn = true;    // enable stats when showing the window
-            /*if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKeyDown(KeyCode.Tab) && Input.GetKey(KeyCode.LeftShift))
             {
                 this.statsWindowOn = !this.statsWindowOn;
                 this.statsOn = true;    // enable stats when showing the window
-            }*/
+            }
         }
 
         private void OnGUI()

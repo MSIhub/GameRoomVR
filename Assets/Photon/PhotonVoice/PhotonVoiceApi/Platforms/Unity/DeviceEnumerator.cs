@@ -37,6 +37,7 @@ namespace Photon.Voice.Unity
         }
     }
 
+#if PHOTON_VOICE_VIDEO_ENABLE
     public class VideoInEnumerator : DeviceEnumeratorBase
     {
         public VideoInEnumerator(ILogger logger) : base(logger)
@@ -61,4 +62,5 @@ namespace Photon.Voice.Unity
         {
         }
     }
+#endif
 }

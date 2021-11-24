@@ -1,5 +1,23 @@
 Photon Voice 2 Change Log
 
+v2.28 (November 10th, 2021)
+   PUN2: v2.39 (3d2cb9e) [RT/lib:4.1.6.10]
+   PhotonVoiceApi: revision 6268
+   FIXED: passing correct default Photon microphone ID (-1 instead of -128).
+   FIXED: compilation in 2021.2+ due to namespace change.
+   FIXED: crash in macOS when device changes due to Unity API call from non main thread by adding internal Recorder.MicrophoneDeviceChangeDetected flag & restarting recording from VoiceConnection.
+   CHANGED: [BREAKING] VoiceConnection.SimpleSpeakerFactory is now a fallback factory in all cases where VoiceConnection.SpeakerFactory does not return Speaker.
+   ADDED: VoiceConnection.TryLateLinkingUsingUserData (to be used w/ Photon Fusion & any other product integration).
+   CHANGED: VoiceConnection.GlobalRecordersLogLevel & VoiceConnection.GlobalSpeakersLogLevel refactored: we now properly check IgnoreGlobalLogLevel per Speaker, update initliazedRecorders only in Editor (no more FindObjectOfType) and build.
+   CHANGED: RemoteVoiceLink refactoring: for better logging & easier / simpler remote voice streams cache handling.
+
+v2.27.1 (October 26th, 2021)
+   PUN2: v2.39 (3d2cb9e) [RT/lib:4.1.6.10]
+   PhotonVoiceApi: revision 6245
+   FIXED: [Android] removed Camera permission added in previous version.
+   FIXED: background thread name length due to some constraints in some platform.
+   FIXED: [logging] minor, log level used for PhotonVoiceApi's AudioSyncBuffer classes: debug instead of info. (this will avoid 'underrun' / 'overrun' Speaker log noise/spam)
+
 v2.27 (October 06th, 2021)
    PUN2: v2.37 (a9f7ce2) [RT/lib:4.1.6.7]
    PhotonVoiceApi: revision 6226

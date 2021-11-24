@@ -63,7 +63,7 @@ namespace Photon.Voice
                     return new VPxCodec.Encoder(logger, info);
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                 case Codec.VideoH264:
-                    //ve = new FFmpegCodec.Encoder(logger, info);
+                    //return new FFmpegCodec.Encoder(logger, info);
                     return new Windows.MFTCodec.VideoEncoder(logger, info);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
                 case Codec.VideoH264:
@@ -84,7 +84,7 @@ namespace Photon.Voice
                     return new VPxCodec.Decoder(logger);
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                 case Codec.VideoH264:
-                    //vd = new FFmpegCodec.Decoder(logger);
+                    //return new FFmpegCodec.Decoder(logger);
                     return new Windows.MFTCodec.VideoDecoder(logger, info);
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
                 case Codec.VideoH264:

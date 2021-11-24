@@ -1,5 +1,307 @@
 #if !FUSION_DEV
 
+#region Assets/Photon/FusionCodeGen/ILWeaver.Cache.cs
+
+#if FUSION_WEAVER && FUSION_HAS_MONO_CECIL
+namespace Fusion.CodeGen {
+
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Runtime.CompilerServices;
+  using Mono.Cecil;
+  using Mono.Cecil.Cil;
+  using Mono.Cecil.Rocks;
+  using static Fusion.CodeGen.ILWeaverOpCodes;
+
+  internal partial class ILWeaver {
+
+    private Dictionary<int, FixedBufferInfo> _fixedBuffers = new Dictionary<int, FixedBufferInfo>();
+    private Dictionary<string, ElementReaderWriterInfo> _readerWriters = new Dictionary<string, ElementReaderWriterInfo>();
+    private Dictionary<string, TypeDefinition> _unitySurrogateTypes = new Dictionary<string, TypeDefinition>();
+    private Dictionary<string, TypeDefinition> _blittableType = new Dictionary<string, TypeDefinition>();
+    private ElementReaderWriterInfo _instanceReaderWriter = new ElementReaderWriterInfo() {
+      InitializeInstance = il => { },
+      LoadInstance = il => il.Append(Ldarg_0()),
+    };
+
+    private TypeReference CacheGetBlittableType(ILWeaverAssembly asm, PropertyDefinition property, TypeReference elementType) {
+
+      if (_blittableType.TryGetValue(elementType.FullName, out var blittableType)) {
+        return blittableType;
+      } else if (elementType.IsFloat() || elementType.IsVector2() || elementType.IsVector3()) {
+        blittableType = new TypeDefinition("Fusion.CodeGen", $"Blittable{elementType.Name}@{elementType.Name}",
+          TypeAttributes.NotPublic | TypeAttributes.AnsiClass | TypeAttributes.ExplicitLayout | TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
+          asm.ValueType);
+
+        blittableType.AddTo(asm.CecilAssembly);
+        blittableType.AddInterface<INetworkStruct>(asm);
+        blittableType.AddAttribute<NetworkStructWeavedAttribute, int>(asm, GetTypeWordCount(asm, elementType));
+
+        if (elementType.IsFloat()) {
+          blittableType.Fields.Add(new FieldDefinition("Value", FieldAttributes.Public, asm.WordSizedPrimitive));
+        } else if (elementType.IsVector2()) {
+          blittableType.Fields.Add(new FieldDefinition("X", FieldAttributes.Public, asm.WordSizedPrimitive));
+          blittableType.Fields.Add(new FieldDefinition("Y", FieldAttributes.Public, asm.WordSizedPrimitive));
+        } else if (elementType.IsVector3()) {
+          blittableType.Fields.Add(new FieldDefinition("X", FieldAttributes.Public, asm.WordSizedPrimitive));
+          blittableType.Fields.Add(new FieldDefinition("Y", FieldAttributes.Public, asm.WordSizedPrimitive));
+          blittableType.Fields.Add(new FieldDefinition("Z", FieldAttributes.Public, asm.WordSizedPrimitive));
+        }
+
+        for (int i = 0; i < blittableType.Fields.Count; ++i) {
+          blittableType.Fields[i].Offset = i * Allocator.REPLICATE_WORD_SIZE;
+        }
+
+        _blittableType.Add(elementType.FullName, blittableType);
+        return blittableType;
+      } else {
+        return null;
+      }
+    }
+
+    private FixedBufferInfo CacheGetFixedBuffer(ILWeaverAssembly asm, int wordCount) {
+      if (!_fixedBuffers.TryGetValue(wordCount, out var entry)) {
+        // fixed buffers could be included directly in structs, but then again it would be impossible to provide a custom drawer;
+        // that's why there's this proxy struct
+        var storageType = new TypeDefinition("Fusion.CodeGen", $"FixedStorage@{wordCount}",
+          TypeAttributes.SequentialLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.Serializable,
+          asm.ValueType);
+
+        storageType.AddTo(asm.CecilAssembly);
+        storageType.AddInterface<INetworkStruct>(asm);
+        storageType.AddAttribute<NetworkStructWeavedAttribute, int>(asm, wordCount);
+
+        FieldDefinition bufferField;
+        if (Allocator.REPLICATE_WORD_SIZE == sizeof(int)) {
+          bufferField = CreateFixedBufferField(asm, storageType, $"Data", asm.Import(typeof(int)), wordCount);
+        }
+
+        entry = new FixedBufferInfo() {
+          Type = storageType,
+          PointerField = bufferField
+        };
+
+        _fixedBuffers.Add(wordCount, entry);
+      }
+      return entry;
+    }
+
+    static FieldDefinition CreateFixedBufferField(ILWeaverAssembly asm, TypeDefinition type, string fieldName, TypeReference elementType, int elementCount) {
+      var fixedBufferType = new TypeDefinition("", $"<{fieldName}>e__FixedBuffer", TypeAttributes.SequentialLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit | TypeAttributes.NestedPublic) {
+        BaseType = asm.Import(typeof(ValueType)),
+        PackingSize = 0,
+        ClassSize = elementCount * elementType.GetPrimitiveSize(),
+      };
+      fixedBufferType.AddAttribute<CompilerGeneratedAttribute>(asm);
+      fixedBufferType.AddAttribute<UnsafeValueTypeAttribute>(asm);
+      fixedBufferType.AddTo(type);
+
+      var elementField = new FieldDefinition("FixedElementField", FieldAttributes.Private, elementType);
+      elementField.AddTo(fixedBufferType);
+
+      var field = new FieldDefinition(fieldName, FieldAttributes.Public, fixedBufferType);
+      field.AddAttribute<FixedBufferAttribute, TypeReference, int>(asm, elementType, elementCount);
+      field.AddTo(type);
+
+      return field;
+    }
+
+
+    private ElementReaderWriterInfo MakeElementReaderWriter(ILWeaverAssembly asm, PropertyDefinition property, TypeReference elementType, int elementWordCount) {
+
+      var interfaceType = asm.Import(typeof(IElementReaderWriter<>)).MakeGenericInstanceType(elementType);
+
+      if (TryGetNetworkWrapperType(elementType, out var wrapInfo)) {
+        if (!property.DeclaringType.Is<NetworkBehaviour>()) {
+          throw new ILWeaverException($"{elementType} needs wrapping - such types are only supported as NetworkBehaviour properties.");
+        }
+
+        // let's add an interface!
+        var behaviour = property.DeclaringType;
+        if (!behaviour.Interfaces.Any(x => x.InterfaceType.FullName == interfaceType.FullName)) {
+          Log.Debug($"Adding interface {behaviour} {interfaceType}");
+          AddIElementReaderWriterImplementation(asm, behaviour, property, elementType, elementWordCount, isExplicit: true);
+        }
+        return _instanceReaderWriter;
+
+      } else {
+        var readerWriterName = "ReaderWriter@" + elementType.FullName.Replace(".", "_");
+
+        if (TryGetFloatAccuracy(property, out var accuracy)) {
+          uint value = BitConverter.ToUInt32(BitConverter.GetBytes(accuracy), 0);
+          readerWriterName += $"@{value:x}";
+        }
+
+        if (_readerWriters.TryGetValue(readerWriterName, out var entry)) {
+          return entry;
+        }
+
+        var readerWriterType = new TypeDefinition("Fusion.CodeGen", readerWriterName,
+          TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.SequentialLayout | TypeAttributes.BeforeFieldInit, asm.ValueType);
+
+        //var constructor = readerWriterType.AddEmptyConstructor(asm);
+        readerWriterType.AddTo(asm.CecilAssembly);
+
+        AddIElementReaderWriterImplementation(asm, readerWriterType, property, elementType, elementWordCount);
+
+        var instanceField = new FieldDefinition("Instance", FieldAttributes.Public | FieldAttributes.Static, interfaceType);
+        instanceField.AddTo(readerWriterType);
+
+        var initializeMethod = new MethodDefinition($"EnsureInitialized", MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.HideBySig, asm.Import(typeof(void)));
+        initializeMethod.AddAttribute<MethodImplAttribute, MethodImplOptions>(asm, MethodImplOptions.AggressiveInlining);
+        initializeMethod.AddTo(readerWriterType);
+
+        {
+          var il = initializeMethod.Body.GetILProcessor();
+          var ret = Instruction.Create(OpCodes.Ret);
+
+          var tmpVar = new VariableDefinition(readerWriterType);
+          il.Body.Variables.Add(tmpVar);
+
+          il.Append(Ldsfld(instanceField));
+          il.Append(Brtrue_S(ret));
+
+          il.Append(Instruction.Create(OpCodes.Ldloca_S, tmpVar));
+          il.Append(Instruction.Create(OpCodes.Initobj, readerWriterType));
+          il.Append(Instruction.Create(OpCodes.Ldloc_0));
+          il.Append(Instruction.Create(OpCodes.Box, readerWriterType));
+          il.Append(Instruction.Create(OpCodes.Stsfld, instanceField));
+
+          il.Append(ret);
+        }
+
+        entry = new ElementReaderWriterInfo() {
+          InitializeInstance = il => il.Append(Call(initializeMethod)),
+          LoadInstance = il => il.Append(Ldsfld(instanceField)),
+          Type = readerWriterType
+        };
+
+        _readerWriters.Add(readerWriterName, entry);
+        return entry;
+      }
+    }
+
+    private void AddIElementReaderWriterImplementation(ILWeaverAssembly asm, TypeDefinition readerWriterType, PropertyDefinition property, TypeReference elementType, int elementWordCount, bool isExplicit = false) {
+
+      var dataType = asm.Import(typeof(byte*));
+      var indexType = asm.Import(typeof(int));
+      var interfaceType = asm.Import(typeof(IElementReaderWriter<>)).MakeGenericInstanceType(elementType);
+      
+      readerWriterType.Interfaces.Add(new InterfaceImplementation(interfaceType));
+
+      var visibility = isExplicit ? MethodAttributes.Private : MethodAttributes.Public;
+      var namePrefix = isExplicit ? $"CodeGen@ElementReaderWriter<{elementType.FullName}>." : "";
+
+      var readMethod = new MethodDefinition($"{namePrefix}Read",
+        visibility | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual,
+        elementType);
+
+      readMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, dataType));
+      readMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, indexType));
+      readMethod.AddAttribute<MethodImplAttribute, MethodImplOptions>(asm, MethodImplOptions.AggressiveInlining);
+      readMethod.AddTo(readerWriterType);
+
+      var writeMethod = new MethodDefinition($"{namePrefix}Write",
+        visibility | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual,
+        asm.Void);
+
+      writeMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, dataType));
+      writeMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, indexType));
+      writeMethod.Parameters.Add(new ParameterDefinition("val", ParameterAttributes.None, elementType));
+      writeMethod.AddAttribute<MethodImplAttribute, MethodImplOptions>(asm, MethodImplOptions.AggressiveInlining);
+      writeMethod.AddTo(readerWriterType);
+
+      var getElementWordCountMethod = new MethodDefinition($"{namePrefix}GetElementWordCount",
+        visibility | MethodAttributes.Final | MethodAttributes.HideBySig | MethodAttributes.NewSlot | MethodAttributes.Virtual,
+        asm.Import(typeof(int)));
+
+      getElementWordCountMethod.AddAttribute<MethodImplAttribute, MethodImplOptions>(asm, MethodImplOptions.AggressiveInlining);
+      
+      if (isExplicit) {
+        readMethod.Overrides.Add(interfaceType.GetGenericInstanceMethodOrThrow(nameof(IElementReaderWriter<int>.Read)));
+        writeMethod.Overrides.Add(interfaceType.GetGenericInstanceMethodOrThrow(nameof(IElementReaderWriter<int>.Write)));
+        getElementWordCountMethod.Overrides.Add(interfaceType.GetGenericInstanceMethodOrThrow(nameof(IElementReaderWriter<int>.GetElementWordCount)));
+      }
+
+      var getterMethodIL = readMethod.Body.GetILProcessor();
+      var setterMethodIL = writeMethod.Body.GetILProcessor();
+
+      InjectValueAccessor(asm, getterMethodIL, setterMethodIL, property, elementType, OpCodes.Ldarg_3, (il, offset) => {
+        LoadArrayElementAddress(il, OpCodes.Ldarg_1, OpCodes.Ldarg_2, elementWordCount, offset);
+      }, false);
+
+      getElementWordCountMethod.AddTo(readerWriterType);
+      {
+        var il = getElementWordCountMethod.Body.GetILProcessor();
+        il.Append(Ldc_I4(elementWordCount));
+        il.Append(Ret());
+      }
+    }
+
+
+    private string TypeNameToIdentifier(TypeReference type, string prefix) {
+      string result = type.FullName;
+      result = result.Replace("`1", "");
+      result = result.Replace("`2", "");
+      result = result.Replace("`3", "");
+      result = result.Replace(".", "_");
+      result = prefix + result;
+      return result;
+    }
+
+    private TypeDefinition CacheGetUnitySurrogate(ILWeaverAssembly asm, PropertyDefinition property) {
+      var type = property.PropertyType;
+      var dataType = asm.CecilAssembly.MainModule.ImportReference(typeof(byte*));
+
+      GenericInstanceType baseType;
+      string surrogateName;
+
+      if (type.IsNetworkDictionary(out var keyType, out var valueType)) {
+        var keyReaderWriterType = MakeElementReaderWriter(asm, property, keyType, GetTypeWordCount(asm, keyType)).Type;
+        var valueReaderWriterType = MakeElementReaderWriter(asm, property, valueType, GetTypeWordCount(asm, valueType)).Type;
+        baseType = asm.Import(typeof(Fusion.Internal.UnityDictionarySurrogate<,,,>)).MakeGenericInstanceType(keyType, keyReaderWriterType, valueType, valueReaderWriterType);
+        surrogateName = "UnityDictionarySurrogate@" + keyReaderWriterType.Name + "@" + valueReaderWriterType.Name;
+      } else if (type.IsNetworkArray(out var elementType)) {
+        var readerWriterType = MakeElementReaderWriter(asm, property, elementType, GetTypeWordCount(asm, elementType)).Type;
+        baseType = asm.Import(typeof(Fusion.Internal.UnityArraySurrogate<,>)).MakeGenericInstanceType(elementType, readerWriterType);
+        surrogateName = "UnityArraySurrogate@" + readerWriterType.Name;
+      } else {
+        var readerWriterType = MakeElementReaderWriter(asm, property, property.PropertyType, GetTypeWordCount(asm, property.PropertyType)).Type;
+        baseType = asm.Import(typeof(Fusion.Internal.UnityValueSurrogate<,>)).MakeGenericInstanceType(property.PropertyType, readerWriterType);
+        surrogateName = "UnityValueSurrogate@" + readerWriterType.Name;
+      }
+
+      if (!_unitySurrogateTypes.TryGetValue(surrogateName, out var surrogateType)) {
+        surrogateType = new TypeDefinition("Fusion.CodeGen", surrogateName,
+          TypeAttributes.NotPublic | TypeAttributes.AnsiClass | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
+          baseType);
+
+        surrogateType.AddTo(asm.CecilAssembly);
+        surrogateType.AddEmptyConstructor(asm);
+
+        _unitySurrogateTypes.Add(surrogateName, surrogateType);
+      }
+      return surrogateType;
+    }
+
+    struct ElementReaderWriterInfo {
+      public Action<ILProcessor> InitializeInstance;
+      public Action<ILProcessor> LoadInstance;
+      public TypeDefinition Type;
+    }
+
+    struct FixedBufferInfo {
+      public FieldDefinition PointerField;
+      public TypeDefinition Type;
+    }
+  }
+}
+#endif
+
+#endregion
+
+
 #region Assets/Photon/FusionCodeGen/ILWeaver.cs
 
 #if FUSION_WEAVER && FUSION_HAS_MONO_CECIL
@@ -26,8 +328,11 @@ namespace Fusion.CodeGen {
 
 
     void AddUnmanagedType<T>() where T : unmanaged {
+      AddUnmanagedType<T>(sizeof(T));
+    }
+
+    void AddUnmanagedType<T>(int size) where T : unmanaged {
       unsafe {
-        var size = sizeof(T);
         var wordCount = Native.WordCount(size, Allocator.REPLICATE_WORD_SIZE);
         _typeData.Add(typeof(T).FullName, new TypeMetaData(wordCount));
       }
@@ -39,6 +344,8 @@ namespace Fusion.CodeGen {
       _rpcCount = new Dictionary<string, int>();
 
       _typeData.Add("NetworkedObject", new TypeMetaData(2));
+
+      AddUnmanagedType<bool>(sizeof(int));
 
       AddUnmanagedType<byte>();
       AddUnmanagedType<sbyte>();
@@ -267,16 +574,6 @@ namespace Fusion.CodeGen {
       return asm.CecilAssembly.MainModule.ImportReference(typeof(NetworkBehaviourWeavedAttribute).GetConstructors()[0]);
     }
 
-    MethodReference GetConstructor<T>(ILWeaverAssembly asm, int argCount = 0) {
-      foreach (var ctor in typeof(T).GetConstructors()) {
-        if (ctor.GetParameters().Length == argCount) {
-          return asm.CecilAssembly.MainModule.ImportReference(ctor);
-        }
-      }
-
-      throw new ILWeaverException($"Could not find constructor with {argCount} arguments on {typeof(T).Name}");
-    }
-
     TypeReference ImportType<T>(ILWeaverAssembly asm) {
       return asm.CecilAssembly.MainModule.ImportReference(typeof(T));
     }
@@ -312,30 +609,7 @@ namespace Fusion.CodeGen {
       il.Append(Instruction.Create(OpCodes.Ldfld, field));
       il.Append(Instruction.Create(OpCodes.Ldc_I4, wordCount * Allocator.REPLICATE_WORD_SIZE));
       il.Append(Instruction.Create(OpCodes.Add));
-    }
-
-    static int GetPrimitiveSize(TypeReference type) {
-      switch (type.MetadataType) {
-        case MetadataType.Byte:
-        case MetadataType.SByte:
-          return sizeof(byte);
-        case MetadataType.UInt16:
-        case MetadataType.Int16:
-          return sizeof(short);
-        case MetadataType.UInt32:
-        case MetadataType.Int32:
-          return sizeof(int);
-        case MetadataType.UInt64:
-        case MetadataType.Int64:
-          return sizeof(long);
-        case MetadataType.Single:
-          return sizeof(float);
-        case MetadataType.Double:
-          return sizeof(double);
-        default:
-          throw new ArgumentException($"Unknown primitive type: {type}", nameof(type));
-      }
-    }
+    }    
 
     int GetWordCount(ILWeaverAssembly asm, WrapInfo wrapInfo) {
       return wrapInfo.WrapperType != null ? GetTypeWordCount(asm, wrapInfo.WrapperType) : Native.WordCount(wrapInfo.MaxRawByteCount, Allocator.REPLICATE_WORD_SIZE);
@@ -351,6 +625,8 @@ namespace Fusion.CodeGen {
       }
 
       if (type.IsNetworkArray(out var elementType)) {
+        type = elementType;
+      } else if (type.IsNetworkList(out elementType)) {
         type = elementType;
       }
 
@@ -398,9 +674,9 @@ namespace Fusion.CodeGen {
     }
 
     int GetPropertyWordCount(ILWeaverAssembly asm, PropertyDefinition property) {
-      if (property.PropertyType.Is<NetworkBehaviour>() || property.PropertyType.Is<NetworkObject>()) {
-        return 2;
-      }
+      //if (property.PropertyType.Is<NetworkBehaviour>() || property.PropertyType.Is<NetworkObject>()) {
+      //  return 2;
+      //}
 
       if (property.PropertyType.IsString()) {
         return 2 + GetStringCapacity(property);
@@ -410,7 +686,12 @@ namespace Fusion.CodeGen {
         return GetStaticArrayCapacity(property) * GetTypeWordCount(asm, GetStaticArrayElementType(property.PropertyType));
       }
 
+      if (property.PropertyType.IsNetworkList()) {
+        return NetworkLinkedList<int>.META_WORDS + (GetStaticListCapacity(property) * (GetTypeWordCount(asm, GetStaticListElementType(property.PropertyType)) + NetworkLinkedList<int>.ELEMENT_WORDS));
+      }
+      
       if (property.PropertyType.IsNetworkDictionary()) {
+      
         var capacity = GetStaticDictionaryCapacity(property);
 
         return
@@ -462,6 +743,10 @@ namespace Fusion.CodeGen {
       return Math.Max(1, GetCapacity(property, 1));
     }
 
+    int GetStaticListCapacity(PropertyDefinition property) {
+      return Math.Max(1, GetCapacity(property, 1));
+    }
+    
     int GetStaticDictionaryCapacity(PropertyDefinition property) {
       return Primes.GetNextPrime(Math.Max(1, GetCapacity(property, 1)));
     }
@@ -476,6 +761,30 @@ namespace Fusion.CodeGen {
       }
 
       return size;
+    }
+
+    bool TryGetFloatAccuracy(PropertyDefinition property, out float accuracy ) {
+      if (property.TryGetAttribute<AccuracyAttribute>(out var attr)) {
+        var obj = attr.ConstructorArguments[0];
+
+        // If the argument is a string, this is using a global Accuracy. Need to look up the value.
+        if (obj.Value is string str) {
+          accuracy = ILWeaverSettings.GetNamedFloatAccuracy(str);
+        } else {
+          var val = attr.ConstructorArguments[0].Value;
+          if (val is float fval) {
+            accuracy = fval;
+          } else if (val is double dval) {
+            accuracy = (float)dval;
+          } else {
+            throw new Exception($"Invalid argument type: {val.GetType()}");
+          }
+        }
+        return true;
+      } else {
+        accuracy = 0.0f; ;
+        return false;
+      }
     }
 
     float GetFloatAccuracy(PropertyDefinition property) {
@@ -504,8 +813,11 @@ namespace Fusion.CodeGen {
       return accuracy;
     }
 
-
     TypeReference GetStaticArrayElementType(TypeReference type) {
+      return ((GenericInstanceType)type).GenericArguments[0];
+    }
+    
+    TypeReference GetStaticListElementType(TypeReference type) {
       return ((GenericInstanceType)type).GenericArguments[0];
     }
     
@@ -517,8 +829,8 @@ namespace Fusion.CodeGen {
       return ((GenericInstanceType)type).GenericArguments[1];
     }
 
-    void LoadArrayElementAddress(ILProcessor il, OpCode indexOpCode, int elementWordCount, int wordOffset = 0) {
-      il.Append(Instruction.Create(OpCodes.Ldarg_0));
+    void LoadArrayElementAddress(ILProcessor il, OpCode arrayOpCode, OpCode indexOpCode, int elementWordCount, int wordOffset = 0) {
+      il.Append(Instruction.Create(arrayOpCode));
       il.Append(Instruction.Create(indexOpCode));
       il.Append(Instruction.Create(OpCodes.Ldc_I4, elementWordCount * Allocator.REPLICATE_WORD_SIZE));
       il.Append(Instruction.Create(OpCodes.Mul));
@@ -560,69 +872,7 @@ namespace Fusion.CodeGen {
       }
     }
 
-    (FieldDefinition, FieldDefinition) MakeReaderWriterMethods(ILWeaverAssembly asm, PropertyDefinition property, TypeReference elementType, int elementWordCount, string suffix, ILProcessor getIL) {
-      var dataType  = asm.CecilAssembly.MainModule.ImportReference(typeof(byte*));
-      var indexType = asm.CecilAssembly.MainModule.ImportReference(typeof(int));
-      
-      var getterMethod = new MethodDefinition(property.Name + $"@{suffix}@Getter", MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig, elementType);
-      getterMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, dataType));
-      getterMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, indexType));
-
-      var setterMethod = new MethodDefinition(property.Name + $"@{suffix}@Setter", MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig, asm.CecilAssembly.MainModule.ImportReference(typeof(void)));
-      setterMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, dataType));
-      setterMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, indexType));
-      setterMethod.Parameters.Add(new ParameterDefinition("val", ParameterAttributes.None, elementType));
-
-      var getterMethodIL = getterMethod.Body.GetILProcessor();
-      var setterMethodIL = setterMethod.Body.GetILProcessor();
-
-      var readerDelegateType = asm.CecilAssembly.MainModule.ImportReference(asm.CecilAssembly.MainModule.ImportReference(typeof(ElementReader<>)).MakeGenericInstanceType(elementType));
-      var writerDelegateType = asm.CecilAssembly.MainModule.ImportReference(asm.CecilAssembly.MainModule.ImportReference(typeof(ElementWriter<>)).MakeGenericInstanceType(elementType));
-
-      var readerDelegateCtor = asm.CecilAssembly.MainModule.ImportReference(readerDelegateType.Resolve().GetConstructors().First());
-      readerDelegateCtor.DeclaringType = readerDelegateCtor.DeclaringType.MakeGenericInstanceType(elementType);
-
-      var writerDelegateCtor = asm.CecilAssembly.MainModule.ImportReference(writerDelegateType.Resolve().GetConstructors().First());
-      writerDelegateCtor.DeclaringType = writerDelegateCtor.DeclaringType.MakeGenericInstanceType(elementType);
-
-      InjectValueAccessor(asm, getterMethodIL, setterMethodIL, property, elementType, OpCodes.Ldarg_2, (il, offset) => {
-        if (ReferenceEquals(il, setterMethodIL)) {
-          LoadArrayElementAddress(setterMethodIL, OpCodes.Ldarg_1, elementWordCount, offset);
-        } else {
-          LoadArrayElementAddress(getterMethodIL, OpCodes.Ldarg_1, elementWordCount, offset);
-        }
-      }, false);
-
-      property.DeclaringType.Methods.Add(getterMethod);
-      property.DeclaringType.Methods.Add(setterMethod);
-
-      var getterCache = new FieldDefinition(GetCacheName(getterMethod.Name), FieldAttributes.Private | FieldAttributes.Static, readerDelegateType);
-      var setterCache = new FieldDefinition(GetCacheName(setterMethod.Name), FieldAttributes.Private | FieldAttributes.Static, writerDelegateType);
-
-      property.DeclaringType.Fields.Add(getterCache);
-      property.DeclaringType.Fields.Add(setterCache);
-      
-      var nop = Instruction.Create(OpCodes.Nop);
-
-      getIL.Append(Instruction.Create(OpCodes.Ldsfld, getterCache));
-      getIL.Append(Instruction.Create(OpCodes.Ldnull));
-      getIL.Append(Instruction.Create(OpCodes.Ceq));
-      getIL.Append(Instruction.Create(OpCodes.Brfalse, nop));
-
-      getIL.Append(Instruction.Create(OpCodes.Ldnull));
-      getIL.Append(Instruction.Create(OpCodes.Ldftn, getterMethod));
-      getIL.Append(Instruction.Create(OpCodes.Newobj, readerDelegateCtor));
-      getIL.Append(Instruction.Create(OpCodes.Stsfld, getterCache));
-
-      getIL.Append(Instruction.Create(OpCodes.Ldnull));
-      getIL.Append(Instruction.Create(OpCodes.Ldftn, setterMethod));
-      getIL.Append(Instruction.Create(OpCodes.Newobj, writerDelegateCtor));
-      getIL.Append(Instruction.Create(OpCodes.Stsfld, setterCache));
-
-      getIL.Append(nop);
-
-      return (getterCache, setterCache);
-    }
+    
 
     void InjectValueAccessor(ILWeaverAssembly asm, ILProcessor getIL, ILProcessor setIL, PropertyDefinition property, TypeReference type, OpCode valueOpCode, Action<ILProcessor, int> addressLoader, bool injectNullChecks) {
       if (injectNullChecks) {
@@ -704,10 +954,33 @@ namespace Fusion.CodeGen {
           }
 
           setIL.Append(Instruction.Create(OpCodes.Ret));
-        }
-
-        // byte, sbyte, short, ushort, int, uint
-        else {
+        } else if (type.IsBool()) {
+          {
+            // return *ptr == 0 ? false : true
+            var load_0 = Ldc_I4(0);
+            addressLoader(getIL, 0);
+            getIL.Append(Ldind_I4());
+            getIL.Append(Brfalse_S(load_0));
+            getIL.Append(Ldc_I4(1));
+            getIL.Append(Ret());
+            getIL.Append(load_0);
+            getIL.Append(Ret());
+          }
+          {
+            // *ptr = value ? 1 : 0;
+            var store = Stind_I4();
+            var load_1 = Ldc_I4(1);
+            addressLoader(setIL, 0);
+            setIL.Append(Instruction.Create(valueOpCode));
+            setIL.Append(Brtrue_S(load_1));
+            setIL.Append(Ldc_I4(0));
+            setIL.Append(Br_S(store));
+            setIL.Append(load_1);
+            setIL.Append(store);
+            setIL.Append(Ret());
+          }
+        } else {
+          // byte, sbyte, short, ushort, int, uint
           addressLoader(getIL, 0);
           getIL.Append(Ldind(type));
           getIL.Append(Instruction.Create(OpCodes.Ret));
@@ -725,29 +998,32 @@ namespace Fusion.CodeGen {
         //}
 
         // getter
-        using (var ctx = new MethodContext(asm, property.GetMethod, addressGetter: (x) => addressLoader(x, 0))) {
+        using (var ctx = new MethodContext(asm, getIL.Body.Method, addressGetter: (x) => addressLoader(x, 0))) {
           if (field != null) {
             property.DeclaringType.Fields.Add(field);
-            WeaveNetworkUnwrap(asm, getIL, ctx, wrapInfo, property.PropertyType, previousValue: field);
+            WeaveNetworkUnwrap(asm, getIL, ctx, wrapInfo, type, previousValue: field);
           } else {
-            WeaveNetworkUnwrap(asm, getIL, ctx, wrapInfo, property.PropertyType);
+            WeaveNetworkUnwrap(asm, getIL, ctx, wrapInfo, type);
           }
           getIL.Append(Ret());
         }
 
-        // setter
-        using (var ctx = new MethodContext(asm, property.SetMethod, addressGetter: (x) => addressLoader(x, 0))) {
-          WeaveNetworkWrap(asm, setIL, ctx, il => il.Append(Ldarg_1()), wrapInfo);
-          //if (cache != null) {
-          //  setIL.Append(Ldarg_0());
-          //  setIL.Append(Ldarg_1());
-          //  setIL.Append(Stfld(cache));
-          //}
-          setIL.Append(Ret());
+
+        if (setIL != null) {
+          // setter
+          using (var ctx = new MethodContext(asm, setIL.Body.Method, addressGetter: (x) => addressLoader(x, 0))) {
+            WeaveNetworkWrap(asm, setIL, ctx, il => il.Append(Instruction.Create(valueOpCode)), wrapInfo);
+            //if (cache != null) {
+            //  setIL.Append(Ldarg_0());
+            //  setIL.Append(Ldarg_1());
+            //  setIL.Append(Stfld(cache));
+            //}
+            setIL.Append(Ret());
+          }
         }
       }
-        // other value types
-        else if (type.IsValueType) {
+      // other value types
+      else if (type.IsValueType) {
         var resolvedPropertyType = type.TryResolve();
         if (resolvedPropertyType == null) {
           throw new ILWeaverException($"Can't resolve type for property {property.FullName} with type {property.PropertyType}");
@@ -821,8 +1097,11 @@ namespace Fusion.CodeGen {
           setIL.Append(Instruction.Create(OpCodes.Call, write));
           setIL.Append(Instruction.Create(OpCodes.Ret));
         } else if (type.IsNetworkDictionary()) {
-          
-          
+
+          if (setIL != null) {
+            throw new ILWeaverException($"NetworkDictionary properties can't have setters.");
+          }
+
           var keyType      = GetStaticDictionaryKeyType(type);
           var keyWordCount = GetTypeWordCount(asm, keyType);
           
@@ -831,16 +1110,16 @@ namespace Fusion.CodeGen {
 
           var capacity  = GetStaticDictionaryCapacity(property);
           
-          var (keyReader, keyWriter) = MakeReaderWriterMethods(asm, property, keyType, keyWordCount, "Key", getIL);
-          var (valReader, valWriter) = MakeReaderWriterMethods(asm, property, valType, valWordCount, "Val", getIL);
-          
+          var keyInfo = MakeElementReaderWriter(asm, property, keyType, keyWordCount);
+          var valInfo = MakeElementReaderWriter(asm, property, valType, valWordCount);
+
           // load address
+          keyInfo.InitializeInstance(getIL);
+          valInfo.InitializeInstance(getIL);
           addressLoader(getIL, 0);
           getIL.Append(Instruction.Create(OpCodes.Ldc_I4, capacity));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, keyReader));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, keyWriter));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, valReader));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, valWriter));
+          keyInfo.LoadInstance(getIL);
+          valInfo.LoadInstance(getIL);
 
           var ctor = asm.CecilAssembly.MainModule.ImportReference(type.Resolve().GetConstructors().First(x => x.Parameters.Count > 1));
           ctor.DeclaringType = ctor.DeclaringType.MakeGenericInstanceType(keyType, valType);
@@ -848,76 +1127,43 @@ namespace Fusion.CodeGen {
           getIL.Append(Instruction.Create(OpCodes.Newobj, ctor));
           getIL.Append(Instruction.Create(OpCodes.Ret));
           
+        } else if (type.IsNetworkList()) {
+          if (setIL != null) {
+            throw new ILWeaverException($"NetworkList properties can't have setters.");
+          }
+          
+          var elementType      = GetStaticListElementType(type);
+          var elementWordCount = GetTypeWordCount(asm, elementType);
+          var listCapacity      = GetStaticListCapacity(property);
+          
+          var elementInfo = MakeElementReaderWriter(asm, property, elementType, elementWordCount);
+
+          elementInfo.InitializeInstance(getIL);
+          addressLoader(getIL, 0);
+          getIL.Append(Instruction.Create(OpCodes.Ldc_I4, listCapacity));
+          elementInfo.LoadInstance(getIL);
+          
+          var ctor = asm.CecilAssembly.MainModule.ImportReference(type.Resolve().GetConstructors().First(x => x.Parameters.Count > 1));
+          ctor.DeclaringType = ctor.DeclaringType.MakeGenericInstanceType(elementType);
+
+          getIL.Append(Instruction.Create(OpCodes.Newobj, ctor));
+          getIL.Append(Instruction.Create(OpCodes.Ret));
+          
         } else if (type.IsNetworkArray()) {
+          if (setIL != null) {
+            throw new ILWeaverException($"NetworkArray properties can't have setters.");
+          }
           var elementType = GetStaticArrayElementType(type);
           var elementWordCount = GetTypeWordCount(asm, elementType);
           var arrayLength = GetStaticArrayCapacity(property);
 
-          var bytePointer = asm.CecilAssembly.MainModule.ImportReference(typeof(byte*));
-          var intValue = asm.CecilAssembly.MainModule.ImportReference(typeof(int));
-
-          var getterMethod = new MethodDefinition(property.Name + "@Getter", MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig, elementType);
-          getterMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, bytePointer));
-          getterMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, intValue));
-
-          var setterMethod = new MethodDefinition(property.Name + "@Setter", MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig, asm.CecilAssembly.MainModule.ImportReference(typeof(void)));
-          setterMethod.Parameters.Add(new ParameterDefinition("data", ParameterAttributes.None, bytePointer));
-          setterMethod.Parameters.Add(new ParameterDefinition("index", ParameterAttributes.None, intValue));
-          setterMethod.Parameters.Add(new ParameterDefinition("val", ParameterAttributes.None, elementType));
-
-          var getterMethodIL = getterMethod.Body.GetILProcessor();
-          var setterMethodIL = setterMethod.Body.GetILProcessor();
-
-          var readerDelegateType = asm.CecilAssembly.MainModule.ImportReference(resolvedPropertyType.NestedTypes.First(x => x.Name == "Reader").MakeGenericInstanceType(elementType));
-          var writerDelegateType = asm.CecilAssembly.MainModule.ImportReference(resolvedPropertyType.NestedTypes.First(x => x.Name == "Writer").MakeGenericInstanceType(elementType));
-
-          var readerDelegateCtor = asm.CecilAssembly.MainModule.ImportReference(readerDelegateType.Resolve().GetConstructors().First());
-          readerDelegateCtor.DeclaringType = readerDelegateCtor.DeclaringType.MakeGenericInstanceType(elementType);
-
-          var writerDelegateCtor = asm.CecilAssembly.MainModule.ImportReference(writerDelegateType.Resolve().GetConstructors().First());
-          writerDelegateCtor.DeclaringType = writerDelegateCtor.DeclaringType.MakeGenericInstanceType(elementType);
-
-          InjectValueAccessor(asm, getterMethodIL, setterMethodIL, property, elementType, OpCodes.Ldarg_2, (il, offset) => {
-            if (ReferenceEquals(il, setterMethodIL)) {
-              LoadArrayElementAddress(setterMethodIL, OpCodes.Ldarg_1, elementWordCount, offset);
-            } else {
-              LoadArrayElementAddress(getterMethodIL, OpCodes.Ldarg_1, elementWordCount, offset);
-            }
-          }, false);
-
-          property.DeclaringType.Methods.Add(getterMethod);
-          property.DeclaringType.Methods.Add(setterMethod);
-
-          var getterCache = new FieldDefinition(GetCacheName(getterMethod.Name), FieldAttributes.Private | FieldAttributes.Static, readerDelegateType);
-          var setterCache = new FieldDefinition(GetCacheName(setterMethod.Name), FieldAttributes.Private | FieldAttributes.Static, writerDelegateType);
-
-          property.DeclaringType.Fields.Add(getterCache);
-          property.DeclaringType.Fields.Add(setterCache);
-
-          var nop = Instruction.Create(OpCodes.Nop);
-
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, getterCache));
-          getIL.Append(Instruction.Create(OpCodes.Ldnull));
-          getIL.Append(Instruction.Create(OpCodes.Ceq));
-          getIL.Append(Instruction.Create(OpCodes.Brfalse, nop));
-
-          getIL.Append(Instruction.Create(OpCodes.Ldnull));
-          getIL.Append(Instruction.Create(OpCodes.Ldftn, getterMethod));
-          getIL.Append(Instruction.Create(OpCodes.Newobj, readerDelegateCtor));
-          getIL.Append(Instruction.Create(OpCodes.Stsfld, getterCache));
-
-          getIL.Append(Instruction.Create(OpCodes.Ldnull));
-          getIL.Append(Instruction.Create(OpCodes.Ldftn, setterMethod));
-          getIL.Append(Instruction.Create(OpCodes.Newobj, writerDelegateCtor));
-          getIL.Append(Instruction.Create(OpCodes.Stsfld, setterCache));
-
-          getIL.Append(nop);
+          var elementInfo = MakeElementReaderWriter(asm, property, elementType, elementWordCount);
 
           // load address
+          elementInfo.InitializeInstance(getIL);
           addressLoader(getIL, 0);
           getIL.Append(Instruction.Create(OpCodes.Ldc_I4, arrayLength));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, getterCache));
-          getIL.Append(Instruction.Create(OpCodes.Ldsfld, setterCache));
+          elementInfo.LoadInstance(getIL);
 
           var ctor = asm.CecilAssembly.MainModule.ImportReference(type.Resolve().GetConstructors().First(x => x.Parameters.Count > 1));
           ctor.DeclaringType = ctor.DeclaringType.MakeGenericInstanceType(elementType);
@@ -944,78 +1190,6 @@ namespace Fusion.CodeGen {
       }
     }
 
-    FieldDefinition AddInspectorField(ILWeaverAssembly asm, PropertyDefinition property, int index) {
-
-      TypeReference fieldType = property.PropertyType;
-      if (fieldType.IsNetworkArray(out var elementType)) {
-        fieldType = TypeReferenceRocks.MakeArrayType(elementType);
-      } else if (fieldType.IsNetworkDictionary(out var keyType, out var valueType)) {
-        if (ILWeaverSettings.UseSerializableDictionaryForNetworkDictionaryProperties()) {
-          fieldType = TypeReferenceRocks.MakeGenericInstanceType(asm.Import(typeof(SerializableDictionary<,>)), keyType, valueType);
-        } else {
-          fieldType = TypeReferenceRocks.MakeGenericInstanceType(asm.Import(typeof(Dictionary<,>)), keyType, valueType);
-        }
-      }
-
-      var field = new FieldDefinition(GetInspectorFieldName(property.Name), FieldAttributes.Private, fieldType);
-      property.DeclaringType.Fields.Add(field);
-
-      bool hasNonSerialized = false;
-
-      foreach (var attribute in property.CustomAttributes) {
-        if (attribute.AttributeType.IsSame<NetworkedAttribute>() || 
-            attribute.AttributeType.IsSame<NetworkedWeavedAttribute>() ||
-            attribute.AttributeType.IsSame<AccuracyAttribute>() ||
-            attribute.AttributeType.IsSame<HideFromInspectorAttribute>() ||
-            attribute.AttributeType.IsSame<CapacityAttribute>()) {
-          continue;
-        }
-
-        var attribDef = attribute.AttributeType.TryResolve();
-        if (attribDef == null) {
-          Log.Warn($"Failed to resolve {attribute.AttributeType}, not going to try to apply on {field}");
-          continue;
-        }
-        
-
-        if (attribDef.TryGetAttribute<UnityPropertyAttributeProxyAttribute>(out var proxy)) {
-          Log.Debug($"Found proxy attribute {attribute.AttributeType}, applying to {field}");
-          var attribTypeRef = proxy.GetAttributeArgument<TypeReference>(0);
-          var attribTypeDef = attribTypeRef.Resolve();
-
-          if (attribTypeDef.TryGetMatchingConstructor(attribute.Constructor.Resolve(), out var constructor)) {
-            field.CustomAttributes.Add(new CustomAttribute(property.Module.ImportReference(constructor), attribute.GetBlob()));
-
-            if (attribute.AttributeType.IsSame<UnityNonSerializedAttribute>()) {
-              Log.Debug($"{field} marked as NonSerialized, SerializeField will not be applied");
-              hasNonSerialized = true;
-            }
-          } else {
-            Log.Warn($"Failed to find matching constructor of {attribTypeDef} for {attribute.Constructor} (field {field})");
-          }
-
-          continue;
-        }
-
-        if (attribDef.TryGetAttribute<AttributeUsageAttribute>(out var usage)) {
-          var targets = usage.GetAttributeArgument<AttributeTargets>(0);
-          if ((targets & AttributeTargets.Field) != AttributeTargets.Field) {
-            Log.Debug($"Attribute {attribute.AttributeType} can't be applied on a field ({field}), skipping.");
-            continue;
-          }
-        }
-
-        Log.Debug($"Copying {attribute.AttributeType} to {field}");
-        field.CustomAttributes.Add(new CustomAttribute(attribute.Constructor, attribute.GetBlob()));
-      }
-
-      if (!hasNonSerialized) {
-        AddAttribute<SerializeField>(asm, field);
-      }
-
-      return field;
-    }
-
     (MethodDefinition getter, MethodDefinition setter) PreparePropertyForWeaving(PropertyDefinition property) {
       var getter = property.GetMethod;
       var setter = property.SetMethod;
@@ -1039,7 +1213,7 @@ namespace Fusion.CodeGen {
       public string DefaultFieldName;
       public FieldDefinition BackingField;
       public bool ReatainIL;
-    }
+    } 
 
     bool IsWeavableProperty(PropertyDefinition property, out WeavablePropertyMeta meta) {
       if (property.TryGetAttribute<NetworkedAttribute>(out var attr) == false) {
@@ -1058,7 +1232,7 @@ namespace Fusion.CodeGen {
       var setter = property.SetMethod;
       if (setter == null) {
         // if it doesn't exist we allow either array or pointer
-        if (property.PropertyType.IsPointer == false && property.PropertyType.IsNetworkArray() == false && property.PropertyType.IsNetworkDictionary() == false) {
+        if (property.PropertyType.IsPointer == false && property.PropertyType.IsNetworkArray() == false && property.PropertyType.IsNetworkDictionary() == false && property.PropertyType.IsNetworkList() == false) {
           meta = default;
           return false;
         }
@@ -1075,9 +1249,6 @@ namespace Fusion.CodeGen {
           };
           return true;
         }
-
-        meta = default;
-        return false;
       }
 
       meta = new WeavablePropertyMeta() {
@@ -1090,40 +1261,12 @@ namespace Fusion.CodeGen {
       return true;
     }
 
-    void AddAttribute<T>(ILWeaverAssembly asm, IMemberDefinition member) where T : Attribute {
-      member.CustomAttributes.Add(new CustomAttribute(GetConstructor<T>(asm)));
-    }
-
-    void AddAttribute<T, A0>(ILWeaverAssembly asm, IMemberDefinition member, A0 arg0) where T : Attribute {
-      CustomAttribute attr;
-      attr = new CustomAttribute(GetConstructor<T>(asm, 1));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A0>(asm), arg0));
-      member.CustomAttributes.Add(attr);
-    }
-
-    void AddAttribute<T, A0, A1>(ILWeaverAssembly asm, IMemberDefinition member, A0 arg0, A1 arg1) where T : Attribute {
-      CustomAttribute attr;
-      attr = new CustomAttribute(GetConstructor<T>(asm, 2));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A0>(asm), arg0));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A1>(asm), arg1));
-      member.CustomAttributes.Add(attr);
-    }
-
-    void AddAttribute<T, A0, A1, A2>(ILWeaverAssembly asm, IMemberDefinition member, A0 arg0, A1 arg1, A2 arg2) where T : Attribute {
-      CustomAttribute attr;
-      attr = new CustomAttribute(GetConstructor<T>(asm, 3));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A0>(asm), arg0));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A1>(asm), arg1));
-      attr.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<A2>(asm), arg2));
-      member.CustomAttributes.Add(attr);
-    }
-
     bool IsRpcCompatibleType(TypeReference property) {
       if (property.IsPointer) {
         return false;
       }
 
-      if (property.IsNetworkArray()) {
+      if (property.IsNetworkArray() || property.IsNetworkList() || property.IsNetworkDictionary()) {
         return false;
       }
 
@@ -1151,13 +1294,9 @@ namespace Fusion.CodeGen {
         return false;
       }
 
-      if (property.PropertyType.IsNetworkArray()) {
+      if (property.PropertyType.IsNetworkArray() || property.PropertyType.IsNetworkList() || property.PropertyType.IsNetworkDictionary()) {
         return false;
-      }
-
-      if (property.PropertyType.IsNetworkDictionary()) {
-        return false;
-      }
+      } 
       
       if (property.PropertyType.IsString()) {
         return true;
@@ -1210,7 +1349,7 @@ namespace Fusion.CodeGen {
         }
 
         // add new attribute
-        AddAttribute<NetworkInputWeavedAttribute, int>(asm, type, wordCount);
+        type.AddAttribute<NetworkInputWeavedAttribute, int>(asm, wordCount);
 
         // track type data
         _typeData.Add(type.FullName, new TypeMetaData {
@@ -1221,66 +1360,7 @@ namespace Fusion.CodeGen {
       }
     }
 
-    void WeaveStruct(ILWeaverAssembly asm, TypeDefinition type) {
-      if (type.TryGetAttribute<NetworkStructWeavedAttribute>(out var attribute)) {
-        if (_typeData.ContainsKey(type.FullName) == false) {
-          _typeData.Add(type.FullName, new TypeMetaData {
-            WordCount = (int)attribute.ConstructorArguments[0].Value,
-            Definition = type,
-            Reference = type
-          });
-        }
-
-        return;
-      }
-
-      using (Log.ScopeStruct(type)) {
-
-        // flag asm as modified
-        asm.Modified = true;
-
-        // set as explicit layout
-        type.IsExplicitLayout = true;
-
-        // clear all backing fields
-        foreach (var property in type.Properties) {
-          if (IsWeavableProperty(property)) {
-            RemoveBackingField(property);
-          }
-        }
-
-        // figure out word counts for everything
-        var wordCount = 0;
-
-        foreach (var field in type.Fields) {
-
-          // skip statics
-          if (field.IsStatic) {
-            continue;
-          }
-
-          // set offset 
-          field.Offset = wordCount * Allocator.REPLICATE_WORD_SIZE;
-
-          try {
-            // increase block count
-            wordCount += GetTypeWordCount(asm, field.FieldType);
-          } catch (Exception ex) {
-            throw new ILWeaverException($"Failed to get word count of field {field}", ex);
-          }
-        }
-
-        // add new attribute
-        AddAttribute<NetworkStructWeavedAttribute, int>(asm, type, wordCount);
-
-        // track type data
-        _typeData.Add(type.FullName, new TypeMetaData {
-          WordCount = wordCount,
-          Definition = type,
-          Reference = type
-        });
-      }
-    }
+    
 
     MethodReference FindMethodInParent(ILWeaverAssembly asm, TypeDefinition type, string name, string stopAtType = null, int? argCount = null) {
       type = type.BaseType.Resolve();
@@ -1457,7 +1537,7 @@ namespace Fusion.CodeGen {
               var checkDone = Nop();
               il.Append(Brtrue_S(checkDone));
               il.Append(Ldstr(rpc.Parameters[0].Name));
-              il.Append(Newobj(GetConstructor<ArgumentNullException>(asm, 1)));
+              il.Append(Newobj(typeof(ArgumentNullException).GetConstructor(asm, 1)));
               il.Append(Throw());
               il.Append(checkDone);
             } else {
@@ -1764,10 +1844,10 @@ namespace Fusion.CodeGen {
           // add attribute
           if (rpc.IsStatic) {
             Log.Assert(instanceRpcKey < 0);
-            AddAttribute<NetworkRpcStaticWeavedInvokerAttribute, string>(asm, invoker, rpc.ToString());
+            invoker.AddAttribute<NetworkRpcStaticWeavedInvokerAttribute, string>(asm, rpc.ToString());
           } else {
             Log.Assert(instanceRpcKey >= 0);
-            AddAttribute<NetworkRpcWeavedInvokerAttribute, int, int, int>(asm, invoker, instanceRpcKey, sources, targets);
+            invoker.AddAttribute<NetworkRpcWeavedInvokerAttribute, int, int, int>(asm, instanceRpcKey, sources, targets);
           }
 
           // put on type
@@ -1908,7 +1988,7 @@ namespace Fusion.CodeGen {
 
       var elementType = para.ParameterType.GetElementType();
       if (elementType.IsPrimitive) {
-        size = GetPrimitiveSize(elementType);
+        size = elementType.GetPrimitiveSize();
       } else if (TryGetNetworkWrapperType(elementType, out var wrapInfo)) {
         size = GetByteCount(asm, wrapInfo);
       } else {
@@ -1959,7 +2039,7 @@ namespace Fusion.CodeGen {
           memCpy.GenericArguments.Add(elementType);
           il.Append(Call(memCpy));
 
-          if (elementType.IsPrimitive && (GetPrimitiveSize(elementType) % Allocator.REPLICATE_WORD_SIZE) != 0) {
+          if (elementType.IsPrimitive && (elementType.GetPrimitiveSize() % Allocator.REPLICATE_WORD_SIZE) != 0) {
             // need to align to word count boundaries
             il.AppendMacro(AlignToWordSize());
           }
@@ -2040,7 +2120,7 @@ namespace Fusion.CodeGen {
           memCpy.GenericArguments.Add(elementType);
           il.Append(Call(memCpy));
 
-          if (elementType.IsPrimitive && (GetPrimitiveSize(elementType) % Allocator.REPLICATE_WORD_SIZE) != 0) {
+          if (elementType.IsPrimitive && (elementType.GetPrimitiveSize() % Allocator.REPLICATE_WORD_SIZE) != 0) {
             il.AppendMacro(AlignToWordSize());
           }
         };
@@ -2226,214 +2306,90 @@ namespace Fusion.CodeGen {
     }
 
 
-    void WeaveBehaviour(ILWeaverAssembly asm, TypeDefinition type) {
-      if (type.HasGenericParameters) {
-        return;
+    private Instruction[] GetInlineFieldInit(MethodDefinition constructor, FieldDefinition field) {
+      var instructions = constructor.Body.Instructions;
+      int prevStfld = -1;
+      for (int i = 0; i < instructions.Count; ++i) {
+        var instruction = instructions[i];
+        if (instruction.OpCode == OpCodes.Stfld) {
+          // found the store
+          if (instruction.Operand == field) {
+            int start = prevStfld + 1;
+            return instructions.Skip(start).Take(i - start + 1).ToArray();
+          } else {
+            prevStfld = i;
+          }
+        } else if (instruction.OpCode == OpCodes.Call) {
+          var m = ((MethodReference)instruction.Operand).Resolve();
+          if (m.IsConstructor && m.DeclaringType.IsSame(constructor.DeclaringType.BaseType)) {
+            // base constructor init
+            break;
+          }
+        }
+      }
+      return Array.Empty<Instruction>();
+    }
+
+    private Instruction[] RemoveInlineFieldInit(TypeDefinition type, FieldDefinition field) {
+      var constructors = type.GetConstructors().Where(x => !x.IsStatic);
+      if (!constructors.Any()) {
+        return Array.Empty<Instruction>();
       }
 
-      if (type.TryGetAttribute<NetworkBehaviourWeavedAttribute>(out var weavedAttribute)) {
-        int weavedSize = weavedAttribute.GetAttributeArgument<int>(0);
-
-        if (_networkedBehaviourTypeData.TryGetValue(type.FullName, out var metaData)) {
-          Debug.Assert(weavedSize < 0 || weavedSize == metaData.BlockCount);
-        } else {
-          _networkedBehaviourTypeData.Add(type.FullName, new BehaviourMetaData {
-            Definition = type,
-            BlockCount = weavedSize >= 0 ? weavedSize : GetNetworkBehaviourWordCount(asm, type)
-          });
-        }
-
-        return;
+      var firstConstructor = constructors.First();
+      var firstInlineInit = GetInlineFieldInit(firstConstructor, field).ToArray();
+      if (firstInlineInit.Length != 0) {
+        Log.Debug($"Found {field} inline init: {(string.Join("; ", firstInlineInit.Cast<object>()))}");
       }
 
-      // flag as modified
-      asm.Modified = true;
+      foreach (var constructor in constructors.Skip(1)) {
+        var otherInlineInit = GetInlineFieldInit(constructor, field);
+        if (!firstInlineInit.SequenceEqual(otherInlineInit, new InstructionEqualityComparer())) {
+          throw new ILWeaverException($"Expect inline init of {field} to be the same in all constructors," +
+            $" but there's a difference between {firstConstructor} and {constructor}");
+        }
+      }
 
-      using (Log.ScopeBehaviour(type)) {
+      foreach (var constructor in constructors) {
+        Log.Debug($"Removing inline init of {field} from {constructor}");
+        var il = constructor.Body.GetILProcessor();
+        var otherInlineInit = GetInlineFieldInit(constructor, field);
+        foreach (var instruction in otherInlineInit.Reverse()) {
+          Log.Debug($"Removing {instruction}");
+          il.Remove(instruction);
+        }
+      }
 
-        var changed = asm.Import(typeof(Changed<>)).MakeGenericInstanceType(type);
-        var changedDelegate = asm.Import(typeof(ChangedDelegate<>)).MakeGenericInstanceType(type);
-        var networkBehaviourCallbacks = asm.Import(typeof(NetworkBehaviourCallbacks<>)).MakeGenericInstanceType(type);
-        type.Fields.Add(new FieldDefinition("$IL2CPP_CHANGED", FieldAttributes.Static, changed));
-        type.Fields.Add(new FieldDefinition("$IL2CPP_CHANGED_DELEGATE", FieldAttributes.Static, changedDelegate));
-        type.Fields.Add(new FieldDefinition("$IL2CPP_NETWORK_BEHAVIOUR_CALLBACKS", FieldAttributes.Static, networkBehaviourCallbacks));
+      return firstInlineInit;
+    }
 
-        // get block count of parent as starting point for ourselves
-        var wordCount = GetNetworkBehaviourWordCount(asm, type.BaseType.Resolve());
+    private static bool IsMakeInitializerCall(Instruction instruction) {
+      if (instruction.OpCode == OpCodes.Call && instruction.Operand is MethodReference method) {
+        if (method.DeclaringType.IsSame<NetworkBehaviour>() && method.Name == nameof(NetworkBehaviour.MakeInitializer)) {
+          return true;
+        }
+      }
+      return false;
+    }
 
-        // this is the data field which holds this behaviours root pointer
-        var dataField = GetFieldFromNetworkedBehaviour(asm, type, PTR_FIELD_NAME);
-
-        // find onspawned method
-        Func<string, MethodDefinition> createOverride = (name) => {
-          var result = type.Methods.FirstOrDefault(x => x.Name == name);
-          if (result != null) {
-            return result;
-          }
-
-          result = new MethodDefinition(name, MethodAttributes.Public, asm.CecilAssembly.MainModule.ImportReference(typeof(void))) {
-            IsVirtual = true,
-            IsHideBySig = true,
-            IsReuseSlot = true
-          };
-
-          var baseMethod = FindMethodInParent(asm, type, name, nameof(NetworkBehaviour));
-
-          // call base method
-          if (baseMethod != null) {
-            var bodyIL = result.Body.GetILProcessor();
-            bodyIL.Append(Instruction.Create(OpCodes.Ldarg_0));
-            bodyIL.Append(Instruction.Create(OpCodes.Call, baseMethod));
-          }
-
-          type.Methods.Add(result);
-          return result;
-        };
-
-        var setDefaults = new Lazy<MethodDefinition>(() => createOverride(nameof(NetworkBehaviour.CopyBackingFieldsToState)));
-        var getDefaults = new Lazy<MethodDefinition>(() => createOverride(nameof(NetworkBehaviour.CopyStateToBackingFields)));
-
-        foreach (var property in type.Properties) {
-          if (IsWeavableProperty(property, out var propertyInfo) == false) {
-            continue;
-          }
-
-          // try to maintain fields order
-          int fieldIndex = type.Fields.Count;
-
-          if (propertyInfo.BackingField != null) {
-            fieldIndex = type.Fields.IndexOf(propertyInfo.BackingField);
-            if (fieldIndex >= 0) {
-              type.Fields.RemoveAt(fieldIndex);
-            }
-          }
-
-          // prepare getter/setter methods
-
-          var (getter, setter) = PreparePropertyForWeaving(property);
-
-          // capture word count in case we re-use the lambda that is created later on ...
-          var wordOffset = wordCount;
-
-          // perform injection
-          InjectValueAccessor(asm, getter.Body.GetILProcessor(), setter?.Body?.GetILProcessor(), property, property.PropertyType, OpCodes.Ldarg_1,
-            (il, offset) => LoadDataAddress(il, dataField, wordOffset + offset), true);
-
-          var propertyWordCount = GetPropertyWordCount(asm, property);
-
-          // step up wordcount
-          wordCount += propertyWordCount;
-
-          // inject attribute to poll weaver data during runtime
-          AddAttribute<NetworkedWeavedAttribute, int, int>(asm, property, wordOffset, propertyWordCount);
-
-          // setup simple field
-          if (property.HasAttribute<HideFromInspectorAttribute>() == false) {
-
-            FieldDefinition defaultField;
-
-            if (string.IsNullOrEmpty(propertyInfo.DefaultFieldName)) {
-              defaultField = AddInspectorField(asm, property, fieldIndex);
-            } else {
-              defaultField = property.DeclaringType.GetFieldOrThrow(propertyInfo.DefaultFieldName);
-            }
-
-            AddAttribute<DefaultForPropertyAttribute, string, int, int>(asm, defaultField, property.Name, wordOffset, propertyWordCount);
-
-            {
-              var il = setDefaults.Value.Body.GetILProcessor();
-              if (property.PropertyType.IsNetworkDictionary(out var keyType, out var valueType)) {
-
-                var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedDictionary)));
-                m.GenericArguments.Add(defaultField.FieldType);
-                m.GenericArguments.Add(keyType);
-                m.GenericArguments.Add(valueType);
-
-                il.Append(Ldarg_0());
-                il.Append(Call(getter));
-                il.Append(Ldarg_0());
-                il.Append(Ldfld(defaultField));
-                il.Append(Ldstr(property.Name));
-                il.Append(Call(m));
-
-              } else if (property.PropertyType.IsNetworkArray(out var elementType)) {
-
-                var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedArray)));
-                m.GenericArguments.Add(elementType);
-                
-                il.Append(Ldarg_0());
-                il.Append(Call(getter));
-                il.Append(Ldarg_0());
-                il.Append(Ldfld(defaultField));
-                il.Append(Ldstr(property.Name));
-                il.Append(Call(m));
-
-              } else {
-                Log.AssertMessage(setter != null, $"{property} expected to have a setter");
-                il.Append(Ldarg_0());
-                il.Append(Ldarg_0());
-                il.Append(Ldfld(defaultField));
-                il.Append(Call(setter));
-              }
-            }
-
-            {
-              var il = getDefaults.Value.Body.GetILProcessor();
-              if (property.PropertyType.IsNetworkDictionary(out var keyType, out var valueType)) {
-
-                var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.CopyFromNetworkedDictionary)));
-                m.GenericArguments.Add(defaultField.FieldType);
-                m.GenericArguments.Add(keyType);
-                m.GenericArguments.Add(valueType);
-
-                il.Append(Ldarg_0());
-                il.Append(Call(getter));
-                il.Append(Ldarg_0());
-                il.Append(Ldflda(defaultField));
-                il.Append(Call(m));
-
-              } else if (property.PropertyType.IsNetworkArray(out var elementType)) {
-
-                var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.CopyFromNetworkedArray)));
-                m.GenericArguments.Add(elementType);
-                
-                il.Append(Ldarg_0());
-                il.Append(Call(getter));
-                il.Append(Ldarg_0());
-                il.Append(Ldflda(defaultField));
-                il.Append(Call(m));
-
-              } else {
-                Log.AssertMessage(getter != null, $"{property} expected to have a getter");
-                il.Append(Ldarg_0());
-                il.Append(Ldarg_0());
-                il.Append(Call(getter));
-                il.Append(Stfld(defaultField));
-              }
-            }
+    private void ReplaceBackingFieldInInlineInit(ILWeaverAssembly asm, FieldDefinition backingField, FieldDefinition field, ILProcessor il, Instruction[] instructions) {
+      foreach (var instruction in instructions) {
+        if (instruction.OpCode == OpCodes.Stfld && instruction.Operand == backingField) {
+          instruction.Operand = field;
+        } else if (IsMakeInitializerCall(instruction)) {
+          // dictionaries need one extra step, if using SerializableDictionary :(
+          if (ILWeaverSettings.UseSerializableDictionaryForNetworkDictionaryProperties() && backingField.FieldType.IsNetworkDictionary(out var keyType, out var valueType)) {
+            var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.MakeSerializableDictionary)));
+            m.GenericArguments.Add(keyType);
+            m.GenericArguments.Add(valueType);
+            Log.Debug($"Inline init for {field}, replacing {instruction.Operand} with {m}");
+            instruction.Operand = m;
+          } else {
+            // remove the op, it will be fine
+            Log.Debug($"Inline init for {field}, removing {instruction}");
+            il.Remove(instruction);
           }
         }
-
-        if (setDefaults.IsValueCreated) {
-          setDefaults.Value.Body.GetILProcessor().Append(Ret());
-        }
-        if (getDefaults.IsValueCreated) {
-          getDefaults.Value.Body.GetILProcessor().Append(Ret());
-        }
-
-        // add meta attribute
-        var metaAttribute = GetMetaAttributeConstructor(asm);
-        var metaAttributeCtor = new CustomAttribute(metaAttribute);
-        metaAttributeCtor.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<int>(asm), wordCount));
-        type.CustomAttributes.Add(metaAttributeCtor);
-
-        // add to type data lookup
-        _networkedBehaviourTypeData.Add(type.FullName, new BehaviourMetaData {
-          Definition = type,
-          BlockCount = wordCount
-        });
-
-        WeaveRpcs(asm, type);
       }
     }
 
@@ -2502,7 +2458,7 @@ namespace Fusion.CodeGen {
         // only if it was modified
         if (asm.Modified) {
           // add weaved assembly attribute to this assembly
-          asm.CecilAssembly.CustomAttributes.Add(new CustomAttribute(GetConstructor<NetworkAssemblyWeavedAttribute>(asm)));
+          asm.CecilAssembly.CustomAttributes.Add(new CustomAttribute(typeof(NetworkAssemblyWeavedAttribute).GetConstructor(asm)));
         }
 
         return asm.Modified;
@@ -2512,6 +2468,586 @@ namespace Fusion.CodeGen {
 }
 #endif
 
+
+#endregion
+
+
+#region Assets/Photon/FusionCodeGen/ILWeaver.INetworkedStruct.cs
+
+#if FUSION_WEAVER && FUSION_HAS_MONO_CECIL
+namespace Fusion.CodeGen {
+  using System;
+  using System.Collections.Generic;
+  using System.IO;
+  using System.Linq;
+  using UnityEditor;
+  using UnityEditor.Compilation;
+  using UnityEngine;
+  using System.Runtime.CompilerServices;
+  using static Fusion.CodeGen.ILWeaverOpCodes;
+  using Mono.Cecil;
+  using Mono.Cecil.Cil;
+  using Mono.Cecil.Rocks;
+  using Mono.Collections.Generic;
+  using CompilerAssembly = UnityEditor.Compilation.Assembly;
+  using FieldAttributes = Mono.Cecil.FieldAttributes;
+  using MethodAttributes = Mono.Cecil.MethodAttributes;
+  using ParameterAttributes = Mono.Cecil.ParameterAttributes;
+
+  unsafe partial class ILWeaver {
+
+    const int WordSize = Allocator.REPLICATE_WORD_SIZE;
+
+    private bool IsTypeBlittable(ILWeaverAssembly asm, TypeReference type) {
+      if (type.IsPrimitive) {
+        return type.IsIntegral();
+      } else if (!type.IsValueType) {
+        return false;
+      } else if (type.IsVector2() || type.IsVector3() || type.IsQuaternion()) {
+        return false;
+      } else if (type.IsNetworkArray() || type.IsNetworkDictionary() || type.IsNetworkList()) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+
+    void WeaveStruct(ILWeaverAssembly asm, TypeDefinition type) {
+      if (type.TryGetAttribute<NetworkStructWeavedAttribute>(out var attribute)) {
+        if (_typeData.ContainsKey(type.FullName) == false) {
+          _typeData.Add(type.FullName, new TypeMetaData {
+            WordCount = (int)attribute.ConstructorArguments[0].Value,
+            Definition = type,
+            Reference = type
+          });
+        }
+
+        return;
+      }
+
+      using (Log.ScopeStruct(type)) {
+
+        // flag asm as modified
+        asm.Modified = true;
+
+        // set as explicit layout
+        type.IsExplicitLayout = true;
+
+        // clear all backing fields
+        foreach (var property in type.Properties) {
+          if (!IsWeavableProperty(property, out var propertyInfo)) {
+            continue;
+          }
+
+          if (IsTypeBlittable(asm, property.PropertyType)) {
+            Log.Warn($"Networked property {property} should be replaced with a regular field. For structs, " +
+              $"[Networked] attribute should to be applied only on collections, booleans, floats and vectors.");
+          }
+
+          int fieldIndex = type.Fields.Count;
+
+          if (propertyInfo.BackingField != null) {
+            fieldIndex = type.Fields.IndexOf(propertyInfo.BackingField);
+            if (fieldIndex >= 0) {
+              type.Fields.RemoveAt(fieldIndex);
+            }
+          }
+
+          try {
+            var propertyWordCount = GetPropertyWordCount(asm, property);
+
+            property.GetMethod?.RemoveAttribute<CompilerGeneratedAttribute>(asm);
+            property.SetMethod?.RemoveAttribute<CompilerGeneratedAttribute>(asm);
+
+            var getIL = property.GetMethod.Body.GetILProcessor();
+            getIL.Clear();
+            getIL.Body.Variables.Clear();
+
+            var setIL = property.SetMethod?.Body.GetILProcessor();
+            if (setIL != null) {
+              setIL.Clear();
+              setIL.Body.Variables.Clear();
+            }
+
+            var backingFieldName = $"_{property.Name}";
+            var fixedBufferInfo = CacheGetFixedBuffer(asm, propertyWordCount);
+            var surrogateType = CacheGetUnitySurrogate(asm, property);
+            var storageField = new FieldDefinition($"_{property.Name}", FieldAttributes.Private, fixedBufferInfo.Type);
+
+            int capacity;
+            if (property.PropertyType.IsNetworkDictionary()) {
+              capacity = GetStaticDictionaryCapacity(property);
+            } else {
+              capacity = GetCapacity(property, 1);
+            }
+            storageField.AddAttribute<SerializeField>(asm);
+            storageField.AddAttribute<FixedBufferPropertyAttribute, TypeReference, TypeReference, int>(asm, property.PropertyType, surrogateType, capacity);
+
+            type.Fields.Insert(fieldIndex, storageField);
+
+            // move field attributes, if any
+            if (propertyInfo.BackingField != null) {
+              MoveBackingFieldAttributes(asm, propertyInfo.BackingField, storageField);
+            }
+            MovePropertyAttributesToBackingField(asm, property, storageField);
+
+            InjectValueAccessor(asm, getIL, setIL, property, property.PropertyType, OpCodes.Ldarg_1, (il, offset) => {
+              il.Append(Ldarg_0());
+              il.Append(Ldflda(storageField));
+              il.AppendMacro(LoadFixedBufferAddress(fixedBufferInfo.PointerField));
+            }, false);
+          } catch (Exception ex) {
+            throw new ILWeaverException($"Failed to weave property {property}", ex);
+          }
+        }
+
+        // figure out word counts for everything
+        var wordCount = 0;
+
+        foreach (var field in type.Fields) {
+
+          // skip statics
+          if (field.IsStatic) {
+            continue;
+          }
+
+          // set offset 
+          field.Offset = wordCount * Allocator.REPLICATE_WORD_SIZE;
+
+          try {
+            // increase block count
+            wordCount += GetTypeWordCount(asm, field.FieldType);
+          } catch (Exception ex) {
+            throw new ILWeaverException($"Failed to get word count of field {field}", ex);
+          }
+        }
+
+        // add new attribute
+        type.AddAttribute<NetworkStructWeavedAttribute, int>(asm, wordCount);
+
+        // track type data
+        _typeData.Add(type.FullName, new TypeMetaData {
+          WordCount = wordCount,
+          Definition = type,
+          Reference = type
+        });
+      }
+    }
+  }
+}
+#endif
+
+
+#endregion
+
+
+#region Assets/Photon/FusionCodeGen/ILWeaver.NetworkBehaviour.cs
+
+#if FUSION_WEAVER && FUSION_HAS_MONO_CECIL
+namespace Fusion.CodeGen {
+  using System;
+  using System.Collections.Generic;
+  using System.IO;
+  using System.Linq;
+  using UnityEditor;
+  using UnityEditor.Compilation;
+  using UnityEngine;
+  using System.Runtime.CompilerServices;
+  using static Fusion.CodeGen.ILWeaverOpCodes;
+  using Mono.Cecil;
+  using Mono.Cecil.Cil;
+  using Mono.Cecil.Rocks;
+  using Mono.Collections.Generic;
+  using CompilerAssembly = UnityEditor.Compilation.Assembly;
+  using FieldAttributes = Mono.Cecil.FieldAttributes;
+  using MethodAttributes = Mono.Cecil.MethodAttributes;
+  using ParameterAttributes = Mono.Cecil.ParameterAttributes;
+
+  unsafe partial class ILWeaver {
+
+    FieldDefinition AddNetworkBehaviourBackingField(ILWeaverAssembly asm, PropertyDefinition property, int index) {
+
+      TypeReference fieldType = property.PropertyType;
+      if (fieldType.IsNetworkArray(out var elementType)) {
+        fieldType = TypeReferenceRocks.MakeArrayType(elementType);
+      } else if (fieldType.IsNetworkDictionary(out var keyType, out var valueType)) {
+        if (ILWeaverSettings.UseSerializableDictionaryForNetworkDictionaryProperties()) {
+          fieldType = TypeReferenceRocks.MakeGenericInstanceType(asm.Import(typeof(SerializableDictionary<,>)), keyType, valueType);
+        } else {
+          fieldType = TypeReferenceRocks.MakeGenericInstanceType(asm.Import(typeof(Dictionary<,>)), keyType, valueType);
+        }
+      }
+
+      var field = new FieldDefinition(GetInspectorFieldName(property.Name), FieldAttributes.Private, fieldType);
+      property.DeclaringType.Fields.Add(field);
+
+      return field;
+    }
+
+    private void MoveBackingFieldAttributes(ILWeaverAssembly asm, FieldDefinition backingField, FieldDefinition storageField) {
+      foreach (var attrib in backingField.CustomAttributes) {
+        if (attrib.AttributeType.Is<CompilerGeneratedAttribute>() ||
+            attrib.AttributeType.Is<System.Diagnostics.DebuggerBrowsableAttribute>()) {
+          continue;
+        }
+        storageField.CustomAttributes.Add(attrib);
+      }
+    }
+
+    private void MovePropertyAttributesToBackingField(ILWeaverAssembly asm, PropertyDefinition property, FieldDefinition field) {
+      bool hasNonSerialized = false;
+
+      foreach (var attribute in property.CustomAttributes) {
+        if (attribute.AttributeType.IsSame<NetworkedAttribute>() ||
+            attribute.AttributeType.IsSame<NetworkedWeavedAttribute>() ||
+            attribute.AttributeType.IsSame<AccuracyAttribute>() ||
+            attribute.AttributeType.IsSame<CapacityAttribute>()) {
+          continue;
+        }
+
+        var attribDef = attribute.AttributeType.TryResolve();
+        if (attribDef == null) {
+          Log.Warn($"Failed to resolve {attribute.AttributeType}, not going to try to apply on {field}");
+          continue;
+        }
+
+
+        if (attribDef.TryGetAttribute<UnityPropertyAttributeProxyAttribute>(out var proxy)) {
+          Log.Debug($"Found proxy attribute {attribute.AttributeType}, applying to {field}");
+          var attribTypeRef = proxy.GetAttributeArgument<TypeReference>(0);
+          var attribTypeDef = attribTypeRef.Resolve();
+
+          if (attribTypeDef.TryGetMatchingConstructor(attribute.Constructor.Resolve(), out var constructor)) {
+            field.CustomAttributes.Add(new CustomAttribute(property.Module.ImportReference(constructor), attribute.GetBlob()));
+
+            if (attribute.AttributeType.IsSame<UnityNonSerializedAttribute>()) {
+              Log.Debug($"{field} marked as NonSerialized, SerializeField will not be applied");
+              hasNonSerialized = true;
+            }
+          } else {
+            Log.Warn($"Failed to find matching constructor of {attribTypeDef} for {attribute.Constructor} (field {field})");
+          }
+
+          continue;
+        }
+
+        if (attribDef.TryGetAttribute<AttributeUsageAttribute>(out var usage)) {
+          var targets = usage.GetAttributeArgument<AttributeTargets>(0);
+          if ((targets & AttributeTargets.Field) != AttributeTargets.Field) {
+            Log.Debug($"Attribute {attribute.AttributeType} can't be applied on a field ({field}), skipping.");
+            continue;
+          }
+        }
+
+        Log.Debug($"Copying {attribute.AttributeType} to {field}");
+        field.CustomAttributes.Add(new CustomAttribute(attribute.Constructor, attribute.GetBlob()));
+      }
+
+      if (!hasNonSerialized && !property.GetMethod.IsPrivate) {
+        if (!field.CustomAttributes.Any(x => x.AttributeType.Is<SerializeField>())) {
+          field.AddAttribute<SerializeField>(asm);
+        }
+      }
+    }
+
+    void WeaveBehaviour(ILWeaverAssembly asm, TypeDefinition type) {
+      if (type.HasGenericParameters) {
+        return;
+      }
+
+      if (type.TryGetAttribute<NetworkBehaviourWeavedAttribute>(out var weavedAttribute)) {
+        int weavedSize = weavedAttribute.GetAttributeArgument<int>(0);
+
+        if (_networkedBehaviourTypeData.TryGetValue(type.FullName, out var metaData)) {
+          Debug.Assert(weavedSize < 0 || weavedSize == metaData.BlockCount);
+        } else {
+          _networkedBehaviourTypeData.Add(type.FullName, new BehaviourMetaData {
+            Definition = type,
+            BlockCount = weavedSize >= 0 ? weavedSize : GetNetworkBehaviourWordCount(asm, type)
+          });
+        }
+
+        return;
+      }
+
+      // flag as modified
+      asm.Modified = true;
+
+      using (Log.ScopeBehaviour(type)) {
+
+        var changed = asm.Import(typeof(Changed<>)).MakeGenericInstanceType(type);
+        var changedDelegate = asm.Import(typeof(ChangedDelegate<>)).MakeGenericInstanceType(type);
+        var networkBehaviourCallbacks = asm.Import(typeof(NetworkBehaviourCallbacks<>)).MakeGenericInstanceType(type);
+        type.Fields.Add(new FieldDefinition("$IL2CPP_CHANGED", FieldAttributes.Static, changed));
+        type.Fields.Add(new FieldDefinition("$IL2CPP_CHANGED_DELEGATE", FieldAttributes.Static, changedDelegate));
+        type.Fields.Add(new FieldDefinition("$IL2CPP_NETWORK_BEHAVIOUR_CALLBACKS", FieldAttributes.Static, networkBehaviourCallbacks));
+
+        // get block count of parent as starting point for ourselves
+        var wordCount = GetNetworkBehaviourWordCount(asm, type.BaseType.Resolve());
+
+        // this is the data field which holds this behaviours root pointer
+        var dataField = GetFieldFromNetworkedBehaviour(asm, type, PTR_FIELD_NAME);
+
+        // find onspawned method
+        Func<string, MethodDefinition> createOverride = (name) => {
+          var result = type.Methods.FirstOrDefault(x => x.Name == name);
+          if (result != null) {
+            return result;
+          }
+
+          result = new MethodDefinition(name, MethodAttributes.Public, asm.CecilAssembly.MainModule.ImportReference(typeof(void))) {
+            IsVirtual = true,
+            IsHideBySig = true,
+            IsReuseSlot = true
+          };
+
+          var baseMethod = FindMethodInParent(asm, type, name, nameof(SimulationBehaviour));
+
+          // call base method
+          if (baseMethod != null) {
+            if (baseMethod.DeclaringType.IsSame<NetworkBehaviour>()) {
+              // don't call base method
+              foreach (var parameter in baseMethod.Parameters) {
+                result.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
+              }
+            } else {
+              var bodyIL = result.Body.GetILProcessor();
+
+              bodyIL.Append(Instruction.Create(OpCodes.Ldarg_0));
+
+              foreach (var parameter in baseMethod.Parameters) {
+                var p = new ParameterDefinition(parameter.ParameterType);
+                result.Parameters.Add(p);
+                bodyIL.Append(Ldarg(p));
+              }
+
+              bodyIL.Append(Instruction.Create(OpCodes.Call, baseMethod));
+            }
+          }
+
+          type.Methods.Add(result);
+          return result;
+        };
+
+        var setDefaults = new Lazy<MethodDefinition>(() => createOverride(nameof(NetworkBehaviour.CopyBackingFieldsToState)));
+        var getDefaults = new Lazy<MethodDefinition>(() => createOverride(nameof(NetworkBehaviour.CopyStateToBackingFields)));
+
+        foreach (var property in type.Properties) {
+          if (IsWeavableProperty(property, out var propertyInfo) == false) {
+            continue;
+          }
+          try {
+
+            // try to maintain fields order
+            int fieldIndex = type.Fields.Count;
+
+            if (propertyInfo.BackingField != null) {
+              fieldIndex = type.Fields.IndexOf(propertyInfo.BackingField);
+              if (fieldIndex >= 0) {
+                type.Fields.RemoveAt(fieldIndex);
+              }
+            }
+
+            // prepare getter/setter methods
+
+            var (getter, setter) = PreparePropertyForWeaving(property);
+
+            // capture word count in case we re-use the lambda that is created later on ...
+            var wordOffset = wordCount;
+
+            // perform injection
+            InjectValueAccessor(asm, getter.Body.GetILProcessor(), setter?.Body?.GetILProcessor(), property, property.PropertyType, OpCodes.Ldarg_1,
+              (il, offset) => LoadDataAddress(il, dataField, wordOffset + offset), true);
+
+            var propertyWordCount = GetPropertyWordCount(asm, property);
+
+            // step up wordcount
+            wordCount += propertyWordCount;
+
+            // inject attribute to poll weaver data during runtime
+            property.AddAttribute<NetworkedWeavedAttribute, int, int>(asm, wordOffset, propertyWordCount);
+
+            // setup simple field
+            if (property.PropertyType.IsPointer) {
+              // ignore
+            } else if (property.HasAttribute<UnityNonSerializedAttribute>()) {
+              // remove the inline init, if present
+              var init = RemoveInlineFieldInit(type, propertyInfo.BackingField);
+              if (init.Length > 0) {
+                // need to patch defaults with this, but only during the initial set
+                var il = setDefaults.Value.Body.GetILProcessor();
+                var postInit = Nop();
+                il.Append(Ldarg_1());
+                il.Append(Brfalse(postInit));
+
+                il.Append(init[0]);
+                if (property.PropertyType.IsNetworkArray() || property.PropertyType.IsNetworkDictionary()) {
+                  // needs some special init
+                  Log.AssertMessage(init[0].OpCode == OpCodes.Ldarg_0, $"Expected Ldarg_0, got: {init[0]}");
+                  il.Append(Call(getter));
+                }
+
+                foreach (var instruction in init.Skip(1)) {
+                  if (instruction.OpCode == OpCodes.Stfld && instruction.Operand == propertyInfo.BackingField) {
+                    // arrays and dictionaries don't have setters
+                    if (property.PropertyType.IsNetworkArray(out var elementType)) {
+                      var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedArray)));
+                      m.GenericArguments.Add(elementType);
+                      il.Append(Ldstr(property.Name));
+                      il.Append(Call(m));
+                    } else if (property.PropertyType.IsNetworkDictionary(out var keyType, out var valueType)) {
+                      var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedDictionary)));
+                      m.GenericArguments.Add(TypeReferenceRocks.MakeGenericInstanceType(asm.Import(typeof(Dictionary<,>)), keyType, valueType));
+                      m.GenericArguments.Add(keyType);
+                      m.GenericArguments.Add(valueType);
+                      il.Append(Ldstr(property.Name));
+                      il.Append(Call(m));
+                    } else {
+                      il.Append(Call(setter));
+                    }
+                  } else if (!IsMakeInitializerCall(instruction)) {
+                    il.Append(instruction);
+                  }
+                }
+                il.Append(postInit);
+              }
+            } else {
+
+              FieldDefinition defaultField;
+
+              if (string.IsNullOrEmpty(propertyInfo.DefaultFieldName)) {
+                defaultField = AddNetworkBehaviourBackingField(asm, property, fieldIndex);
+                if (propertyInfo.BackingField != null) {
+                  MoveBackingFieldAttributes(asm, propertyInfo.BackingField, defaultField);
+                }
+                MovePropertyAttributesToBackingField(asm, property, defaultField);
+              } else {
+                defaultField = property.DeclaringType.GetFieldOrThrow(propertyInfo.DefaultFieldName);
+              }
+
+              // in each constructor, replace inline init, if present
+              foreach (var constructor in type.GetConstructors()) {
+                var init = GetInlineFieldInit(constructor, propertyInfo.BackingField);
+                if (init.Length > 0) {
+                  ReplaceBackingFieldInInlineInit(asm, propertyInfo.BackingField, defaultField, constructor.Body.GetILProcessor(), init);
+                }
+              }
+
+              defaultField.AddAttribute<DefaultForPropertyAttribute, string, int, int>(asm, property.Name, wordOffset, propertyWordCount);
+
+              {
+                var il = setDefaults.Value.Body.GetILProcessor();
+                if (property.PropertyType.IsNetworkDictionary(out var keyType, out var valueType)) {
+
+                  var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedDictionary)));
+                  m.GenericArguments.Add(defaultField.FieldType);
+                  m.GenericArguments.Add(keyType);
+                  m.GenericArguments.Add(valueType);
+
+                  il.Append(Ldarg_0());
+                  il.Append(Call(getter));
+                  il.Append(Ldarg_0());
+                  il.Append(Ldfld(defaultField));
+                  il.Append(Ldstr(property.Name));
+                  il.Append(Call(m));
+
+                } else if (property.PropertyType.IsNetworkArray(out var elementType)) {
+
+                  var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedArray)));
+                  m.GenericArguments.Add(elementType);
+                  il.Append(Ldarg_0());
+                  il.Append(Call(getter));
+                  il.Append(Ldarg_0());
+                  il.Append(Ldfld(defaultField));
+                  il.Append(Ldstr(property.Name));
+                  il.Append(Call(m));
+
+                } else if (property.PropertyType.IsNetworkList(out var listElementType)) {
+
+                  // var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.InitializeNetworkedArray)));
+                  // m.GenericArguments.Add(elementType);
+                  // il.Append(Ldarg_0());
+                  // il.Append(Call(getter));
+                  // il.Append(Ldarg_0());
+                  // il.Append(Ldfld(defaultField));
+                  // il.Append(Ldstr(property.Name));
+                  // il.Append(Call(m));
+
+                }else {
+                  Log.AssertMessage(setter != null, $"{property} expected to have a setter");
+                  il.Append(Ldarg_0());
+                  il.Append(Ldarg_0());
+                  il.Append(Ldfld(defaultField));
+                  il.Append(Call(setter));
+                }
+              }
+
+              {
+                var il = getDefaults.Value.Body.GetILProcessor();
+                if (property.PropertyType.IsNetworkDictionary(out var keyType, out var valueType)) {
+
+                  var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.CopyFromNetworkedDictionary)));
+                  m.GenericArguments.Add(defaultField.FieldType);
+                  m.GenericArguments.Add(keyType);
+                  m.GenericArguments.Add(valueType);
+
+                  il.Append(Ldarg_0());
+                  il.Append(Call(getter));
+                  il.Append(Ldarg_0());
+                  il.Append(Ldflda(defaultField));
+                  il.Append(Call(m));
+
+                } else if (property.PropertyType.IsNetworkArray(out var elementType)) {
+
+                  var m = new GenericInstanceMethod(asm.NetworkBehaviourUtils.GetMethod(nameof(NetworkBehaviourUtils.CopyFromNetworkedArray)));
+                  m.GenericArguments.Add(elementType);
+
+                  il.Append(Ldarg_0());
+                  il.Append(Call(getter));
+                  il.Append(Ldarg_0());
+                  il.Append(Ldflda(defaultField));
+                  il.Append(Call(m));
+
+                } else {
+                  Log.AssertMessage(getter != null, $"{property} expected to have a getter");
+                  il.Append(Ldarg_0());
+                  il.Append(Ldarg_0());
+                  il.Append(Call(getter));
+                  il.Append(Stfld(defaultField));
+                }
+              }
+            }
+          } catch (Exception ex) {
+            throw new ILWeaverException($"Failed to weave property {property}", ex);
+          }
+        }
+
+        if (setDefaults.IsValueCreated) {
+          setDefaults.Value.Body.GetILProcessor().Append(Ret());
+        }
+        if (getDefaults.IsValueCreated) {
+          getDefaults.Value.Body.GetILProcessor().Append(Ret());
+        }
+
+        // add meta attribute
+        var metaAttribute = GetMetaAttributeConstructor(asm);
+        var metaAttributeCtor = new CustomAttribute(metaAttribute);
+        metaAttributeCtor.ConstructorArguments.Add(new CustomAttributeArgument(ImportType<int>(asm), wordCount));
+        type.CustomAttributes.Add(metaAttributeCtor);
+
+        // add to type data lookup
+        _networkedBehaviourTypeData.Add(type.FullName, new BehaviourMetaData {
+          Definition = type,
+          BlockCount = wordCount
+        });
+
+        WeaveRpcs(asm, type);
+      }
+    }
+  }
+}
+#endif
 
 #endregion
 
@@ -2538,6 +3074,8 @@ namespace Fusion.CodeGen {
     Dictionary<(string, int?), MethodReference> _methods = new Dictionary<(string, int?), MethodReference>();
     Dictionary<string, MethodReference> _propertiesGet = new Dictionary<string, MethodReference>();
     Dictionary<string, MethodReference> _propertiesSet = new Dictionary<string, MethodReference>();
+
+    public static implicit operator TypeReference(ILWeaverImportedType type) => type.Reference;
 
     public ILWeaverImportedType(ILWeaverAssembly asm, Type type) {
       ClrType    = type;
@@ -2653,137 +3191,60 @@ namespace Fusion.CodeGen {
     ILWeaverImportedType _simulationBehaviour;
     ILWeaverImportedType _simulationMessage;
 
+    ILWeaverImportedType _object;
+    ILWeaverImportedType _valueType;
+    ILWeaverImportedType _void;
+    ILWeaverImportedType _int;
+    ILWeaverImportedType _float;
+
     Dictionary<Type, TypeReference> _types = new Dictionary<Type, TypeReference>();
 
-    public ILWeaverImportedType NetworkedObject {
-      get {
-        if (_networkedObject == null) {
-          _networkedObject = new ILWeaverImportedType(this, typeof(NetworkObject));
-        }
-
-        return _networkedObject;
-      }
+    private ILWeaverImportedType MakeImportedType<T>(ref ILWeaverImportedType field) {
+      return MakeImportedType(ref field, typeof(T));
     }
 
-    public ILWeaverImportedType Simulation {
-      get {
-        if (_simulation == null) {
-          _simulation = new ILWeaverImportedType(this, typeof(Simulation));
-        }
-
-        return _simulation;
+    private ILWeaverImportedType MakeImportedType(ref ILWeaverImportedType field, Type type) {
+      if (field == null) {
+        field = new ILWeaverImportedType(this, type);
       }
+      return field;
     }
+
+    public ILWeaverImportedType WordSizedPrimitive => MakeImportedType<int>(ref _int);
+
+    public ILWeaverImportedType Void => MakeImportedType(ref _void, typeof(void));
+
+    public ILWeaverImportedType Object => MakeImportedType<object>(ref _object);
+
+    public ILWeaverImportedType ValueType => MakeImportedType<ValueType>(ref _valueType);
+
+    public ILWeaverImportedType Float => MakeImportedType<float>(ref _float);
+
+    public ILWeaverImportedType NetworkedObject => MakeImportedType<NetworkObject>(ref _networkedObject);
+
+    public ILWeaverImportedType Simulation => MakeImportedType<Simulation>(ref _simulation);
+
+    public ILWeaverImportedType SimulationMessage => MakeImportedType<SimulationMessage>(ref _simulationMessage);
+
+    public ILWeaverImportedType NetworkedBehaviour => MakeImportedType<NetworkBehaviour>(ref _networkedBehaviour);
+
+    public ILWeaverImportedType SimulationBehaviour => MakeImportedType<SimulationBehaviour>(ref _simulationBehaviour);
+
+    public ILWeaverImportedType NetworkId => MakeImportedType<NetworkId>(ref _networkedObjectId);
+
+    public ILWeaverImportedType NetworkedBehaviourId => MakeImportedType<NetworkBehaviourId>(ref _networkedBehaviourId);
+
+    public ILWeaverImportedType NetworkRunner => MakeImportedType<NetworkRunner>(ref _networkRunner);
+
+    public ILWeaverImportedType ReadWriteUtils => MakeImportedType(ref _readWriteUtils, typeof(ReadWriteUtilsForWeaver));
     
-    public ILWeaverImportedType SimulationMessage {
-      get {
-        if (_simulationMessage == null) {
-          _simulationMessage = new ILWeaverImportedType(this, typeof(SimulationMessage));
-        }
+    public ILWeaverImportedType Native => MakeImportedType(ref _nativeUtils, typeof(Native));
 
-        return _simulationMessage;
-      }
-    }
+    public ILWeaverImportedType NetworkBehaviourUtils => MakeImportedType(ref _networkBehaviourUtils, typeof(NetworkBehaviourUtils));
 
-    public ILWeaverImportedType NetworkedBehaviour {
-      get {
-        if (_networkedBehaviour == null) {
-          _networkedBehaviour = new ILWeaverImportedType(this, typeof(NetworkBehaviour));
-        }
+    public ILWeaverImportedType RpcHeader => MakeImportedType<RpcHeader>(ref _rpcHeader);
 
-        return _networkedBehaviour;
-      }
-    }
-
-    public ILWeaverImportedType SimulationBehaviour {
-      get {
-        if (_simulationBehaviour == null) {
-          _simulationBehaviour = new ILWeaverImportedType(this, typeof(SimulationBehaviour));
-        }
-
-        return _simulationBehaviour;
-      }
-    }
-
-    public ILWeaverImportedType NetworkId {
-      get {
-        if (_networkedObjectId == null) {
-          _networkedObjectId = new ILWeaverImportedType(this, typeof(NetworkId));
-        }
-
-        return _networkedObjectId;
-      }
-    }
-
-    public ILWeaverImportedType NetworkedBehaviourId {
-      get {
-        if (_networkedBehaviourId == null) {
-          _networkedBehaviourId = new ILWeaverImportedType(this, typeof(NetworkBehaviourId));
-        }
-
-        return _networkedBehaviourId;
-      }
-    }
-    
-    public ILWeaverImportedType NetworkRunner {
-      get {
-        if (_networkRunner == null) {
-          _networkRunner = new ILWeaverImportedType(this, typeof(NetworkRunner));
-        }
-
-        return _networkRunner;
-      }
-    }
-
-    public ILWeaverImportedType ReadWriteUtils {
-      get {
-        if (_readWriteUtils == null) {
-          _readWriteUtils = new ILWeaverImportedType(this, typeof(ReadWriteUtilsForWeaver));
-        }
-
-        return _readWriteUtils;
-      }
-    }
-
-    public ILWeaverImportedType Native {
-      get {
-        if (_nativeUtils == null) {
-          _nativeUtils = new ILWeaverImportedType(this, typeof(Native));
-        }
-
-        return _nativeUtils;
-      }
-    }
-
-    public ILWeaverImportedType NetworkBehaviourUtils {
-      get {
-        if (_networkBehaviourUtils == null) {
-          _networkBehaviourUtils = new ILWeaverImportedType(this, typeof(NetworkBehaviourUtils));
-        }
-
-        return _networkBehaviourUtils;
-      }
-    }
-
-    public ILWeaverImportedType RpcHeader {
-      get {
-        if (_rpcHeader == null) {
-          _rpcHeader = new ILWeaverImportedType(this, typeof(RpcHeader));
-        }
-
-        return _rpcHeader;
-      }
-    }
-
-    public ILWeaverImportedType RpcInfo {
-      get {
-        if (_rpcInfo == null) {
-          _rpcInfo = new ILWeaverImportedType(this, typeof(RpcInfo));
-        }
-
-        return _rpcInfo;
-      }
-    }
+    public ILWeaverImportedType RpcInfo => MakeImportedType<RpcInfo>(ref _rpcInfo);
 
     public TypeReference Import(TypeReference type) {
       return CecilAssembly.MainModule.ImportReference(type);
@@ -2792,7 +3253,11 @@ namespace Fusion.CodeGen {
     public MethodReference Import(MethodInfo method) {
       return CecilAssembly.MainModule.ImportReference(method);
     }
-    
+
+    public MethodReference Import(MethodReference method) {
+      return CecilAssembly.MainModule.ImportReference(method);
+    }
+
     public MethodReference Import(ConstructorInfo method) {
       return CecilAssembly.MainModule.ImportReference(method);
     }
@@ -2811,6 +3276,10 @@ namespace Fusion.CodeGen {
       Modified = false;
       Errors.Clear();
       CecilAssembly    = null;
+    }
+
+    public TypeReference Import<T>() {
+      return Import(typeof(T));
     }
   }
 }
@@ -3424,6 +3893,45 @@ namespace Fusion.CodeGen {
 
   static class ILWeaverExtensions {
 
+    public static bool IsIntegral(this TypeReference type) {
+      switch (type.MetadataType) {
+        case MetadataType.Byte:
+        case MetadataType.SByte:
+        case MetadataType.UInt16:
+        case MetadataType.Int16:
+        case MetadataType.UInt32:
+        case MetadataType.Int32:
+        case MetadataType.UInt64:
+        case MetadataType.Int64:
+          return true;
+        default:
+          return false;
+      }
+    }
+
+    public static int GetPrimitiveSize(this TypeReference type) {
+      switch (type.MetadataType) {
+        case MetadataType.Byte:
+        case MetadataType.SByte:
+          return sizeof(byte);
+        case MetadataType.UInt16:
+        case MetadataType.Int16:
+          return sizeof(short);
+        case MetadataType.UInt32:
+        case MetadataType.Int32:
+          return sizeof(int);
+        case MetadataType.UInt64:
+        case MetadataType.Int64:
+          return sizeof(long);
+        case MetadataType.Single:
+          return sizeof(float);
+        case MetadataType.Double:
+          return sizeof(double);
+        default:
+          throw new ArgumentException($"Unknown primitive type: {type}", nameof(type));
+      }
+    }
+
     public static bool IsString(this TypeReference type) {
       return type.MetadataType == MetadataType.String;
     }
@@ -3466,6 +3974,22 @@ namespace Fusion.CodeGen {
 
       return type.GetElementType().FullName == typeDefinition.FullName;
     }
+
+    public static bool IsNetworkList(this TypeReference type) {
+      return IsNetworkList(type, out _);
+    }
+    
+    public static bool IsNetworkList(this TypeReference type, out TypeReference elementType) {
+      if (!type.IsGenericInstance || type.GetElementType().FullName != typeof(NetworkLinkedList<>).FullName) {
+        elementType = default;
+        return false;
+      }
+
+      var git = (GenericInstanceType)type;
+      elementType = git.GenericArguments[0];
+      return true;
+    }
+
 
     public static bool IsNetworkArray(this TypeReference type) {
       return IsNetworkArray(type, out _);
@@ -3684,26 +4208,30 @@ namespace Fusion.CodeGen {
       return false;
     }
 
-    public static bool TryGetMatchingConstructor(this TypeDefinition type, MethodDefinition constructor, out MethodDefinition matchingConstructor) {
-      foreach (var c in type.GetConstructors() ) {
-        if ( c.Parameters.Count != constructor.Parameters.Count ) {
+    public static bool TryGetConstructor(this TypeDefinition type, IList<ParameterDefinition> parameters, out MethodDefinition result) {
+      foreach (var c in type.GetConstructors()) {
+        if (c.Parameters.Count != parameters.Count) {
           continue;
         }
         int i;
         for (i = 0; i < c.Parameters.Count; ++i) {
-          if (!c.Parameters[i].ParameterType.IsSame(constructor.Parameters[i].ParameterType)) {
+          if (!c.Parameters[i].ParameterType.IsSame(parameters[i].ParameterType)) {
             break;
           }
         }
 
-        if ( i == c.Parameters.Count ) {
-          matchingConstructor = c;
+        if (i == c.Parameters.Count) {
+          result = c;
           return true;
         }
       }
 
-      matchingConstructor = null;
+      result = null;
       return false;
+    }
+
+    public static bool TryGetMatchingConstructor(this TypeDefinition type, MethodDefinition constructor, out MethodDefinition matchingConstructor) {
+      return TryGetConstructor(type, constructor.Parameters, out matchingConstructor);
     }
 
     public static bool Remove(this FieldDefinition field) {
@@ -3719,6 +4247,115 @@ namespace Fusion.CodeGen {
       throw new ArgumentOutOfRangeException(nameof(fieldName), $"Field {fieldName} not found in {type}");
     }
 
+    public static MethodReference GetGenericInstanceMethodOrThrow(this GenericInstanceType type, string name) {
+      var methodRef = type.Resolve().GetMethodOrThrow(name);
+
+      var newMethodRef = new MethodReference(methodRef.Name, methodRef.ReturnType) {
+        HasThis = methodRef.HasThis,
+        ExplicitThis = methodRef.ExplicitThis,
+        DeclaringType = type,
+        CallingConvention = methodRef.CallingConvention,
+      };
+
+      foreach (var parameter in methodRef.Parameters) {
+        newMethodRef.Parameters.Add(new ParameterDefinition(parameter.Name, parameter.Attributes, parameter.ParameterType));
+      }
+
+      foreach (var genericParameter in methodRef.GenericParameters) {
+        newMethodRef.GenericParameters.Add(new GenericParameter(genericParameter.Name, newMethodRef));
+      }
+
+      return newMethodRef;
+    }
+
+    public static void AddInterface<T>(this TypeDefinition type, ILWeaverAssembly asm) {
+      type.Interfaces.Add(new InterfaceImplementation(asm.Import(typeof(T))));
+    }
+
+    public static bool RemoveAttribute<T>(this IMemberDefinition member, ILWeaverAssembly asm) where T : Attribute {
+      for (int i = 0; i < member.CustomAttributes.Count; ++i) {
+        var attr = member.CustomAttributes[i];
+        if ( attr.AttributeType.Is<T>() ) {
+          member.CustomAttributes.RemoveAt(i);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public static CustomAttribute AddAttribute<T>(this IMemberDefinition member, ILWeaverAssembly asm) where T : Attribute {
+      CustomAttribute attr;
+      attr = new CustomAttribute(typeof(T).GetConstructor(asm));
+      member.CustomAttributes.Add(attr);
+      return attr;
+    }
+
+    public static CustomAttribute AddAttribute<T, A0>(this IMemberDefinition member, ILWeaverAssembly asm, A0 arg0) where T : Attribute {
+      CustomAttribute attr;
+      attr = new CustomAttribute(typeof(T).GetConstructor(asm, 1));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A0>(), arg0));
+      member.CustomAttributes.Add(attr);
+      return attr;
+    }
+
+    public static CustomAttribute AddAttribute<T, A0, A1>(this IMemberDefinition member, ILWeaverAssembly asm, A0 arg0, A1 arg1) where T : Attribute {
+      CustomAttribute attr;
+      attr = new CustomAttribute(typeof(T).GetConstructor(asm, 2));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A0>(), arg0));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A1>(), arg1));
+      member.CustomAttributes.Add(attr);
+      return attr;
+    }
+
+    public static CustomAttribute AddAttribute<T, A0, A1, A2>(this IMemberDefinition member, ILWeaverAssembly asm, A0 arg0, A1 arg1, A2 arg2) where T : Attribute {
+      CustomAttribute attr;
+      attr = new CustomAttribute(typeof(T).GetConstructor(asm, 3));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A0>(), arg0));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A1>(), arg1));
+      attr.ConstructorArguments.Add(new CustomAttributeArgument(asm.ImportAttributeType<A2>(), arg2));
+      member.CustomAttributes.Add(attr);
+      return attr;
+    }
+
+    private static TypeReference ImportAttributeType<T>(this ILWeaverAssembly asm) {
+      if (typeof(T) == typeof(TypeReference)) {
+        return asm.Import<Type>();
+      } else {
+        return asm.Import<T>();
+      }
+    }
+
+    public static MethodReference GetConstructor(this Type type, ILWeaverAssembly asm, int argCount = 0) {
+      foreach (var ctor in type.GetConstructors()) {
+        if (ctor.GetParameters().Length == argCount) {
+          return asm.CecilAssembly.MainModule.ImportReference(ctor);
+        }
+      }
+
+      throw new ILWeaverException($"Could not find constructor with {argCount} arguments on {type.Name}");
+    }
+
+    public static void AddTo(this MethodDefinition method, TypeDefinition type) {
+      type.Methods.Add(method);
+    }
+
+    public static void AddTo(this PropertyDefinition property, TypeDefinition type) {
+      type.Properties.Add(property);
+    }
+
+
+    public static void AddTo(this FieldDefinition field, TypeDefinition type) {
+      type.Fields.Add(field);
+    }
+
+    public static void AddTo(this TypeDefinition type, AssemblyDefinition assembly) {
+      assembly.MainModule.Types.Add(type);
+    }
+
+    public static void AddTo(this TypeDefinition type, TypeDefinition parentType) {
+      parentType.NestedTypes.Add(type);
+    }
+
     public static MethodDefinition GetMethodOrThrow(this TypeDefinition type, string methodName) {
       foreach (var method in type.Methods) {
         if (method.Name == methodName) {
@@ -3731,6 +4368,38 @@ namespace Fusion.CodeGen {
     public static Instruction AppendReturn(this ILProcessor il, Instruction instruction) {
       il.Append(instruction);
       return instruction;
+    }
+
+    public static void Clear(this ILProcessor il) {
+      var instructions = il.Body.Instructions;
+      foreach (var instruction in instructions.Reverse()) {
+        il.Remove(instruction);
+      }
+    }
+
+    public static MethodDefinition AddEmptyConstructor(this TypeDefinition type, ILWeaverAssembly asm) {
+      var methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+      var method = new MethodDefinition(".ctor", methodAttributes, asm.Import(typeof(void)));
+      method.Body.Instructions.Add(Instruction.Create(OpCodes.Ldarg_0));
+
+      MethodReference baseConstructor;
+
+      if (type.BaseType.IsGenericInstance) {
+        var gi = (GenericInstanceType)type.BaseType;
+        baseConstructor = gi.GetGenericInstanceMethodOrThrow(".ctor");
+      } else {
+        if (!type.BaseType.Resolve().TryGetMatchingConstructor(method, out var baseConstructorDef)) {
+          throw new ILWeaverException("Unable to find matching constructor.");
+        }
+        baseConstructor = baseConstructorDef;
+      }
+
+      
+
+      method.Body.Instructions.Add(Instruction.Create(OpCodes.Call, asm.Import(baseConstructor)));
+      method.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+      type.Methods.Add(method);
+      return method;
     }
 
     public static void AppendMacro<T>(this ILProcessor il, in T macro) where T : struct, ILProcessorMacro {
@@ -4128,6 +4797,7 @@ namespace Fusion.CodeGen {
   using System.Collections.Generic;
   using Mono.Cecil;
   using Mono.Cecil.Cil;
+  using Mono.Cecil.Rocks;
   using static Fusion.CodeGen.ILWeaverOpCodes;
 
   unsafe partial class ILWeaver {
@@ -4138,6 +4808,24 @@ namespace Fusion.CodeGen {
       Ldc_I4(~(Allocator.REPLICATE_WORD_SIZE - 1)),
       And()
     };
+
+    ILMacroStruct LoadFixedBufferAddress(FieldDefinition fixedBufferField) => new Action<ILProcessor>(il => {
+
+      var elementField = fixedBufferField.FieldType.Resolve().Fields[0];
+
+      int pointerLoc = il.Body.Variables.Count;
+      il.Body.Variables.Add(new VariableDefinition(elementField.FieldType.MakePointerType()));
+      int pinnedRefLoc = il.Body.Variables.Count;
+      il.Body.Variables.Add(new VariableDefinition(elementField.FieldType.MakeByReferenceType().MakePinnedType()));
+
+      il.Append(Ldflda(fixedBufferField));
+      il.Append(Ldflda(elementField));
+      il.Append(Stloc(il.Body, pinnedRefLoc));
+      il.Append(Ldloc(il.Body, pinnedRefLoc));
+      il.Append(Conv_U());
+      il.Append(Stloc(il.Body, pointerLoc));
+      il.Append(Ldloc(il.Body, pointerLoc));
+    });
 
     struct ILMacroStruct : ILProcessorMacro {
       Action<ILProcessor> generator;
@@ -4174,6 +4862,13 @@ namespace Fusion.CodeGen {
       private bool runnerIsLdarg0 = false;
 
       public MethodContext(ILWeaverAssembly assembly, MethodDefinition method, bool staticRunnerAccessor = false, Action<ILProcessor> addressGetter = null) {
+        if (assembly == null) {
+          throw new ArgumentNullException(nameof(assembly));
+        }
+        if (method == null) {
+          throw new ArgumentNullException(nameof(method));
+        }
+
         this.Assembly = assembly;
         this.Method = method;
         this.runnerIsLdarg0 = staticRunnerAccessor;
@@ -4197,13 +4892,22 @@ namespace Fusion.CodeGen {
       }
 
       public TypeReference ImportReference(TypeReference type) {
-        return Method.Module.ImportReference(type);
-      }
-      public MethodReference ImportReference(MethodReference type) {
+        if (type == null) {
+          throw new ArgumentNullException(nameof(type));
+        }
         return Method.Module.ImportReference(type);
       }
 
+      public MethodReference ImportReference(MethodReference method) {
+        if (method == null) {
+          throw new ArgumentNullException(nameof(method));
+        }
+        return Method.Module.ImportReference(method);
+      }
+
       public virtual ILMacroStruct LoadAddress() => addressGetter;
+
+      public ForLoopMacro For(int start, int stop, Action<ILProcessor, VariableDefinition> body) => new ForLoopMacro(this, body, start, stop);
 
       public AddOffsetMacro AddOffset(int val) => AddOffset(Ldc_I4(val));
 
@@ -4229,6 +4933,46 @@ namespace Fusion.CodeGen {
       }
 
       protected virtual void EmitAddOffsetAfter(ILProcessor il) {
+      }
+
+      public readonly struct ForLoopMacro : ILProcessorMacro {
+        public readonly MethodContext Context;
+        public readonly Action<ILProcessor, VariableDefinition> Generator;
+        public readonly int Start;
+        public readonly int Stop;
+
+        public ForLoopMacro(MethodContext context, Action<ILProcessor, VariableDefinition> generator, int start, int stop) {
+          Context = context;
+          Generator = generator;
+          Start = start;
+          Stop = stop;
+        }
+
+        public void Emit(ILProcessor il) {
+          var body = Context.Method.Body;
+          var varId = body.Variables.Count;
+          var indexVariable = new VariableDefinition(Context.Assembly.Import(typeof(int)));
+          body.Variables.Add(indexVariable);
+
+          il.Append(Ldc_I4(Start));
+          il.Append(Stloc(body, varId));
+
+          var loopConditionStart = Ldloc(body, varId);
+          il.Append(Br_S(loopConditionStart));
+          {
+            var loopBodyBegin = il.AppendReturn(Nop());
+            Generator(il, indexVariable);
+
+            il.Append(Ldloc(body, varId));
+            il.Append(Ldc_I4(1));
+            il.Append(Add());
+            il.Append(Stloc(body, varId));
+
+            il.Append(loopConditionStart);
+            il.Append(Ldc_I4(Stop));
+            il.Append(Blt_S(loopBodyBegin));
+          }
+        }
       }
 
       public readonly struct AddOffsetMacro : ILProcessorMacro {
@@ -4355,6 +5099,8 @@ namespace Fusion.CodeGen {
 
     public static Instruction Newobj(MethodReference constructor) => Instruction.Create(OpCodes.Newobj, constructor);
 
+    public static Instruction Initobj(TypeReference type) => Instruction.Create(OpCodes.Initobj, type);
+
     // fields
     public static Instruction Ldflda(FieldReference field) => Instruction.Create(OpCodes.Ldflda, field);
     
@@ -4368,10 +5114,53 @@ namespace Fusion.CodeGen {
 
     public static Instruction Ldloc_or_const(VariableDefinition var, int val) => var != null ? Ldloc(var) : Ldc_I4(val);
 
+    public static Instruction Ldloc(VariableDefinition var, MethodDefinition method) => Ldloc(method.Body, method.Body.Variables.IndexOf(var));
+
     public static Instruction Ldloc(VariableDefinition var)    => Instruction.Create(OpCodes.Ldloc, var);
     public static Instruction Ldloca(VariableDefinition var)   => Instruction.Create(OpCodes.Ldloca, var);
     public static Instruction Ldloca_S(VariableDefinition var) => Instruction.Create(OpCodes.Ldloca_S, var);
     public static Instruction Stloc(VariableDefinition var)    => Instruction.Create(OpCodes.Stloc, var);
+
+    public static Instruction Stloc_0() => Instruction.Create(OpCodes.Stloc_0);
+    public static Instruction Stloc_1() => Instruction.Create(OpCodes.Stloc_1);
+    public static Instruction Stloc_2() => Instruction.Create(OpCodes.Stloc_2);
+    public static Instruction Stloc_3() => Instruction.Create(OpCodes.Stloc_3);
+
+    public static Instruction Ldloc_0() => Instruction.Create(OpCodes.Ldloc_0);
+    public static Instruction Ldloc_1() => Instruction.Create(OpCodes.Ldloc_1);
+    public static Instruction Ldloc_2() => Instruction.Create(OpCodes.Ldloc_2);
+    public static Instruction Ldloc_3() => Instruction.Create(OpCodes.Ldloc_3);
+
+    public static Instruction Stloc(MethodBody body, int index) {
+      switch (index) {
+        case 0:
+          return Stloc_0();
+        case 1:
+          return Stloc_1();
+        case 2:
+          return Stloc_2();
+        case 3:
+          return Stloc_3();
+        default:
+          return Stloc(body.Variables[index]);
+      }
+    }
+
+    public static Instruction Ldloc(MethodBody body, int index) {
+      switch (index) {
+        case 0:
+          return Ldloc_0();
+        case 1:
+          return Ldloc_1();
+        case 2:
+          return Ldloc_2();
+        case 3:
+          return Ldloc_3();
+        default:
+          return Ldloc(body.Variables[index]);
+      }
+    }
+
 
     // ldarg
     public static Instruction Ldarg(ParameterDefinition arg) => Instruction.Create(OpCodes.Ldarg, arg);
@@ -4802,6 +5591,43 @@ namespace Fusion.CodeGen {
 
     static partial void UseSerializableDictionaryForNetworkDictionaryPropertiesPartial(ref bool result) {
       result = NetworkProjectConfig.Global.UseSerializableDictionary;
+    }
+  }
+}
+#endif
+
+#endregion
+
+
+#region Assets/Photon/FusionCodeGen/InstructionEqualityComparer.cs
+
+#if FUSION_WEAVER && FUSION_HAS_MONO_CECIL
+namespace Fusion.CodeGen {
+  using System.Collections.Generic;
+  using Mono.Cecil.Cil;
+
+  internal class InstructionEqualityComparer : IEqualityComparer<Instruction> {
+    public bool Equals(Instruction x, Instruction y) {
+      if (x.OpCode != y.OpCode) {
+        return false;
+      }
+
+      if (x.Operand != y.Operand) {
+        if (x.Operand?.GetType() != y?.Operand.GetType()) {
+          return false;
+        }
+        // there needs to be a better way to do this
+        if (x.Operand.ToString() != y.Operand.ToString()) {
+          return false;
+        }
+
+      }
+
+      return true;
+    }
+
+    public int GetHashCode(Instruction obj) {
+      return obj.GetHashCode();
     }
   }
 }
