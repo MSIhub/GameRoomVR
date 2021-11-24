@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ExitGames.Client.Photon.StructWrapping;
 using UnityEngine;
 using Fusion;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,7 @@ public class PlayerSpawner : MonoBehaviour
 	[SerializeField] private List<GameObject> _startPrefab;
 	private Vector3 _startPosition;
 	private Quaternion _startRotation;
+	
 	public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
 	{
 		_startPosition = Vector3.zero;
@@ -22,6 +24,10 @@ public class PlayerSpawner : MonoBehaviour
 		runner.Spawn( _playerPrefab, _startPosition, _startRotation, player );
 	}
 
+	public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+	{
+		runner.Despawn(player.Get<NetworkObject>());
+	}
 	
 	public void OnConnectedToServer(NetworkRunner runner)
 	{
