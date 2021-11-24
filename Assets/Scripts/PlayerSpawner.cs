@@ -8,33 +8,47 @@ using UnityEngine.SceneManagement;
 
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-	[SerializeField] private Player _playerPrefab;
+	[SerializeField] private NetworkObject prefab;
 	[SerializeField] private List<GameObject> _startPrefab;
 	private Vector3 _startPosition;
 	private Quaternion _startRotation;
 	
-	[SerializeField]
-	private bool debugLogs;
+	private Dictionary<PlayerRef, NetworkObject> spawnedPlayers = new Dictionary<PlayerRef, NetworkObject>();
 	
+	[SerializeField] private bool debugLogs;
+
 	#region INetworkRunnerCallbacks
 
         void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-	        _startPosition = Vector3.zero;
-	        _startRotation = Quaternion.identity;
-	        var scene = SceneManager.GetActiveScene();
-	        if (scene.buildIndex <= _startPrefab.Count)
-	        { 
-		        _startPosition = _startPrefab[scene.buildIndex].transform.position; 
-		        _startRotation = _startPrefab[scene.buildIndex].transform.rotation;
+	        if (this.debugLogs)
+	        {
+		        Debug.Log($"OnPlayerJoined {player} mode = {runner.GameMode}");
 	        }
-	        runner.Spawn( _playerPrefab, _startPosition, _startRotation, player );
+	        switch (runner.GameMode)
+	        {
+		        case GameMode.Single:
+		        case GameMode.Server:
+		        case GameMode.Host:
+			        this.SpawnPlayer(runner, player);
+			        break;
+	        }
         }
 
         void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-	      //  runner.Despawn(player.Get<NetworkObject>());
-	      Debug.Log("Player Left" + player.PlayerId);
+	        if (this.debugLogs)
+	        {
+		        Debug.Log($"OnPlayerLeft {player} mode = {runner.GameMode}");
+	        }
+	        switch (runner.GameMode)
+	        {
+		        case GameMode.Single:
+		        case GameMode.Server:
+		        case GameMode.Host:
+			        this.TryDespawnPlayer(runner, player);
+			        break;
+	        }
         }
 
         void INetworkRunnerCallbacks.OnInput(NetworkRunner runner, NetworkInput input)
@@ -47,24 +61,38 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
         void INetworkRunnerCallbacks.OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
+	        if (this.debugLogs)
+	        {
+		        Debug.Log($"OnShutdown mode = {runner.GameMode} reason = {shutdownReason}");
+		        foreach (var pair in this.spawnedPlayers)
+		        {
+			        Debug.LogWarning($"Prefab not despawned? {pair.Key}:{pair.Value?.Id}");
+		        }
+	        }
         }
 
         void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
         {
-	        _startPosition = Vector3.zero;
-	        _startRotation = Quaternion.identity;
-	        var scene = SceneManager.GetActiveScene();
-	        if (scene.buildIndex <= _startPrefab.Count)
-	        { 
-		        _startPosition = _startPrefab[scene.buildIndex].transform.position; 
-		        _startRotation = _startPrefab[scene.buildIndex].transform.rotation;
+	        if (this.debugLogs)
+	        {
+		        Debug.Log($"OnConnectedToServer mode = {runner.GameMode}");
 	        }
-	        if(runner.Topology==SimulationConfig.Topologies.Shared)
-		        runner.Spawn( _playerPrefab, null, null, runner.LocalPlayer );
+	        if (runner.GameMode == GameMode.Shared)
+	        {
+		        this.SpawnPlayer(runner, runner.LocalPlayer);
+	        }
         }
 
         void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner)
         {
+	        if (this.debugLogs)
+	        {
+		        Debug.Log($"OnDisconnectedFromServer mode = {runner.GameMode}");
+	        }
+	        if (runner.GameMode == GameMode.Shared)
+	        {
+		        this.TryDespawnPlayer(runner, runner.LocalPlayer);
+	        }
            
         }
 
@@ -101,42 +129,53 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         #endregion
+        
+	private void SpawnPlayer(NetworkRunner runner, PlayerRef player)
+	{
+		SetStartSpawingPose();
 
-	
-	
-	
-	/*public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+		NetworkObject instance = runner.Spawn(this.prefab, _startPosition, _startRotation, player);
+		if (this.debugLogs)
+		{
+			if (this.spawnedPlayers.TryGetValue(player, out NetworkObject oldValue))
+			{
+				Debug.LogWarning($"Replacing NO {oldValue?.Id} w/ {instance?.Id} for {player}");
+			}
+			else
+			{
+				Debug.Log($"Spawned NO {instance?.Id} for {player}");
+			}
+		}
+		this.spawnedPlayers[player] = instance;
+	}
+
+	private void SetStartSpawingPose()
 	{
 		_startPosition = Vector3.zero;
 		_startRotation = Quaternion.identity;
 		var scene = SceneManager.GetActiveScene();
 		if (scene.buildIndex <= _startPrefab.Count)
-		{ 
-			_startPosition = _startPrefab[scene.buildIndex].transform.position; 
+		{
+			_startPosition = _startPrefab[scene.buildIndex].transform.position;
 			_startRotation = _startPrefab[scene.buildIndex].transform.rotation;
 		}
-		runner.Spawn( _playerPrefab, _startPosition, _startRotation, player );
 	}
 
-	public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+	private bool TryDespawnPlayer(NetworkRunner runner, PlayerRef player)
 	{
-		runner.Despawn(player.Get<NetworkObject>());
-	}
-	
-	public void OnConnectedToServer(NetworkRunner runner)
-	{
-		_startPosition = Vector3.zero;
-		_startRotation = Quaternion.identity;
-		var scene = SceneManager.GetActiveScene();
-		if (scene.buildIndex <= _startPrefab.Count)
-		{ 
-			_startPosition = _startPrefab[scene.buildIndex].transform.position; 
-			_startRotation = _startPrefab[scene.buildIndex].transform.rotation;
+		if (this.spawnedPlayers.TryGetValue(player, out NetworkObject instance))
+		{
+			if (this.debugLogs)
+			{
+				Debug.Log($"Despawning NO {instance?.Id} for {player}");
+			}
+			runner.Despawn(instance);
+			return this.spawnedPlayers.Remove(player);
 		}
-		if(runner.Topology==SimulationConfig.Topologies.Shared)
-			runner.Spawn( _playerPrefab, null, null, runner.LocalPlayer );
+		if (this.debugLogs)
+		{
+			Debug.LogWarning($"No spawned NO found for player {player}");
+		}
+		return false;
 	}
-	*/
-	
-
 }
