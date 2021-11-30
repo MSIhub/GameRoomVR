@@ -7,7 +7,7 @@ namespace SceneObjectBehavior
     {
         private void Start()
         {
-            transform.DOPunchScale(new Vector3(0.5f, 0.5f, 0.5f), 2f, 2, 0.2f).SetLoops(-1, LoopType.Yoyo);
+            transform.DOPunchScale(new Vector3(0.5f, 0.5f, 0.5f), 10f, 1, 0.1f).SetLoops(-1, LoopType.Yoyo);
     
         }
 

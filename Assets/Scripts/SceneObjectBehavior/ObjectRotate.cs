@@ -9,10 +9,10 @@ namespace SceneObjectBehavior
         private void Start()
         {
             var mySequence = DOTween.Sequence();
-            var up = transform.up;
+            var up = transform.up.normalized;
             mySequence.Append(transform.DORotate(up*360f, 10f, RotateMode.FastBeyond360).SetEase(Ease.Linear));
             mySequence.Append(transform.GetChild(0).transform.DORotate(up*360f, 10f, RotateMode.FastBeyond360).SetEase(Ease.Linear));
-            mySequence.SetLoops(-1, LoopType.Incremental);
+            mySequence.SetLoops(-1, LoopType.Yoyo);
         }
         
     }
