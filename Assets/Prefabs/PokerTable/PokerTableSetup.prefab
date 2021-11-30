@@ -45383,7 +45383,7 @@ MonoBehaviour:
   m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
+  _interpolationDataSource: 1
   _interpolationTarget: {fileID: 3567823630378691654}
   DetachInterpTarget: 0
   SyncParent: 1
@@ -47225,11 +47225,11 @@ MonoBehaviour:
   m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
+  _interpolationDataSource: 3
   _interpolationTarget: {fileID: 2607297892211968784}
   DetachInterpTarget: 0
-  SyncParent: 1
-  InterpolateErrorCorrection: 1
+  SyncParent: 0
+  InterpolateErrorCorrection: 0
   InterpolatedErrorCorrectionSettings:
     MinRate: 3.3
     MaxRate: 10
@@ -51603,7 +51603,8 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 6281266218549144771}
   - {fileID: 8595371881330117491}
-  SimulationBehaviours: []
+  SimulationBehaviours:
+  - {fileID: 8019702792812698005}
 --- !u!54 &4472917388599064798
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -51632,11 +51633,11 @@ MonoBehaviour:
   m_Script: {fileID: 1710889294, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
+  _interpolationDataSource: 3
   _interpolationTarget: {fileID: 3946701871850775627}
   DetachInterpTarget: 0
-  SyncParent: 1
-  InterpolateErrorCorrection: 1
+  SyncParent: 0
+  InterpolateErrorCorrection: 0
   InterpolatedErrorCorrectionSettings:
     MinRate: 3.3
     MaxRate: 10

@@ -9,14 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/VR_Start.unity
     guid: 20d6bc2b446ede94cb3e41b2b64796c3
   - enabled: 1
+    path: Assets/Scenes/NewGame.unity
+    guid: 84a99dc6140345845b34ac36d3569349
+  - enabled: 0
     path: Assets/Scenes/ReductionTest.unity
     guid: 8d067e040c74a9e45a39497a6fd78d17
   - enabled: 0
     path: Assets/Scenes/Game.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
-    path: Assets/Scenes/NewGame.unity
-    guid: 84a99dc6140345845b34ac36d3569349
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: cc82b5cb87c6c774481a7be05438c863, type: 2}
     com.unity.xr.openxr.settings4: {fileID: 11400000, guid: e1ae04986daac854aa223297c329e571, type: 2}

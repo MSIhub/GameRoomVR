@@ -364,7 +364,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &136913607
 PrefabInstance:
@@ -3947,156 +3947,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &928167666
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 928167670}
-  - component: {fileID: 928167669}
-  - component: {fileID: 928167668}
-  - component: {fileID: 928167667}
-  m_Layer: 0
-  m_Name: NetworkVoiceManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &928167667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 928167666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65b99afb3758e9e4689c28a18224eb8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RandomRoom: 1
-  autoConnect: 1
-  autoTransmit: 1
-  publishUserId: 0
-  RoomName: 
---- !u!114 &928167668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 928167666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91175dcc15224463780e01a8a98b1b60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  logLevel: 3
-  ignoreGlobalLogLevel: 0
-  voiceDetection: 1
-  voiceDetectionThreshold: 0.01
-  voiceDetectionDelayMs: 500
-  unityMicrophoneDevice: 
-  photonMicrophoneDeviceId: -1
-  interestGroup: 0
-  debugEchoMode: 0
-  reliableMode: 0
-  encrypt: 0
-  transmitEnabled: 1
-  samplingRate: 24000
-  frameDuration: 20000
-  bitrate: 30000
-  sourceType: 0
-  microphoneType: 0
-  audioClip: {fileID: 0}
-  loopAudioClip: 1
-  reactOnSystemChanges: 0
-  autoStart: 1
-  audioSessionParameters:
-    Category: 4
-    Mode: 0
-    CategoryOptions: 0800000004000000
-  useCustomAudioSessionParameters: 0
-  audioSessionPresetIndex: 0
-  nativeAndroidMicrophoneSettings:
-    AcousticEchoCancellation: 0
-    AutomaticGainControl: 0
-    NoiseSuppression: 0
-  recordOnlyWhenEnabled: 1
-  skipDeviceChangeChecks: 0
-  stopRecordingWhenPaused: 0
-  useOnAudioFilterRead: 0
-  trySamplingRateMatch: 0
-  useMicrophoneTypeFallback: 1
-  recordOnlyWhenJoined: 1
---- !u!114 &928167669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 928167666}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 697c1cda529a1419782f2a2e3afe37a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DisconnectAfterKeepAlive: 0
-  KeepAliveInBackground: 60000
-  ApplyDontDestroyOnLoad: 1
-  logLevel: 3
-  enableSupportLogger: 0
-  updateInterval: 50
-  runInBackground: 1
-  statsResetInterval: 1000
-  speakerPrefab: {fileID: 4145174223250164459, guid: 8e0d70155b246004288c5cd443930c28, type: 3}
-  primaryRecorder: {fileID: 928167668}
-  globalRecordersLogLevel: 3
-  globalSpeakersLogLevel: 3
-  globalPlaybackDelay: -1
-  globalPlaybackDelaySettings:
-    MinDelaySoft: 200
-    MaxDelaySoft: 400
-    MaxDelayHard: 1000
-  Settings:
-    AppIdRealtime: 
-    AppIdFusion: 
-    AppIdChat: 
-    AppIdVoice: 992eb900-0e26-4c60-be58-5c1778e8f2c2
-    AppVersion: 
-    UseNameServer: 1
-    FixedRegion: 
-    Server: 
-    Port: 0
-    ProxyServer: 
-    Protocol: 0
-    EnableProtocolFallback: 1
-    AuthMode: 0
-    EnableLobbyStatistics: 0
-    NetworkLogging: 1
-  ShowSettings: 1
-  MinimalTimeScaleToDispatchInFixedUpdate: -1
-  AutoCreateSpeakerIfNotFound: 1
-  MaxDatagrams: 3
-  SendAsap: 0
---- !u!4 &928167670
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 928167666}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.2, y: 0, z: 22.1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &930380846
 Mesh:
   m_ObjectHideFlags: 0
@@ -6323,6 +6173,7 @@ MonoBehaviour:
   AoiMode: 0
   DefaultPropertyGroups: []
   DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 0
   AoiPosition: {fileID: 0}
   Flags: 2561
   NetworkGuid:
@@ -9025,6 +8876,13 @@ MonoBehaviour:
   ServerPort: 27015
   DefaultRoomName: 
   AlwaysShowStats: 0
+  includedStats: 0
+  StatsPosition:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0.33
+    height: 1
   InitialScenePath: 
 --- !u!114 &1799304353
 MonoBehaviour:
@@ -22536,7 +22394,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4562087495408052376, guid: 8c94a802fd3bf784bb38c8456742b544, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4562087495408052376, guid: 8c94a802fd3bf784bb38c8456742b544, type: 3}
       propertyPath: m_LocalPosition.x
@@ -23761,8 +23619,27 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 2054260664}
+    - target: {fileID: 9199067965453181116, guid: 818a401c40d64444ebfd0d1f1fc5df99, type: 3}
+      propertyPath: SimulationBehaviours.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9199067965453181116, guid: 818a401c40d64444ebfd0d1f1fc5df99, type: 3}
+      propertyPath: SimulationBehaviours.Array.data[0]
+      value: 
+      objectReference: {fileID: 5635298713714079698}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 818a401c40d64444ebfd0d1f1fc5df99, type: 3}
+--- !u!114 &5635298713714079698 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8019702792812698005, guid: 818a401c40d64444ebfd0d1f1fc5df99, type: 3}
+  m_PrefabInstance: {fileID: 5635298713714079697}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18d68137ff89ce2429ffd585d628dc08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &5685797927186850692
 Transform:
   m_ObjectHideFlags: 0
